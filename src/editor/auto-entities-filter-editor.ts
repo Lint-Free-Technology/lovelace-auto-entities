@@ -11,6 +11,7 @@ import {
   hasSelector,
   templateSchema,
   entitiesSchema,
+  isRuleKeySelector,
 } from "./schema";
 
 class AutoEntitiesFilterEditor extends LitElement {
@@ -23,7 +24,8 @@ class AutoEntitiesFilterEditor extends LitElement {
     if ("type" in filter) {
       return `${filter.type} ${filter.label ? `"${filter.label}"` : ""}`;
     }
-    return `${Object.keys(filter).length} rules`;
+    const rules = Object.keys(filter).filter((key) => isRuleKeySelector(key)).length;
+    return `${rules} ${rules === 1 ? "rule" : "rules"}`;
   }
 
   _getFilters(type) {

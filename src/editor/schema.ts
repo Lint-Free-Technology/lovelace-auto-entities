@@ -37,12 +37,16 @@ const filterValueSelector = {
   label: { label: {} },
 };
 
+export const isRuleKeySelector = (key) => {
+  return ruleKeySelector.options.some(([k, v]) => k === key);
+}
+
 export const hasSelector = (filter) => {
   return Object.keys(filter).some((k) => k in filterValueSelector);
 };
 
 const ruleSchema = ([key, value], idx) => {
-  if (["sort", "optios"].includes(key)) {
+  if (["sort", "options"].includes(key)) {
     return undefined;
   }
   if (!ruleKeySelector.options.some(([k, v]) => k === key))
