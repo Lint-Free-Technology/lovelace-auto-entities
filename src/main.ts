@@ -10,7 +10,6 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
-  HuiErrorCard,
   LovelaceCard,
   LovelaceRowConfig,
 } from "./types";
@@ -29,6 +28,7 @@ class AutoEntities extends LitElement {
   connectedWhileHidden = true;
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
+  @property() preview: boolean;
   @property() card: LovelaceCard;
   @property() else?: LovelaceCard;
   @property() _template: string[];
@@ -128,8 +128,14 @@ class AutoEntities extends LitElement {
   }
 
   async update_all() {
-    if (this.card) this.card.hass = this.hass;
-    if (this.else) this.else.hass = this.hass;
+    if (this.card) {
+      this.card.hass = this.hass;
+      this.card.preview = this.preview;
+    }
+    if (this.else) {
+      this.else.hass = this.hass;
+      this.else.preview = this.preview;
+    }
 
     if (this._updateCooldown.timer) {
       this._updateCooldown.rerun = true;
@@ -153,6 +159,7 @@ class AutoEntities extends LitElement {
     const helpers = await (window as any).loadCardHelpers();
     this.else = await helpers.createCardElement(this._config.else);
     this.else.hass = this.hass;
+    this.else.preview = this.preview;
   }
 
   async update_card(entities: EntityList) {
@@ -182,6 +189,7 @@ class AutoEntities extends LitElement {
 
     this._cardBuiltResolve?.();
     this.card.hass = this.hass;
+    this.card.preview = this.preview;
 
     this.empty =
       entities.length === 0 ||
@@ -302,6 +310,10 @@ class AutoEntities extends LitElement {
     ) {
       queueMicrotask(() => this.update_all());
     }
+    if (changedProperties.has("preview")) {
+      if (this.card) this.card.preview = this.preview;
+      if (this.else) this.else.preview = this.preview;
+    }
   }
 
   createRenderRoot() {
@@ -309,7 +321,7 @@ class AutoEntities extends LitElement {
   }
   render() {
     return html`${this.empty &&
-    (this._config.show_empty === false || this._config.else)
+    ((this._config.show_empty === false && !this.preview) || this._config.else)
       ? this.else
       : this.card}`;
   }
@@ -326,6 +338,7 @@ class AutoEntities extends LitElement {
 
   get hidden() {
     const hide =
+      !this.preview &&
       this.empty &&
       this._config.show_empty === false &&
       this._config.else === undefined;
