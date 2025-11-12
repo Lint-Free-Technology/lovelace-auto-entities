@@ -194,9 +194,15 @@ class AutoEntities extends LitElement {
     this.empty =
       entities.length === 0 ||
       entities.every((e) => HIDDEN_TYPES.includes(e.type));
-    this.dispatchEvent(
-      new Event("card-visibility-changed", { bubbles: true, cancelable: true })
-    );
+    if (this._config.card_as_row) {
+      this.dispatchEvent(
+        new CustomEvent("row-visibility-changed", { detail: { row: this, value: !this.hidden}, bubbles: true, cancelable: true, composed: true })
+      );
+    } else {
+      this.dispatchEvent(
+        new Event("card-visibility-changed", { bubbles: true, cancelable: true })
+      );
+    }
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();

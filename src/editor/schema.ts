@@ -258,6 +258,11 @@ export const cardOptionsSchema = [
         label: "Show if empty",
       },
       {
+        name: "card_as_row",
+        type: "boolean",
+        label: "Card as row",
+      },
+      {
         name: "card_param",
         type: "string",
         label: "Parameter to populate",
