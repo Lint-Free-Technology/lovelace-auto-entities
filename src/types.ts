@@ -49,6 +49,7 @@ export interface AutoEntitiesConfig {
   };
 
   card_param?: string;
+  card_as_row?: boolean;
 
   show_empty?: boolean;
   else?: any;
