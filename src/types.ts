@@ -69,6 +69,11 @@ export interface LovelaceCard extends HTMLElement {
   getCardSize?(): number;
   preview?: boolean;
 }
+export interface HuiCard extends LovelaceCard {
+  load(): void;
+  config?: any;
+  _element?: LovelaceCard;
+}
 export interface HuiErrorCard extends LovelaceCard {
   _config: any;
 }

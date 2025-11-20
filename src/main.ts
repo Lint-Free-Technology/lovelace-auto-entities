@@ -10,7 +10,7 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
-  LovelaceCard,
+  HuiCard,
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
@@ -29,8 +29,8 @@ class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() preview: boolean;
-  @property() card: LovelaceCard;
-  @property() else?: LovelaceCard;
+  @property() card: HuiCard;
+  @property() else?: HuiCard;
   @property() _template: string[];
   @state() empty = false;
 
@@ -156,10 +156,11 @@ class AutoEntities extends LitElement {
 
   async build_else() {
     if (this._config.else === undefined) return;
-    const helpers = await (window as any).loadCardHelpers();
-    this.else = await helpers.createCardElement(this._config.else);
+    this.else = document.createElement("hui-card") as HuiCard;
     this.else.hass = this.hass;
     this.else.preview = this.preview;
+    this.else.config = this._config.else;
+    this.else.load();
   }
 
   async update_card(entities: EntityList) {
@@ -180,16 +181,19 @@ class AutoEntities extends LitElement {
       [this._config.card_param || "entities"]: cardEntities,
       ...this._config.card,
     };
+
     if (!this.card || newType) {
-      const helpers = await (window as any).loadCardHelpers();
-      this.card = await helpers.createCardElement(cardConfig);
+      this.card = document.createElement("hui-card") as HuiCard;
+      this.card.hass = this.hass;
+      this.card.preview = this.preview;
+      this.card.config = cardConfig;
+      this.card.load();
     } else {
-      this.card.setConfig(cardConfig);
+      this.card.config = cardConfig;
+      this.card.load();
     }
 
     this._cardBuiltResolve?.();
-    this.card.hass = this.hass;
-    this.card.preview = this.preview;
 
     this.empty =
       entities.length === 0 ||
