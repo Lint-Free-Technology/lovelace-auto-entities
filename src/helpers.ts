@@ -1,3 +1,4 @@
+import { debounce } from "./helpers/debounce";
 import { HassObject } from "./types";
 
 export const loadHaForm = async () => {
@@ -82,10 +83,15 @@ function cacheSubscription<T>(
   type: string,
   cacheKey: string,
 ) {
-  return hass.connection.subscribeEvents((event) => {
-      cache[cacheKey] = null;
-      document.dispatchEvent(new CustomEvent("auto-entities-update"));
-    }, 
+  return hass.connection.subscribeEvents(
+    debounce(
+      (event) => {
+        cache[cacheKey] = null;
+        document.dispatchEvent(new CustomEvent("auto-entities-update"));
+      },
+      500,
+      true
+    ),
     `${type}_registry_updated`
   );
 }
