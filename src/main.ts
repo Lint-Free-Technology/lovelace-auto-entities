@@ -121,10 +121,12 @@ class AutoEntities extends LitElement {
         config: this._config,
       });
     }
+    document.addEventListener("auto-entities-update", this.update_all.bind(this));
   }
   disconnectedCallback() {
     super.disconnectedCallback();
     unbind_template(this._renderer);
+    document.removeEventListener("auto-entities-update", this.update_all.bind(this));
   }
 
   async update_all() {
