@@ -33,26 +33,31 @@ const cache = (window as any).autoEntities_cache;
 export function getAreas(hass) {
   cache.areas =
     cache.areas ?? cacheByProperty(hass, "area", "area_id");
+  cache.areas_subscription = cache.areas_subscription ?? cacheSubscription(hass, "area", "areas");
   return cache.areas;
 }
 export function getFloors(hass) {
   cache.floors =
     cache.floors ?? cacheByProperty(hass, "floor", "floor_id");
+  cache.floors_subscription = cache.floors_subscription ?? cacheSubscription(hass, "floor", "floors");
   return cache.floors;
 }
 export function getDevices(hass) {
   cache.devices =
     cache.devices ?? cacheByProperty(hass, "device", "id");
+  cache.devices_subscription = cache.devices_subscription ?? cacheSubscription(hass, "device", "devices");
   return cache.devices;
 }
 export function getEntities(hass) {
   cache.entities =
     cache.entities ?? cacheByProperty(hass, "entity", "entity_id");
+  cache.entities_subscription = cache.entities_subscription ?? cacheSubscription(hass, "entity", "entities");
   return cache.entities;
 }
 export function getLabels(hass) {
   cache.labels =
     cache.labels ?? cacheByProperty(hass, "label", "label_id");
+  cache.labels_subscription = cache.labels_subscription ?? cacheSubscription(hass, "label", "labels");
   return cache.labels;
 }
 
@@ -70,6 +75,19 @@ function cacheByProperty<T>(
       return acc;
     }, {} as Record<string, T>);
   });
+}
+
+function cacheSubscription<T>(
+  hass: HassObject,
+  type: string,
+  cacheKey: string,
+) {
+  return hass.connection.subscribeEvents((event) => {
+      cache[cacheKey] = null;
+      document.dispatchEvent(new CustomEvent("auto-entities-update"));
+    }, 
+    `${type}_registry_updated`
+  );
 }
 
 // Debugging helper

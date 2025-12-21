@@ -85,6 +85,9 @@ export interface HassObject {
   formatEntityState: (stateObj, state?) => string;
   formatEntityAttributeValue: (stateObj, attribute, value?) => string;
   formatEntityAttributeName: (stateObj, attribute) => string;
+  connection: {
+    subscribeEvents: (callback: (event: any) => void, eventType: string) => void;
+  };
 }
 
 export type MatchValue = string | number;
