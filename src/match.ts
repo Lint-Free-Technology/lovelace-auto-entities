@@ -5,6 +5,11 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
   const matchers = [];
   const transforms = [];
 
+  if (typeof pattern === "object" && pattern.active_choice) {
+    // Handle config from choose selector
+    pattern = pattern[pattern.active_choice];
+  }
+
   if (typeof pattern === "string") {
     if (pattern.startsWith("$$")) {
       pattern = pattern.substring(2);

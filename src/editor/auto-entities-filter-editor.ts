@@ -6,9 +6,7 @@ import {
   rule_to_form,
   form_to_rule,
   nonFilterSchema,
-  postProcess,
   sortSchema,
-  hasSelector,
   templateSchema,
   entitiesSchema,
   isRuleKeySelector,
@@ -157,12 +155,6 @@ class AutoEntitiesFilterEditor extends LitElement {
 
   updated(changedProperties) {
     this.updateComplete.then(async () => {
-      // Go through all selectors and force them to allow custom values
-      const promises = Array.from(
-        this.shadowRoot.querySelectorAll(".filter-rule-form")
-      ).map(postProcess);
-      await Promise.all(promises);
-
       // Populate forms with data AFTER selectors have been patched.
       // Otherwise they may overwrite the data with undefined
       this.shadowRoot.querySelectorAll("ha-form").forEach((form) => {
@@ -206,15 +198,6 @@ class AutoEntitiesFilterEditor extends LitElement {
                   </ha-button>
                   ${filter.type === undefined
                     ? html`
-                        ${hasSelector(filter)
-                          ? html`
-                              <p class="info">
-                                If entering a custom Value (e.g. "*light" or
-                                "/^[Bb]ed/") in a box with options, you need to
-                                finish with the Enter key.
-                              </p>
-                            `
-                          : ""}
                         <ha-form
                           .hass=${this.hass}
                           .schema=${filterSchema(filter)}

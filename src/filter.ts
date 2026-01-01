@@ -41,7 +41,8 @@ export const RULES: Record<
     return (entity) => match(entity.attributes?.friendly_name);
   },
   group: async (hass, value) => (entity) => {
-    return hass.states[value]?.attributes?.entity_id?.includes(
+    const group = (typeof value === "object" && value.active_choice) ? value[value.active_choice] : value;
+    return hass.states[group]?.attributes?.entity_id?.includes(
       entity.entity_id
     );
   },
