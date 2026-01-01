@@ -28,18 +28,68 @@ const ruleKeySelector = {
 
 const filterValueSelector = {
   attributes: { object: {} },
-  area: { area: {} },
-  device: { device: {} },
-  entity_id: { entity: {} },
-  floor: { floor: {} },
-  group: { entity: { filter: { domain: "group" } } },
-  integration: { config_entry: {} },
-  label: { label: {} },
+  area: { 
+    choose: {
+      choices: {
+        area: { selector: { area: {} } },
+        custom: { selector: { text: {} } }
+      }
+    } 
+  },
+  domain: { text: {} },
+  device: { 
+    choose: {
+      choices: {
+        device: { selector: { device: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  entity_id: { 
+    choose: {
+      choices: {
+        entity: { selector: { entity: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  floor: { 
+    choose: {
+      choices: {
+        floor: { selector: { floor: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
+  group: { 
+    choose: {
+      choices: {
+        entity: { selector: { entity: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  integration: { 
+    choose: {
+      choices: {
+        integration: { selector: { config_entry: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
+  label: { 
+    choose: {
+      choices: {
+        label: { selector: { label: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
 };
 
-export const hasSelector = (filter) => {
-  return Object.keys(filter).some((k) => k in filterValueSelector);
-};
+export const isRuleKeySelector = (key) => {
+  return ruleKeySelector.options.some(([k, v]) => k === key);
+}
 
 const ruleSchema = ([key, value], idx) => {
   if (["sort", "optios"].includes(key)) {
@@ -69,51 +119,6 @@ const ruleSchema = ([key, value], idx) => {
       },
     ],
   };
-};
-
-export const postProcess = async (form: Element) => {
-  await await_element(form);
-  for (const grid of await selectTree(form, "$ ha-form-grid", true)) {
-    await await_element(grid);
-    const selector = await selectTree(
-      grid,
-      "$ ha-form:nth-child(2) $ ha-selector"
-    );
-    if (!selector) continue;
-    await await_element(selector);
-
-    let cb =
-      (await selectTree(
-        selector,
-        "$ ha-selector-area $ ha-area-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-device $ ha-device-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-entity $ ha-entity-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-label $ ha-label-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-floor $ ha-floor-picker $ ha-combo-box"
-      ));
-
-    if (cb) {
-      await await_element(cb);
-      cb.allowCustomValue = true;
-      continue;
-    }
-  }
 };
 
 export const filterSchema = (group) => {
