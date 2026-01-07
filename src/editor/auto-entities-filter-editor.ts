@@ -9,6 +9,7 @@ import {
   sortSchema,
   templateSchema,
   entitiesSchema,
+  migrate_custom_rule_values,
 } from "./schema";
 
 class AutoEntitiesFilterEditor extends LitElement {
@@ -82,6 +83,19 @@ class AutoEntitiesFilterEditor extends LitElement {
     this._setFilters(type, filters);
   }
 
+  _rulesMigrated(migrations) { 
+    migrations.forEach(({new_value, idx, type, key}) => {
+      const filters = this._getFilters(type);
+      filters[idx][key] = { ...new_value };
+      this._setFilters(type, filters);
+    });
+    this.updateComplete.then(() => {
+      this.dispatchEvent(
+        new CustomEvent("config-changed", { detail: { config: this._config } })
+      );
+    });
+  }
+
   _rulesChanged(ev, idx, type) {
     ev.stopPropagation();
 
@@ -141,21 +155,10 @@ class AutoEntitiesFilterEditor extends LitElement {
         `ha-expansion-panel:first-child`
       );
       (fold as any).expanded = true;
-    });
-  }
-
-  updated(changedProperties) {
-    this.updateComplete.then(async () => {
-      // Populate forms with data AFTER selectors have been patched.
-      // Otherwise they may overwrite the data with undefined
-      this.shadowRoot.querySelectorAll("ha-form").forEach((form) => {
-        let f = form as any;
-        if (f.filter_type !== undefined && f.filter_idx !== undefined) {
-          f.data = rule_to_form(
-            this._config.filter[f.filter_type][f.filter_idx]
-          );
-        }
+      migrate_custom_rule_values(this.hass, this._config, ["include", "exclude"], (migrations) => { 
+        this._rulesMigrated(migrations);
       });
+
     });
   }
 
@@ -196,8 +199,7 @@ class AutoEntitiesFilterEditor extends LitElement {
                           @value-changed=${(ev) =>
                             this._rulesChanged(ev, idx, type)}
                           class="filter-rule-form"
-                          .filter_type=${type}
-                          .filter_idx=${idx}
+                          .data=${rule_to_form(this._config.filter[type][idx])}
                         >
                         </ha-form>
                         <ha-expansion-panel outlined class="sort">
