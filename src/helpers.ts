@@ -62,6 +62,20 @@ export function getLabels(hass) {
   return cache.labels;
 }
 
+export function getConfigEntries(hass, filterType?: string, filterValue?: any) {
+  const cacheKey = `config_entries_${filterType ?? "all"}_${String(filterValue)}`;
+  cache.config_entries = cache.config_entries ?? {};
+  if (!(cacheKey in cache.config_entries)) {
+    cache.config_entries[cacheKey] = cacheConfigEntries(
+      hass,
+      "entry_id",
+      filterType,
+      filterValue,
+    );
+  }
+  return cache.config_entries[cacheKey];
+}
+
 function cacheByProperty<T>(
   hass: HassObject,
   type: string,
@@ -78,6 +92,22 @@ function cacheByProperty<T>(
   });
 }
 
+function cacheConfigEntries<T>(
+  hass: HassObject,
+  property: keyof T,
+  filter_type?: string,
+  filter_value?: any,
+): Promise<Record<string, T>> {
+  return hass.callWS({ type: `config_entries/get` }).then((items: T[]) => {
+    return items.reduce((acc, item) => {
+      const key = item[property];
+      if (typeof key === "string" || typeof key === "number") {
+        acc[String(key)] = item;
+      }
+      return acc;
+    }, {} as Record<string, T>);
+  });
+    
 function cacheSubscription<T>(
   hass: HassObject,
   type: string,

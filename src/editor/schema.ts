@@ -1,4 +1,4 @@
-import { await_element, selectTree } from "../helpers/selecttree";
+import { getAreas, getConfigEntries, getDevices, getEntities, getFloors, getLabels } from "../helpers";
 
 const ruleKeySelector = {
   type: "select",
@@ -64,7 +64,7 @@ const filterValueSelector = {
   group: { 
     choose: {
       choices: {
-        entity: { selector: { entity: {} } },
+        group: { selector: { entity: {} } },
         custom: { selector: { text: {} } }
       } 
     }
@@ -86,6 +86,44 @@ const filterValueSelector = {
     }
   },
 };
+
+const filterChooseValidators = {
+  entity_id: {
+    validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { entity: value, active_choice: "entity" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  device: {
+    validator: async (hass, value) => { return getDevices(hass).then((devices) => { return value in devices; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { device: value, active_choice: "device" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  area: {
+    validator: async (hass, value) => { return getAreas(hass).then((areas) => { return value in areas; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { area: value, active_choice: "area" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  floor: {
+    validator: async (hass, value) => { return getFloors(hass).then((floors) => { return value in floors; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { floor: value, active_choice: "floor" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  group: {
+    validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { group: value, active_choice: "group" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  integration: {  
+    validator: async (hass, value) => { return getConfigEntries(hass, "type", ["device", "hub", "service" ]).then((entries) => { return value in entries; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { integration: value, active_choice: "integration" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  label: {
+    validator: async (hass, value) => { return getLabels(hass).then((labels) => { return value in labels; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { label: value, active_choice: "label" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  }
+}
 
 export const isRuleKeySelector = (key) => {
   return ruleKeySelector.options.some(([k, v]) => k === key);
@@ -141,6 +179,34 @@ export const filterSchema = (group) => {
       selector: { object: {} },
     },
   ];
+};
+
+export const migrate_custom_rule_values = async (hass, config, types, callback) => {
+  const migrations = [];
+  const promises = [];
+  
+  Object.values(Array.isArray(types) ? types : [types]).forEach((type) => {
+    Object.values(config?.filter?.[type]).forEach((group, idx) => {
+      const filters = { ...group as Object };
+      Object.entries(filters).forEach(([key, value]) => {
+        if (key in filterChooseValidators && typeof value === "string") {
+          const promise = filterChooseValidators[key].validator(hass, value).then((is_valid) => {
+            if (is_valid) {
+              const new_value = filterChooseValidators[key].choose_valid(value);
+              migrations.push({new_value, idx, type, key});
+            } else {
+              const new_value = filterChooseValidators[key].choose_custom(value);
+              migrations.push({new_value, idx, type, key});
+            }
+          });
+          promises.push(promise);
+        }
+      });
+    });
+  });
+  
+  await Promise.all(promises);
+  callback(migrations);
 };
 
 export const rule_to_form = (group) => {
