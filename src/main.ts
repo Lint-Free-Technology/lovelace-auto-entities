@@ -29,6 +29,7 @@ class AutoEntities extends LitElement {
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
   @property() preview: boolean;
+  @property() layout: string;
   @property() card: HuiCard;
   @property() else?: HuiCard;
   @property() _template: string[];
@@ -161,6 +162,7 @@ class AutoEntities extends LitElement {
     this.else = document.createElement("hui-card") as HuiCard;
     this.else.hass = this.hass;
     this.else.preview = this.preview;
+    this.else.layout = this.layout;
     this.else.config = this._config.else;
     this.else.load();
   }
@@ -188,6 +190,7 @@ class AutoEntities extends LitElement {
       this.card = document.createElement("hui-card") as HuiCard;
       this.card.hass = this.hass;
       this.card.preview = this.preview;
+      this.card.layout = this.layout;
       this.card.config = cardConfig;
       this.card.load();
     } else {

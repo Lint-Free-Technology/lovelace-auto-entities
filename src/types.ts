@@ -72,6 +72,7 @@ export interface LovelaceCard extends HTMLElement {
 export interface HuiCard extends LovelaceCard {
   load(): void;
   config?: any;
+  layout?: string;
   _element?: LovelaceCard;
 }
 export interface HuiErrorCard extends LovelaceCard {
