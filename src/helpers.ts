@@ -107,6 +107,7 @@ function cacheConfigEntries<T>(
       return acc;
     }, {} as Record<string, T>);
   });
+}
     
 function cacheSubscription<T>(
   hass: HassObject,

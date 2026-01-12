@@ -9,6 +9,7 @@ import {
   sortSchema,
   templateSchema,
   entitiesSchema,
+  isRuleKeySelector,
   migrate_custom_rule_values,
 } from "./schema";
 
