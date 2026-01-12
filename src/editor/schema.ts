@@ -129,8 +129,12 @@ export const isRuleKeySelector = (key) => {
   return ruleKeySelector.options.some(([k, v]) => k === key);
 }
 
+export const hasSelector = (filter) => {
+  return Object.keys(filter).some((k) => k in filterValueSelector);
+};
+
 const ruleSchema = ([key, value], idx) => {
-  if (["sort", "optios"].includes(key)) {
+  if (["sort", "options"].includes(key)) {
     return undefined;
   }
   if (!ruleKeySelector.options.some(([k, v]) => k === key))
@@ -222,10 +226,15 @@ export const rule_to_form = (group) => {
 export const form_to_rule = (config, filter): Object => {
   const data = {};
   data["options"] = filter.options;
-  for (let i = 0; i <= config.filter.include.length + 1; i++) {
-    if (filter[`key_${i}`] !== undefined)
-      data[filter[`key_${i}`]] = filter[`value_${i}`] ?? "";
-  }
+  Object.keys(filter)
+    .filter((k) => /^key_\d+$/.test(k))
+    .forEach((k) => {
+      const idx = k.split("_")[1];
+      const ruleKey = filter[k];
+      if (ruleKey !== undefined) {
+        data[ruleKey] = filter[`value_${idx}`] ?? "";
+      }
+    });
   if (filter.key_new !== undefined) {
     data[filter.key_new] = "";
   }
@@ -318,6 +327,11 @@ export const cardOptionsSchema = [
         name: "show_empty",
         type: "boolean",
         label: "Show if empty",
+      },
+      {
+        name: "card_as_row",
+        type: "boolean",
+        label: "Card as row",
       },
       {
         name: "card_param",

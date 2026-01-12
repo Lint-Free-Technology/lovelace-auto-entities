@@ -25,6 +25,7 @@ filter:
     - <filter>
 
 show_empty: <show_empty>
+card_as_row: <card_as_row>
 else: <else>
 unique: <unique>
 sort: <sort_method>
@@ -42,6 +43,7 @@ sort: <sort_method>
 | `else`                 | Dashboard card\*                 | Card to display if the main card has no entities. Overrides `show_empty`                                              |
 | `sort`                 | [Sort config](#sorting-entities) | How to sort the entities of the card                                                                                  | `none`          |
 | `card_param`           | string                           | The parameter of the card to populate with entities                                                                   | `entities`      |
+| `card_as_row`          | `true`/`false`                   | Set to `true` if you use auto-entities card as a nested row in an entities card.                          | `false`        |
 
 \* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
 \*\* [Entities](https://www.home-assistant.io/dashboards/entities/#options-for-entities)

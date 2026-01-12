@@ -16,11 +16,14 @@ class AutoEntitiesFilterEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
   @property() hass;
 
+  private _newStyleButton = false;
+
   _describe_filter(filter) {
     if ("type" in filter) {
       return `${filter.type} ${filter.label ? `"${filter.label}"` : ""}`;
     }
-    return `${Object.keys(filter).length} rules`;
+    const rules = Object.keys(filter).filter((key) => isRuleKeySelector(key)).length;
+    return `${rules} ${rules === 1 ? "rule" : "rules"}`;
   }
 
   _getFilters(type) {
@@ -158,7 +161,6 @@ class AutoEntitiesFilterEditor extends LitElement {
       migrate_custom_rule_values(this.hass, this._config, ["include", "exclude"], (migrations) => { 
         this._rulesMigrated(migrations);
       });
-
     });
   }
 
