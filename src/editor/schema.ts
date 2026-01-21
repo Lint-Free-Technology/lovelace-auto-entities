@@ -144,6 +144,7 @@ const ruleSchema = ([key, value], idx) => {
   return {
     type: "grid",
     name: "",
+    column_min_width: filterValueSelector[key] !== undefined ? "100%" : undefined,
     schema: [
       {
         ...ruleKeySelector,
@@ -182,6 +183,7 @@ export const migrate_custom_rule_values = async (hass, config, types, callback) 
   const promises = [];
   
   Object.values(Array.isArray(types) ? types : [types]).forEach((type) => {
+    if (!config?.filter?.[type]) return;
     Object.values(config?.filter?.[type]).forEach((group, idx) => {
       const filters = { ...group as Object };
       Object.entries(filters).forEach(([key, value]) => {
