@@ -98,7 +98,11 @@ function cacheConfigEntries<T>(
   filter_type?: string,
   filter_value?: any,
 ): Promise<Record<string, T>> {
-  return hass.callWS({ type: `config_entries/get` }).then((items: T[]) => {
+  const params: any = {};
+  if (filter_type !== undefined) {
+    params[filter_type] = filter_value;
+  }
+  return hass.callWS({ type: `config_entries/get`, ...params }).then((items: T[]) => {
     return items.reduce((acc, item) => {
       const key = item[property];
       if (typeof key === "string" || typeof key === "number") {

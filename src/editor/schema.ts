@@ -114,7 +114,7 @@ const filterChooseValidators = {
     choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
   },
   integration: {  
-    validator: async (hass, value) => { return getConfigEntries(hass, "type", ["device", "hub", "service" ]).then((entries) => { return value in entries; }).catch(() => { return false; }); },
+    validator: async (hass, value) => { return getConfigEntries(hass, "type_filter", ["device", "hub", "service" ]).then((entries) => { return value in entries; }).catch(() => { return false; }); },
     choose_valid: (value) => { return { integration: value, active_choice: "integration" }; },
     choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
   },
