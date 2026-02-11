@@ -2,11 +2,23 @@
 
 ### ⭐ New Features
 
-* **major:** Bump major version for first semantic-release ([11a66a4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/11a66a4049953fdb6e194d5eadfc8a05160b7744))
+- Use new choose selector for filter pickers to allow for built in selector including migration of existing config
 
 ### 🐞 Bug Fixes
 
-* Filter editor issues where rules may be cleared in various scenarios ([13f6235](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/13f623586d45f1838ed0dac34990c3bc4445e5a8))
+- Pass through layout parameter to have panel layout styling for card
+- Invalidate cache for entities, devices, areas, labels, floors when config registry changes.
+- Load card / else via hui-card
+- card_as_row config to work as nested row in entities card
+- Always show card preview (or else card if configured)
+- Button updates
+- Filter editor issues where rules may be cleared in various scenarios
+- Ha tabs
+- Fixup rule count in filter editor
+- Migrate mwc-button to ha-button for HA 2025.8 mwc-button removal
+- Split translated states to own filter 'state_translated'
+- Update workaround for cards which show errors
+- Performance improvements
 
 ### 📔 Documentation
 
