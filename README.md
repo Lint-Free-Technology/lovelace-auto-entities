@@ -61,17 +61,17 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `domain` | Entity domain | `light`, `binary_sensor`, `media_player` |
 | `state` | Current state of entity. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
 | `state_translated` | Current state of entity as translated using Frontend language user setting. For numeric states always use `state` as translated numeric values will include formatting that will give unexpected results e.g. '3.14 s' => 3 | `Éteint`, `Maison`, `Déclenché` |
-| `entity_id` | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
+| `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
 | `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
-| `group` | Entities in the group | `group.living_room_lights` |
-| `area` | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
-| `floor` | Entities on a given floor. Also matches all entities belonging to a Device on that floor. | `Second`, `Basement` |
+| `group` :ab: | Entities in the group | `group.living_room_lights` |
+| `area` :ab: | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
+| `floor` :ab: | Entities on a given floor. Also matches all entities belonging to a Device on that floor. | `Second`, `Basement` |
 | `level` | Entities on a given level. | `2`, `>1` |
-| `device` | Entities belonging to a Device | `Thomas iPhone` |
-| `label` | Entities that are tagged with a certain label | `Show on dashboard`, `Holiday light` |
+| `device` :ab: | Entities belonging to a Device | `Thomas iPhone` |
+| `label` :ab: | Entities that are tagged with a certain label | `Show on dashboard`, `Holiday light` |
 | `device_manufacturer` | Entities belonging to a device by a given manufacturer | `IKEA` |
 | `device_model` | Entities belonging to a device of a given model | `Hue white ambiance E26/E27 (8718696548738)` |
-| `integration` | Entities included by a given integration. This is not possible for _all_ integrations. | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
+| `integration` :ab: | Entities included by a given integration. This is not possible for _all_ integrations. | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
 | `hidden_by` | Who has hidden an entity | `user`, `integration` |
 | `attributes` | Map of `attribute: value` pairs to match | |
 | `last_changed` | Time since last state change (defaults to minutes) | `< 15`, `> 2 d ago` |
@@ -89,6 +89,38 @@ Special options:
 | `options` | Map of configuration options to apply to the entity when passed to the card |
 | `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card |
 | `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
+
+NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
+
+Legacy filter config:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Test Areas
+filter:
+  include:
+    - options: {}
+      area: kitchen
+  exclude: []
+```
+
+Choose selector filter config:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Test Areas
+filter:
+  include:
+    - options: {}
+      area:
+        area: kitchen
+        active_choice: area
+  exclude: []
+```
 
 ### Template filter
 
