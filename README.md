@@ -1,7 +1,5 @@
 # auto-entities
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
-
 Forked from [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) to continue development of the stalled project.
 
 Automatically populate lovelace cards with entities matching certain criteria.
