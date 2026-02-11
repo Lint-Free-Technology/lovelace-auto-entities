@@ -10,8 +10,7 @@ import { get_sorter } from "./sort";
 import {
   AutoEntitiesConfig,
   EntityList,
-  HuiErrorCard,
-  LovelaceCard,
+  HuiCard,
   LovelaceRowConfig,
 } from "./types";
 import pjson from "../package.json";
@@ -29,8 +28,10 @@ class AutoEntities extends LitElement {
   connectedWhileHidden = true;
   @property() _config: AutoEntitiesConfig;
   @property() hass: any;
-  @property() card: LovelaceCard;
-  @property() else?: LovelaceCard;
+  @property() preview: boolean;
+  @property() layout: string;
+  @property() card: HuiCard;
+  @property() else?: HuiCard;
   @property() _template: string[];
   @state() empty = false;
 
@@ -121,15 +122,23 @@ class AutoEntities extends LitElement {
         config: this._config,
       });
     }
+    document.addEventListener("auto-entities-update", this.update_all.bind(this));
   }
   disconnectedCallback() {
     super.disconnectedCallback();
     unbind_template(this._renderer);
+    document.removeEventListener("auto-entities-update", this.update_all.bind(this));
   }
 
   async update_all() {
-    if (this.card) this.card.hass = this.hass;
-    if (this.else) this.else.hass = this.hass;
+    if (this.card) {
+      this.card.hass = this.hass;
+      this.card.preview = this.preview;
+    }
+    if (this.else) {
+      this.else.hass = this.hass;
+      this.else.preview = this.preview;
+    }
 
     if (this._updateCooldown.timer) {
       this._updateCooldown.rerun = true;
@@ -150,9 +159,12 @@ class AutoEntities extends LitElement {
 
   async build_else() {
     if (this._config.else === undefined) return;
-    const helpers = await (window as any).loadCardHelpers();
-    this.else = await helpers.createCardElement(this._config.else);
+    this.else = document.createElement("hui-card") as HuiCard;
     this.else.hass = this.hass;
+    this.else.preview = this.preview;
+    this.else.layout = this.layout;
+    this.else.config = this._config.else;
+    this.else.load();
   }
 
   async update_card(entities: EntityList) {
@@ -173,22 +185,33 @@ class AutoEntities extends LitElement {
       [this._config.card_param || "entities"]: cardEntities,
       ...this._config.card,
     };
+
     if (!this.card || newType) {
-      const helpers = await (window as any).loadCardHelpers();
-      this.card = await helpers.createCardElement(cardConfig);
+      this.card = document.createElement("hui-card") as HuiCard;
+      this.card.hass = this.hass;
+      this.card.preview = this.preview;
+      this.card.layout = this.layout;
+      this.card.config = cardConfig;
+      this.card.load();
     } else {
-      this.card.setConfig(cardConfig);
+      this.card.config = cardConfig;
+      this.card.load();
     }
 
     this._cardBuiltResolve?.();
-    this.card.hass = this.hass;
 
     this.empty =
       entities.length === 0 ||
       entities.every((e) => HIDDEN_TYPES.includes(e.type));
-    this.dispatchEvent(
-      new Event("card-visibility-changed", { bubbles: true, cancelable: true })
-    );
+    if (this._config.card_as_row) {
+      this.dispatchEvent(
+        new CustomEvent("row-visibility-changed", { detail: { row: this, value: !this.hidden}, bubbles: true, cancelable: true, composed: true })
+      );
+    } else {
+      this.dispatchEvent(
+        new Event("card-visibility-changed", { bubbles: true, cancelable: true })
+      );
+    }
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
@@ -302,6 +325,10 @@ class AutoEntities extends LitElement {
     ) {
       queueMicrotask(() => this.update_all());
     }
+    if (changedProperties.has("preview")) {
+      if (this.card) this.card.preview = this.preview;
+      if (this.else) this.else.preview = this.preview;
+    }
   }
 
   createRenderRoot() {
@@ -309,7 +336,7 @@ class AutoEntities extends LitElement {
   }
   render() {
     return html`${this.empty &&
-    (this._config.show_empty === false || this._config.else)
+    ((this._config.show_empty === false && !this.preview) || this._config.else)
       ? this.else
       : this.card}`;
   }
@@ -326,6 +353,7 @@ class AutoEntities extends LitElement {
 
   get hidden() {
     const hide =
+      !this.preview &&
       this.empty &&
       this._config.show_empty === false &&
       this._config.else === undefined;
@@ -336,12 +364,9 @@ class AutoEntities extends LitElement {
 if (!customElements.get("auto-entities")) {
   customElements.define("auto-entities", AutoEntities);
   console.groupCollapsed(
-    `%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,
-    "color: green; font-weight: bold"
+    `%c💡 AUTO-ENTITIES ${pjson.version} IS INSTALLED 💡`,
+    'color: white; background-color: #CE3226; padding: 2px 5px; font-weight: bold; border-radius: 5px;',
   );
-  console.log(
-    "Readme:",
-    "https://github.com/thomasloven/lovelace-auto-entities"
-  );
+  console.log('Readme:', 'https://github.com/Lint-Free-Technology/lovelace-auto-entities');
   console.groupEnd();
 }

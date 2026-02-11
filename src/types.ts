@@ -49,6 +49,7 @@ export interface AutoEntitiesConfig {
   };
 
   card_param?: string;
+  card_as_row?: boolean;
 
   show_empty?: boolean;
   else?: any;
@@ -66,6 +67,13 @@ export interface LovelaceCard extends HTMLElement {
   hass: any;
   setConfig(config: any): void;
   getCardSize?(): number;
+  preview?: boolean;
+}
+export interface HuiCard extends LovelaceCard {
+  load(): void;
+  config?: any;
+  layout?: string;
+  _element?: LovelaceCard;
 }
 export interface HuiErrorCard extends LovelaceCard {
   _config: any;
@@ -79,12 +87,16 @@ export interface HAState {
   last_updated: number;
 }
 
+type SubscriptionUnsubscribe = () => Promise<void>;
 export interface HassObject {
   states: HAState[];
   callWS: (_: any) => any;
   formatEntityState: (stateObj, state?) => string;
   formatEntityAttributeValue: (stateObj, attribute, value?) => string;
   formatEntityAttributeName: (stateObj, attribute) => string;
+  connection: {
+    subscribeEvents: (callback: (event: any) => void, eventType: string) => Promise<SubscriptionUnsubscribe>;
+  };
 }
 
 export type MatchValue = string | number;

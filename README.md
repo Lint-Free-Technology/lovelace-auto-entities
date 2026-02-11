@@ -2,9 +2,11 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 
+Forked from [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) to continue development of the stalled project.
+
 Automatically populate lovelace cards with entities matching certain criteria.
 
-Install Auto Entities through HACS [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=thomasloven&repository=lovelace-auto-entities) or [see this guide](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins).
+To install via HACS, add this repo [https://github.com/Lint-Free-Technology/lovelace-auto-entities](https://github.com/Lint-Free-Technology/lovelace-auto-entities) as a [custom HACS repository](https://www.hacs.xyz/docs/faq/custom_repositories/). You are best to remove [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) in your HACS to avoid confusion as to what repo you are using.
 
 ## Usage
 
@@ -25,23 +27,25 @@ filter:
     - <filter>
 
 show_empty: <show_empty>
+card_as_row: <card_as_row>
 else: <else>
 unique: <unique>
 sort: <sort_method>
 ```
 
-| Option                 | Type                             | Description                                                                                                           | Default         |
-| ---------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `card`                 | Dashboard card\*                 | The card to display. Specify this as you would specify any normal dashboard card, but ommit the `entities` parameter. | `entities`-card |
-| `entities`             | List of Entities\*\*             | Any entities added here will be added to the card before any filters are applied                                      |
-| `filter`               |
-| &nbsp;&nbsp;`template` | string                           | A jinja template evaluating to a list of entities to include                                                          |
-| &nbsp;&nbsp;`include`  | List of [Filters](#filters)      | A list of filters specifying which entities to add to the card                                                        |
-| &nbsp;&nbsp;`exclude`  | List of [Filters](#filters)      | A list of filters specifying which entities to remove from the card                                                   |
-| `show_empty`           | `true`/`false`                   | Whether to display the card if there are no entities                                                                  | `true`          |
-| `else`                 | Dashboard card\*                 | Card to display if the main card has no entities. Overrides `show_empty`                                              |
-| `sort`                 | [Sort config](#sorting-entities) | How to sort the entities of the card                                                                                  | `none`          |
-| `card_param`           | string                           | The parameter of the card to populate with entities                                                                   | `entities`      |
+| Option | Type | Description | Default |
+| -------- | ------ | ------------- | --------- |
+| `card` | Dashboard card\* | The card to display. Specify this as you would specify any normal dashboard card, but omit the `entities` parameter. | `entities`-card |
+| `entities` | List of Entities\*\* | Any entities added here will be added to the card before any filters are applied | |
+| `filter` | | | |
+| &nbsp;&nbsp;`template` | string | A jinja template evaluating to a list of entities to include | |
+| &nbsp;&nbsp;`include` | List of [Filters](#filters) | A list of filters specifying which entities to add to the card | |
+| &nbsp;&nbsp;`exclude` | List of [Filters](#filters) | A list of filters specifying which entities to remove from the card | |
+| `show_empty` | `true`/`false` | Whether to display the card if there are no entities | `true` |
+| `else` | Dashboard card\* | Card to display if the main card has no entities. Overrides `show_empty` | |
+| `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
+| `card_param` | string | The parameter of the card to populate with entities | `entities` |
+| `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
 
 \* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
 \*\* [Entities](https://www.home-assistant.io/dashboards/entities/#options-for-entities)
@@ -52,38 +56,73 @@ The two main filter sections `include` and `exclude` each takes a list of filter
 
 Each filter has a set of rules and will match entities which match **ALL** rules:
 
-| Rule                  | Matches                                                                                     | Example                                              |
-| --------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `domain`              | Entity domain                                                                               | `light`, `binary_sensor`, `media_player`             |
-| `state`               | Current state of entity.                                                                    | `"on"`, `home`, `"3.14"`, `"Triggered"`              |
-| `state_translated`       | Current state of entity as translated using Frontend language user setting. For numeric states always use `state` as translated numeric values will include formatting that will give unexpected results e.g. '3.14 s' => 3 | `Éteint`, `Maison`, `Déclenché`              |
-| `entity_id`           | Full entity id                                                                              | `light.bed_light`, `input_binary.weekdays_only`      |
-| `name`                | Friendly name attribute                                                                     | `Kitchen lights`, `Front door`                       |
-| `group`               | Entities in the group                                                                       | `group.living_room_lights`                           |
-| `area`                | Entities in a given area. Also matches all entities belonging to a Device in the area.      | `Kitchen`                                            |
-| `floor`               | Entities on a given floor. Also matches all entities belonging to a Device on that floor.   | `Second`, `Basement`                                 |
-| `level`               | Entities on a given level.                                                                  | `2`, `>1`                                            |
-| `device`              | Entities belonging to a Device                                                              | `Thomas iPhone`                                      |
-| `label`               | Entities that are tagged with a certain label                                               | `Show on dashboard`, `Holiday light`                 |
-| `device_manufacturer` | Entities belonging to a device by a given manufacturer                                      | `IKEA`                                               |
-| `device_model`        | Entities belonging to a device of a given model                                             | `Hue white ambiance E26/E27 (8718696548738)`         |
-| `integration`         | Entities included by a given integration. This is not possible for _all_ integrations.      | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
-| `hidden_by`           | Who has hidden an entity                                                                    | `user`, `integration`                                |
-| `attributes`          | Map of `attribute: value` pairs to match                                                    |
-| `last_changed`        | Time since last state change (defaults to minutes)                                          | `< 15`, `> 2 d ago`                                  |
-| `last_updated`        | Time since last update (defaults to minutes)                                                | `< 15`, `> 2 d ago`                                  |
-| `entity_category`     | [Entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) | `config`, `diagnostic`                               |
-|                       |                                                                                             |                                                      |
-| `not`                 | Matche entities that do _not_ match a filter                                                |
-| `or`                  | Matches any in a list of filters                                                            |
-| `and`                 | Matches all in a list of filters                                                            |
+| Rule | Matches | Example |
+| --- | --- | --- |
+| `domain` | Entity domain | `light`, `binary_sensor`, `media_player` |
+| `state` | Current state of entity. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
+| `state_translated` | Current state of entity as translated using Frontend language user setting. For numeric states always use `state` as translated numeric values will include formatting that will give unexpected results e.g. '3.14 s' => 3 | `Éteint`, `Maison`, `Déclenché` |
+| `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
+| `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
+| `group` :ab: | Entities in the group | `group.living_room_lights` |
+| `area` :ab: | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
+| `floor` :ab: | Entities on a given floor. Also matches all entities belonging to a Device on that floor. | `Second`, `Basement` |
+| `level` | Entities on a given level. | `2`, `>1` |
+| `device` :ab: | Entities belonging to a Device | `Thomas iPhone` |
+| `label` :ab: | Entities that are tagged with a certain label | `Show on dashboard`, `Holiday light` |
+| `device_manufacturer` | Entities belonging to a device by a given manufacturer | `IKEA` |
+| `device_model` | Entities belonging to a device of a given model | `Hue white ambiance E26/E27 (8718696548738)` |
+<!--- cSpell:disable --->
+| `integration` :ab: | Entities included by a given integration. This is not possible for _all_ integrations. | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
+<!--- cSpell:enable--->
+| `hidden_by` | Who has hidden an entity | `user`, `integration` |
+| `attributes` | Map of `attribute: value` pairs to match | |
+| `last_changed` | Time since last state change (defaults to minutes) | `< 15`, `> 2 d ago` |
+| `last_updated` | Time since last update (defaults to minutes) | `< 15`, `> 2 d ago` |
+| `entity_category` | [Entity category](https://developers.home-assistant.io/docs/core/entity#generic-properties) | `config`, `diagnostic` |
+| | | |
+| `not` | Matches entities that do _not_ match a filter | |
+| `or` | Matches any in a list of filters | |
+| `and` | Matches all in a list of filters | |
 
 Special options:
+
 | Option | Description |
-|-----------|-------------|
-| `options` | Map of configuration options to apply to the entity when passed to the card
-| `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card
-| `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_
+| --- | --- |
+| `options` | Map of configuration options to apply to the entity when passed to the card |
+| `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card |
+| `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
+
+NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
+
+Legacy filter config:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Test Areas
+filter:
+  include:
+    - options: {}
+      area: kitchen
+  exclude: []
+```
+
+Choose selector filter config:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+  title: Test Areas
+filter:
+  include:
+    - options: {}
+      area:
+        area: kitchen
+        active_choice: area
+  exclude: []
+```
 
 ### Template filter
 
@@ -102,7 +141,7 @@ It then creates a card based on the configuration given in `card:`, and fills in
 
 The list of entities added to the card will be on the form:
 
-```
+```yaml
 - entity: <entity_id>
   <options>
 ```
@@ -124,12 +163,14 @@ filter:
 
 Any filter option can use [javascript Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) for string comparison. To do this, enclose the regex in `/`. Also make sure to quote the string:
 
+<!--- cSpell:disable --->
 ```yaml
 filter:
   include:
     - name: "/^.* [Ll]ight$/"
     - entity_id: "/sensor.temperature_4[abd]/"
 ```
+<!--- cSpell:disable --->
 
 ### Numerical comparison
 

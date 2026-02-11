@@ -1,4 +1,4 @@
-import { await_element, selectTree } from "../helpers/selecttree";
+import { getAreas, getConfigEntries, getDevices, getEntities, getFloors, getLabels } from "../helpers";
 
 const ruleKeySelector = {
   type: "select",
@@ -28,21 +28,113 @@ const ruleKeySelector = {
 
 const filterValueSelector = {
   attributes: { object: {} },
-  area: { area: {} },
-  device: { device: {} },
-  entity_id: { entity: {} },
-  floor: { floor: {} },
-  group: { entity: { filter: { domain: "group" } } },
-  integration: { config_entry: {} },
-  label: { label: {} },
+  area: { 
+    choose: {
+      choices: {
+        area: { selector: { area: {} } },
+        custom: { selector: { text: {} } }
+      }
+    } 
+  },
+  domain: { text: {} },
+  device: { 
+    choose: {
+      choices: {
+        device: { selector: { device: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  entity_id: { 
+    choose: {
+      choices: {
+        entity: { selector: { entity: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  floor: { 
+    choose: {
+      choices: {
+        floor: { selector: { floor: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
+  group: { 
+    choose: {
+      choices: {
+        group: { selector: { entity: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
+  integration: { 
+    choose: {
+      choices: {
+        integration: { selector: { config_entry: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
+  label: { 
+    choose: {
+      choices: {
+        label: { selector: { label: {} } },
+        custom: { selector: { text: {} } }
+      }
+    }
+  },
 };
+
+const filterChooseValidators = {
+  entity_id: {
+    validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { entity: value, active_choice: "entity" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  device: {
+    validator: async (hass, value) => { return getDevices(hass).then((devices) => { return value in devices; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { device: value, active_choice: "device" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  area: {
+    validator: async (hass, value) => { return getAreas(hass).then((areas) => { return value in areas; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { area: value, active_choice: "area" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  floor: {
+    validator: async (hass, value) => { return getFloors(hass).then((floors) => { return value in floors; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { floor: value, active_choice: "floor" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  group: {
+    validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { group: value, active_choice: "group" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  integration: {  
+    validator: async (hass, value) => { return getConfigEntries(hass, "type_filter", ["device", "hub", "service" ]).then((entries) => { return value in entries; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { integration: value, active_choice: "integration" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  label: {
+    validator: async (hass, value) => { return getLabels(hass).then((labels) => { return value in labels; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { label: value, active_choice: "label" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  }
+}
+
+export const isRuleKeySelector = (key) => {
+  return ruleKeySelector.options.some(([k, v]) => k === key);
+}
 
 export const hasSelector = (filter) => {
   return Object.keys(filter).some((k) => k in filterValueSelector);
 };
 
 const ruleSchema = ([key, value], idx) => {
-  if (["sort", "optios"].includes(key)) {
+  if (["sort", "options"].includes(key)) {
     return undefined;
   }
   if (!ruleKeySelector.options.some(([k, v]) => k === key))
@@ -56,6 +148,7 @@ const ruleSchema = ([key, value], idx) => {
   return {
     type: "grid",
     name: "",
+    column_min_width: filterValueSelector[key] !== undefined ? "100%" : undefined,
     schema: [
       {
         ...ruleKeySelector,
@@ -69,51 +162,6 @@ const ruleSchema = ([key, value], idx) => {
       },
     ],
   };
-};
-
-export const postProcess = async (form: Element) => {
-  await await_element(form);
-  for (const grid of await selectTree(form, "$ ha-form-grid", true)) {
-    await await_element(grid);
-    const selector = await selectTree(
-      grid,
-      "$ ha-form:nth-child(2) $ ha-selector"
-    );
-    if (!selector) continue;
-    await await_element(selector);
-
-    let cb =
-      (await selectTree(
-        selector,
-        "$ ha-selector-area $ ha-area-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-device $ ha-device-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-entity $ ha-entity-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-label $ ha-label-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-config_entry $ ha-config-entry-picker $ ha-combo-box"
-      )) ??
-      (await selectTree(
-        selector,
-        "$ ha-selector-floor $ ha-floor-picker $ ha-combo-box"
-      ));
-
-    if (cb) {
-      await await_element(cb);
-      cb.allowCustomValue = true;
-      continue;
-    }
-  }
 };
 
 export const filterSchema = (group) => {
@@ -134,6 +182,35 @@ export const filterSchema = (group) => {
   ];
 };
 
+export const migrate_custom_rule_values = async (hass, config, types, callback) => {
+  const migrations = [];
+  const promises = [];
+  
+  Object.values(Array.isArray(types) ? types : [types]).forEach((type) => {
+    if (!config?.filter?.[type]) return;
+    Object.values(config?.filter?.[type]).forEach((group, idx) => {
+      const filters = { ...group as Object };
+      Object.entries(filters).forEach(([key, value]) => {
+        if (key in filterChooseValidators && typeof value === "string") {
+          const promise = filterChooseValidators[key].validator(hass, value).then((is_valid) => {
+            if (is_valid) {
+              const new_value = filterChooseValidators[key].choose_valid(value);
+              migrations.push({new_value, idx, type, key});
+            } else {
+              const new_value = filterChooseValidators[key].choose_custom(value);
+              migrations.push({new_value, idx, type, key});
+            }
+          });
+          promises.push(promise);
+        }
+      });
+    });
+  });
+  
+  await Promise.all(promises);
+  callback(migrations);
+};
+
 export const rule_to_form = (group) => {
   const filters = { ...group };
   const options = { ...group.options };
@@ -151,10 +228,15 @@ export const rule_to_form = (group) => {
 export const form_to_rule = (config, filter): Object => {
   const data = {};
   data["options"] = filter.options;
-  for (let i = 0; i <= config.filter.include.length + 1; i++) {
-    if (filter[`key_${i}`] !== undefined)
-      data[filter[`key_${i}`]] = filter[`value_${i}`] ?? "";
-  }
+  Object.keys(filter)
+    .filter((k) => /^key_\d+$/.test(k))
+    .forEach((k) => {
+      const idx = k.split("_")[1];
+      const ruleKey = filter[k];
+      if (ruleKey !== undefined) {
+        data[ruleKey] = filter[`value_${idx}`] ?? "";
+      }
+    });
   if (filter.key_new !== undefined) {
     data[filter.key_new] = "";
   }
@@ -247,6 +329,11 @@ export const cardOptionsSchema = [
         name: "show_empty",
         type: "boolean",
         label: "Show if empty",
+      },
+      {
+        name: "card_as_row",
+        type: "boolean",
+        label: "Card as row",
       },
       {
         name: "card_param",
