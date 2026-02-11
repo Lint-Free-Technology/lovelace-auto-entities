@@ -364,12 +364,9 @@ class AutoEntities extends LitElement {
 if (!customElements.get("auto-entities")) {
   customElements.define("auto-entities", AutoEntities);
   console.groupCollapsed(
-    `%cAUTO-ENTITIES ${pjson.version} IS INSTALLED`,
-    "color: green; font-weight: bold"
+    `%c💡 AUTO-ENTITIES ${pjson.version} IS INSTALLED 💡`,
+    'color: white; background-color: #CE3226; padding: 2px 5px; font-weight: bold; border-radius: 5px;',
   );
-  console.log(
-    "Readme:",
-    "https://github.com/thomasloven/lovelace-auto-entities"
-  );
+  console.log('Readme:', 'https://github.com/Lint-Free-Technology/lovelace-auto-entities');
   console.groupEnd();
 }
