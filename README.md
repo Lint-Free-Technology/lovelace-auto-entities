@@ -71,7 +71,9 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `label` :ab: | Entities that are tagged with a certain label | `Show on dashboard`, `Holiday light` |
 | `device_manufacturer` | Entities belonging to a device by a given manufacturer | `IKEA` |
 | `device_model` | Entities belonging to a device of a given model | `Hue white ambiance E26/E27 (8718696548738)` |
+<!--- cSpell:disable --->
 | `integration` :ab: | Entities included by a given integration. This is not possible for _all_ integrations. | `plex`, `input_boolean`, `xiaomi_miio`, `mobile_app` |
+<!--- cSpell:enable--->
 | `hidden_by` | Who has hidden an entity | `user`, `integration` |
 | `attributes` | Map of `attribute: value` pairs to match | |
 | `last_changed` | Time since last state change (defaults to minutes) | `< 15`, `> 2 d ago` |
@@ -161,12 +163,14 @@ filter:
 
 Any filter option can use [javascript Regular Expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) for string comparison. To do this, enclose the regex in `/`. Also make sure to quote the string:
 
+<!--- cSpell:disable --->
 ```yaml
 filter:
   include:
     - name: "/^.* [Ll]ight$/"
     - entity_id: "/sensor.temperature_4[abd]/"
 ```
+<!--- cSpell:disable --->
 
 ### Numerical comparison
 
