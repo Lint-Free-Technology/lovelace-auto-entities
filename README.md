@@ -4,6 +4,8 @@ Forked from [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/
 
 Automatically populate lovelace cards with entities matching certain criteria.
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Lint-Free-Technology&repository=lovelace-auto-entities&category=plugin)
+
 To install via HACS, add this repo [https://github.com/Lint-Free-Technology/lovelace-auto-entities](https://github.com/Lint-Free-Technology/lovelace-auto-entities) as a [custom HACS repository](https://www.hacs.xyz/docs/faq/custom_repositories/). You are best to remove [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities) in your HACS to avoid confusion as to what repo you are using.
 
 ## Usage
