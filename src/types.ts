@@ -50,6 +50,7 @@ export interface AutoEntitiesConfig {
 
   card_param?: string;
   card_as_row?: boolean;
+  connected_while_hidden?: boolean;
 
   show_empty?: boolean;
   else?: any;

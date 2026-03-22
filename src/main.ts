@@ -88,6 +88,8 @@ class AutoEntities extends LitElement {
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
+    this.connectedWhileHidden = config.connected_while_hidden !== false;
+
     if (
       this._config.filter?.template &&
       hasTemplate(this._config.filter.template)

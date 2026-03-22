@@ -46,6 +46,7 @@ sort: <sort_method>
 | `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
 | `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
+| `connected_while_hidden` | `true`/`false` | Whether to keep the card connected (processing updates) while it is hidden. Set to `false` to avoid issues with certain cards such as the map card. | `true` |
 
 \* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
 \*\* [Entities](https://www.home-assistant.io/dashboards/entities/#options-for-entities)

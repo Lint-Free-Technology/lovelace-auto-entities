@@ -336,6 +336,11 @@ export const cardOptionsSchema = [
         label: "Card as row",
       },
       {
+        name: "connected_while_hidden",
+        type: "boolean",
+        label: "Connected while hidden",
+      },
+      {
         name: "card_param",
         type: "string",
         label: "Parameter to populate",
