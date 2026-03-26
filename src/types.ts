@@ -9,8 +9,33 @@ export interface SortConfig {
   ip?: boolean;
 }
 
+/**
+ * HA-style entity name part. Mirrors the EntityNameItem type from the HA frontend.
+ * - `"entity"` / `{type:"entity"}` — the entity's own name (from registry original_name / user name)
+ * - `"device"` / `{type:"device"}` — device name
+ * - `"area"` / `{type:"area"}` — area name
+ * - `"floor"` / `{type:"floor"}` — floor name
+ * - `{type:"text", text:"..."}` — literal text
+ */
+export type EntityNameItem =
+  | "entity"
+  | "device"
+  | "area"
+  | "floor"
+  | { type: "entity" | "device" | "area" | "floor" }
+  | { type: "text"; text: string };
+
 export interface RenameConfig {
-  method: string;
+  /** Single-value extraction method. Mutually exclusive with `type`. */
+  method?: string;
+  /**
+   * HA-style name composition — one or more EntityNameItem parts (or a plain
+   * type string such as `"entity"`). Parts are joined with `separator`.
+   * Mutually exclusive with `method`.
+   */
+  type?: string | EntityNameItem | EntityNameItem[];
+  /** Separator used when `type` is an array. Defaults to `" "`. */
+  separator?: string;
   attribute?: string;
   find?: string;
   replace?: string;
