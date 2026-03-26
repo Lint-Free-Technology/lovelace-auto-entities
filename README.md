@@ -284,17 +284,17 @@ sort:
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
 
-There are two mutually exclusive ways to extract the initial name — `method` (single-value) and `type` (HA-style name composition). Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
+There are two mutually exclusive ways to extract the initial name — `type` (HA-style name composition) and `method` (single-value). Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
 
 ```yaml
 rename:
-  # Option A — single-value method
-  method: <method>
-  attribute: <attribute>
-
-  # Option B — HA name parts (uses hass.formatEntityName)
+  # Option A — HA name parts (uses hass.formatEntityName)
   type: <type>           # string or list — see below
   separator: <separator>
+
+  # Option B — single-value method
+  method: <method>
+  attribute: <attribute>
 
   # Applied after whichever option is used
   find: <find>
@@ -304,25 +304,7 @@ rename:
   eval_js: <eval_js>
 ```
 
-### Option A — `method`
-
-- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
-- `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
-
-| Method | Description |
-| --- | --- |
-| `friendly_name` | Use the entity's friendly name (default HA name) |
-| `name` | Same as `friendly_name` |
-| `entity_id` | Use the full entity ID |
-| `domain` | Use the entity domain only |
-| `state` | Use the current state value |
-| `attribute` | Use a specific attribute (requires `attribute:`) |
-| `device` | Use the device name |
-| `area` | Use the area name |
-| `remove_device` | Strip the device name prefix from the friendly name automatically |
-| `remove_area` | Strip the area name prefix from the friendly name automatically |
-
-### Option B — `type` (HA-style `hass.formatEntityName`)
+### Option A — `type` (HA-style `hass.formatEntityName`)
 
 Composes the entity name from one or more named parts, exactly as the HA frontend does via `hass.formatEntityName`. This gives a name that always matches what HA itself would display.
 
@@ -352,6 +334,24 @@ rename:
     - area
     - entity
 ```
+
+### Option B — `method`
+
+- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
+- `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
+
+| Method | Description |
+| --- | --- |
+| `friendly_name` | Use the entity's friendly name (default HA name) |
+| `name` | Same as `friendly_name` |
+| `entity_id` | Use the full entity ID |
+| `domain` | Use the entity domain only |
+| `state` | Use the current state value |
+| `attribute` | Use a specific attribute (requires `attribute:`) |
+| `device` | Use the device name |
+| `area` | Use the area name |
+| `remove_device` | Strip the device name prefix from the friendly name automatically |
+| `remove_area` | Strip the area name prefix from the friendly name automatically |
 
 ### Automatic device/area name removal (`method`)
 
