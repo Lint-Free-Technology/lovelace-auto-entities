@@ -284,7 +284,7 @@ sort:
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
 
-There are two mutually exclusive ways to extract the initial name — `type` (Home Assistant-style name composition) and `method` (single-value). When both are specified, **`type` takes precedence and `method` is ignored**. Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
+The initial name comes from one of two sources — `type` (Home Assistant-style name composition) or `method` (single-value extraction). When both are specified, **`type` takes precedence and `method` is ignored**. The `find`/`replace`/`prepend`/`append`/`eval_js` string operations are then applied to the result. If neither `type` nor `method` is set, string operations are applied to the entity's friendly name directly.
 
 ```yaml
 rename:
@@ -298,6 +298,7 @@ rename:
   attribute: <attribute>
 
   # Applied after whichever option is used
+  # (if neither type nor method is set, these apply to the friendly name)
   find: <find>
   replace: <replace>
   prepend: <prepend>

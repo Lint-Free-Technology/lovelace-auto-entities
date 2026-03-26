@@ -339,7 +339,7 @@ export const renameSchema = (method, type?) => {
     // ── Home Assistant name parts (hass.formatEntityName) ────────────────
     {
       type: "constant",
-      name: "Home Assistant name parts — uses hass.formatEntityName (Option A):",
+      name: "Home Assistant name parts:",
       value: "",
     },
     {
@@ -368,7 +368,7 @@ export const renameSchema = (method, type?) => {
     // ── Other (single-value extraction) ──────────────────────────────────
     {
       type: "constant",
-      name: "Other (single-value extraction, Option B — overridden by Option A):",
+      name: "Other (single-value extraction):",
       value: "",
     },
     {

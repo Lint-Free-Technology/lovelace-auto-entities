@@ -247,7 +247,11 @@ class AutoEntities extends LitElement {
           : (x) => x;
         const rename_has_type = filter.rename?.type !== undefined &&
           !(Array.isArray(filter.rename.type) && filter.rename.type.length === 0);
-        const renamer = (filter.rename?.method || rename_has_type)
+        const rename_has_string_ops = !!(filter.rename?.find !== undefined ||
+          filter.rename?.replace !== undefined ||
+          filter.rename?.prepend !== undefined ||
+          filter.rename?.append !== undefined);
+        const renamer = (filter.rename?.method || rename_has_type || rename_has_string_ops)
           ? await get_renamer(this.hass, filter.rename)
           : (x) => x;
 
@@ -300,7 +304,11 @@ class AutoEntities extends LitElement {
     // Global rename
     const global_rename_has_type = this._config.rename?.type !== undefined &&
       !(Array.isArray(this._config.rename.type) && this._config.rename.type.length === 0);
-    const renamer = (this._config.rename?.method || global_rename_has_type)
+    const global_rename_has_string_ops = !!(this._config.rename?.find !== undefined ||
+      this._config.rename?.replace !== undefined ||
+      this._config.rename?.prepend !== undefined ||
+      this._config.rename?.append !== undefined);
+    const renamer = (this._config.rename?.method || global_rename_has_type || global_rename_has_string_ops)
       ? await get_renamer(this.hass, this._config.rename)
       : (x) => x;
     entities = await renamer(entities);

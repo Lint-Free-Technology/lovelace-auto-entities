@@ -96,8 +96,20 @@ const NAME_EXTRACTORS: Record<
   },
 };
 
+function has_string_ops(config: RenameConfig): boolean {
+  return (
+    config.find !== undefined ||
+    config.replace !== undefined ||
+    config.prepend !== undefined ||
+    config.append !== undefined
+  );
+}
+
 export async function get_renamer(hass: HassObject, config: RenameConfig) {
-  if (!config.method && config.type === undefined) return (x: EntityList) => x;
+  const has_type = config.type !== undefined &&
+    !(Array.isArray(config.type) && config.type.length === 0);
+  if (!config.method && !has_type && !has_string_ops(config))
+    return (x: EntityList) => x;
 
   const rename = async (
     values: LovelaceRowConfig[]
@@ -126,25 +138,25 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
 
         let name: string;
 
-        const has_type = config.type !== undefined &&
-          !(Array.isArray(config.type) && config.type.length === 0);
-
         if (has_type) {
-          // HA-native path: delegate to hass.formatEntityName so the output
-          // always matches what the HA frontend would display.
+          // Home Assistant native path: delegate to hass.formatEntityName so the
+          // output always matches what the HA frontend would display.
           if (typeof hass.formatEntityName !== "function") return entity;
           const items = to_ha_items(config.type);
           const options = config.separator !== undefined
             ? { separator: config.separator }
             : undefined;
           name = hass.formatEntityName(state, items, options);
-        } else {
+        } else if (config.method) {
           // Single-method extraction path
-          const extract = NAME_EXTRACTORS[config.method!];
+          const extract = NAME_EXTRACTORS[config.method];
           if (!extract) return entity;
           const raw = await extract(state, config, hass);
           if (raw === undefined) return entity;
           name = String(raw);
+        } else {
+          // String operations only — start from the friendly name
+          name = get_friendly(state);
         }
 
         const original_name = name;
