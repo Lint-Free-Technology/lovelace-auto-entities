@@ -1,14 +1,22 @@
 import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, RenameConfig, EntityList } from "./types";
 
+function strip_prefix(name: string, prefix: string | undefined): string {
+  if (!prefix) return name;
+  const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return name.replace(new RegExp(`^${escaped}\\s*`, "i"), "").trim() || name;
+}
+
+function get_friendly(x: HAState): string {
+  return x?.attributes?.friendly_name || x?.entity_id?.split(".")[1];
+}
+
 const NAME_EXTRACTORS: Record<
   string,
   (x: HAState, method: RenameConfig, hass: HassObject) => any | Promise<any>
 > = {
-  friendly_name: (x) =>
-    x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
-  name: (x) =>
-    x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  friendly_name: (x) => get_friendly(x),
+  name: (x) => get_friendly(x),
   entity_id: (x) => x?.entity_id,
   domain: (x) => x?.entity_id?.split(".")[0],
   state: (x) => x?.state,
@@ -40,6 +48,35 @@ const NAME_EXTRACTORS: Record<
     area = areas[dev.area_id];
     if (!area) return undefined;
     return area.name;
+  },
+  remove_device: async (x, m, hass) => {
+    const [entities, devices] = await Promise.all([
+      getEntities(hass),
+      getDevices(hass),
+    ]);
+    const friendly = get_friendly(x);
+    const ent = entities[x.entity_id];
+    if (!ent) return friendly;
+    const dev = devices[ent.device_id];
+    if (!dev) return friendly;
+    return strip_prefix(friendly, dev.name_by_user ?? dev.name);
+  },
+  remove_area: async (x, m, hass) => {
+    const [entities, devices, areas] = await Promise.all([
+      getEntities(hass),
+      getDevices(hass),
+      getAreas(hass),
+    ]);
+    const friendly = get_friendly(x);
+    const ent = entities[x.entity_id];
+    if (!ent) return friendly;
+    let area = areas[ent.area_id];
+    if (!area) {
+      const dev = devices[ent.device_id];
+      if (dev) area = areas[dev.area_id];
+    }
+    if (!area) return friendly;
+    return strip_prefix(friendly, area.name);
   },
 };
 

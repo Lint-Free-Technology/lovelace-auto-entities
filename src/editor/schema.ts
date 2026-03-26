@@ -334,6 +334,8 @@ export const renameSchema = (method) => {
         ["attribute", "Attribute"],
         ["device", "Device Name"],
         ["area", "Area Name"],
+        ["remove_device", "Remove Device Name prefix"],
+        ["remove_area", "Remove Area Name prefix"],
       ],
     },
   ];

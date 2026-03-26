@@ -169,3 +169,57 @@ cards:
                 method: friendly_name
                 prepend: "${area ? area + ': ' : ''}"
                 eval_js: true
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 7: Rename – remove device name prefix automatically
+
+          Without knowing the device name, strip it from the entity's
+          friendly name. E.g. device "Smart Plug", entity
+          "Smart Plug energy" → "energy".
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                device: "*"
+          rename:
+            method: remove_device
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              device: "*"
+        rename:
+          method: remove_device
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 8: Rename – remove area name prefix automatically
+
+          Without knowing the area name, strip it from the entity's
+          friendly name. E.g. area "Living Room", entity
+          "Living Room temperature" → "temperature".
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                area: "*"
+          rename:
+            method: remove_area
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              area: "*"
+        rename:
+          method: remove_area
