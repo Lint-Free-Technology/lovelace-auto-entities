@@ -320,13 +320,34 @@ export const sortSchema = (method) => {
   return schema;
 };
 
-export const renameSchema = (method) => {
-  const schema: any[] = [
+export const renameSchema = (method, type?) => {
+  const knownMethods = [
+    "friendly_name", "entity_id", "domain", "state", "attribute",
+    "device", "area", "remove_device", "remove_area",
+  ];
+
+  if (method && !knownMethods.includes(method))
+    return [
+      {
+        type: "Constant",
+        name: "GUI editor not available",
+        value: `Renaming by ${method} is not supported by the GUI editor. Please switch to the CODE EDITOR to access all options.`,
+      },
+    ];
+
+  return [
+    // ── Single-value method ───────────────────────────────────────────────
+    {
+      type: "constant",
+      name: "Method (single-value extraction):",
+      value: "",
+    },
     {
       name: "method",
       label: "Rename method",
       type: "select",
       options: [
+        ["", "—  None  —"],
         ["friendly_name", "Friendly Name"],
         ["entity_id", "Entity ID"],
         ["domain", "Entity Domain"],
@@ -338,24 +359,41 @@ export const renameSchema = (method) => {
         ["remove_area", "Remove Area Name prefix"],
       ],
     },
-  ];
-
-  if (method !== undefined && !schema[0].options.some(([k, v]) => k === method))
-    return [
-      {
-        type: "Constant",
-        name: "GUI editor not available",
-        value: `Renaming by ${method} is not supported by the GUI editor.
-        Please switch to the CODE EDITOR to access all options.`,
-      },
-    ];
-
-  schema.push(
     {
       name: "attribute",
-      label: "Attribute:",
+      label: "Attribute (required when method is 'attribute'):",
       selector: { text: {} },
     },
+    // ── HA name parts (hass.formatEntityName) ────────────────────────────
+    {
+      type: "constant",
+      name: "HA name parts — alternative to method (uses hass.formatEntityName):",
+      value: "",
+    },
+    {
+      type: "grid",
+      name: "",
+      schema: [
+        {
+          name: "type",
+          label: "Name parts",
+          selector: {
+            select: {
+              multiple: true,
+              custom_value: false,
+              options: [
+                { value: "entity", label: "Entity" },
+                { value: "device", label: "Device" },
+                { value: "area", label: "Area" },
+                { value: "floor", label: "Floor" },
+              ],
+            },
+          },
+        },
+        { name: "separator", label: "Separator", selector: { text: {} } },
+      ],
+    },
+    // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
       name: "String operations (applied in order: find/replace → prepend → append):",
@@ -380,10 +418,8 @@ export const renameSchema = (method) => {
       name: "eval_js",
       type: "boolean",
       label: "Enable JS templates in find/replace/prepend/append (use ${entity_id}, ${entity}, ${device}, ${area}, ${state}, ${name})",
-    }
-  );
-
-  return schema;
+    },
+  ];
 };
 
 export const cardOptionsSchema = [

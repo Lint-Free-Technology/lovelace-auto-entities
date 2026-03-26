@@ -131,6 +131,8 @@ export interface HassObject {
   formatEntityState: (stateObj, state?) => string;
   formatEntityAttributeValue: (stateObj, attribute, value?) => string;
   formatEntityAttributeName: (stateObj, attribute) => string;
+  /** Available in HA 2024.x+. Used for HA-style entity name composition. */
+  formatEntityName?: (stateObj: any, type: any, options?: { separator?: string }) => string;
   connection: {
     subscribeEvents: (callback: (event: any) => void, eventType: string) => Promise<SubscriptionUnsubscribe>;
   };

@@ -284,12 +284,19 @@ sort:
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
 
-Rename configuration is specified as:
+There are two mutually exclusive ways to extract the initial name — `method` (single-value) and `type` (HA-style name composition). Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
 
 ```yaml
 rename:
+  # Option A — single-value method
   method: <method>
   attribute: <attribute>
+
+  # Option B — HA name parts (uses hass.formatEntityName)
+  type: <type>           # string or list — see below
+  separator: <separator>
+
+  # Applied after whichever option is used
   find: <find>
   replace: <replace>
   prepend: <prepend>
@@ -297,15 +304,10 @@ rename:
   eval_js: <eval_js>
 ```
 
-- `method:` **Required** One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
-- `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
-- `find:` A JavaScript regular expression string. If provided, matches in the extracted name are replaced with `replace`.
-- `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
-- `prepend:` A string to prepend to the name.
-- `append:` A string to append to the name.
-- `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (HA state object), `name` (extracted name before find/replace).
+### Option A — `method`
 
-### Rename methods
+- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
+- `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
 
 | Method | Description |
 | --- | --- |
@@ -320,27 +322,87 @@ rename:
 | `remove_device` | Strip the device name prefix from the friendly name automatically |
 | `remove_area` | Strip the area name prefix from the friendly name automatically |
 
-### Automatic device/area name removal
+### Option B — `type` (HA-style `hass.formatEntityName`)
 
-The `remove_device` and `remove_area` methods let you strip the device or area name prefix from the friendly name **without needing to know the name in advance**. For example, if a device is named "Smart Plug" and one of its entities has the friendly name "Smart Plug energy", `remove_device` will rename it to just "energy".
+Composes the entity name from one or more named parts, exactly as the HA frontend does via `hass.formatEntityName`. This gives a name that always matches what HA itself would display.
+
+- `type:` A single part name or a list of part names. Each part can be one of:
+  - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring HA's behaviour.
+  - `device` — the device name
+  - `area` — the area name
+  - `floor` — the floor name
+  - `{type: text, text: "..."}` — a literal string (YAML only)
+- `separator:` String used to join multiple parts. Defaults to `" "` (space).
+
+```yaml
+# Just the entity part (no device prefix) — equivalent to HA's "entity" name
+rename:
+  type: entity
+
+# Device + entity, comma-separated
+rename:
+  type:
+    - device
+    - entity
+  separator: ", "
+
+# Area prefix followed by the entity name
+rename:
+  type:
+    - area
+    - entity
+```
+
+### Automatic device/area name removal (`method`)
+
+The `remove_device` and `remove_area` methods let you strip the device or area name prefix from the friendly name **without needing to know the name in advance**.
 
 ```yaml
 rename:
   method: remove_device
 ```
 
-Similarly, if an area is "Living Room" and an entity is "Living Room temperature":
+e.g. device "Smart Plug", entity "Smart Plug energy" → "energy"
 
 ```yaml
 rename:
   method: remove_area
 ```
 
-Result: "temperature"
+e.g. area "Living Room", entity "Living Room temperature" → "temperature"
 
 Both methods fall back gracefully to the original friendly name when no device or area is associated with the entity.
 
+> **Note:** Using `type: entity` is the preferred modern approach and delegates to HA's own logic. Use `remove_device`/`remove_area` for older HA versions or when you need exact prefix-stripping behaviour.
+
+### String operations (common options)
+
+These apply after the name has been extracted by either `method` or `type`:
+
+- `find:` A JavaScript regular expression string. Matches in the extracted name are replaced with `replace`.
+- `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
+- `prepend:` A string to prepend to the name.
+- `append:` A string to append to the name.
+- `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (HA state object), `name` (extracted name before find/replace).
+
 ### Rename examples
+
+Get just the entity part using `hass.formatEntityName` (recommended):
+
+```yaml
+rename:
+  type: entity
+```
+
+Device and entity joined with " — ":
+
+```yaml
+rename:
+  type:
+    - device
+    - entity
+  separator: " — "
+```
 
 Remove a known prefix from all sensors:
 
@@ -351,7 +413,7 @@ rename:
   replace: ""
 ```
 
-Strip the device name prefix automatically (works for any device name):
+Strip the device name prefix automatically:
 
 ```yaml
 rename:

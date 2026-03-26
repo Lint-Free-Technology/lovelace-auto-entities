@@ -1,4 +1,4 @@
-import { getAreas, getDevices, getEntities, getFloors } from "./helpers";
+import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, RenameConfig, EntityNameItem, EntityList } from "./types";
 
 function strip_prefix(name: string, prefix: string | undefined): string {
@@ -11,80 +11,34 @@ function get_friendly(x: HAState): string {
   return x?.attributes?.friendly_name || x?.entity_id?.split(".")[1];
 }
 
-/** Resolve an EntityNameItem to a canonical type string and optional text. */
-function item_type(item: EntityNameItem): { kind: string; text?: string } {
-  if (typeof item === "string") return { kind: item };
-  if ("text" in item) return { kind: "text", text: item.text };
-  return { kind: item.type };
-}
-
 /**
- * HA-style name composition.
- * Models `hass.formatEntityName(stateObj, type, {separator})` from the HA frontend.
- * When an entity uses its device name (has no original_name), items of type
- * "entity" are silently promoted to "device" — mirroring HA's behaviour.
+ * Convert user-facing shorthand strings ("entity", "device", "area", "floor")
+ * to the HA-native object form ({ type: "entity" } etc.) that
+ * hass.formatEntityName expects.  Object items pass through unchanged.
  */
-async function get_name_by_type(
-  type_config: string | EntityNameItem | EntityNameItem[],
-  separator: string,
-  x: HAState,
-  hass: HassObject
-): Promise<string> {
-  // Normalise to array
-  const items: EntityNameItem[] = Array.isArray(type_config)
+function to_ha_items(
+  type_config: string | EntityNameItem | EntityNameItem[]
+): Array<{ type: string; text?: string }> {
+  const arr: EntityNameItem[] = Array.isArray(type_config)
     ? type_config
-    : [typeof type_config === "string" ? (type_config as EntityNameItem) : type_config];
-
-  const [entities, devices, areas, floors] = await Promise.all([
-    getEntities(hass),
-    getDevices(hass),
-    getAreas(hass),
-    getFloors(hass),
-  ]);
-
-  const ent = entities[x.entity_id];
-  const dev = ent?.device_id ? devices[ent.device_id] : undefined;
-  let area = ent?.area_id ? areas[ent.area_id] : undefined;
-  if (!area && dev?.area_id) area = areas[dev.area_id];
-  const floor = area?.floor_id ? floors[area.floor_id] : undefined;
-
-  // Entity's own name (user-set or original_name from registry)
-  const entity_own_name: string | undefined = ent ? (ent.name ?? ent.original_name) ?? undefined : get_friendly(x);
-
-  // When the entity has no own name it "uses" the device name — mirror HA's
-  // entityUseDeviceName logic: replace entity items with device items.
-  const uses_device_name = ent ? !entity_own_name : false;
-
-  const device_name: string | undefined = dev ? (dev.name_by_user ?? dev.name) : undefined;
-
-  const names = items.map((raw_item) => {
-    let { kind, text } = item_type(raw_item);
-    if (kind === "entity" && uses_device_name) kind = "device";
-    switch (kind) {
-      case "entity": return entity_own_name;
-      case "device": return device_name;
-      case "area":   return area?.name;
-      case "floor":  return floor?.name;
-      case "text":   return text;
-      default:       return undefined;
-    }
-  });
-
-  return names.filter((n) => n != null).join(separator);
+    : [type_config as EntityNameItem];
+  return arr.map((item) =>
+    typeof item === "string" ? { type: item } : (item as { type: string; text?: string })
+  );
 }
 
 const NAME_EXTRACTORS: Record<
   string,
-  (x: HAState, method: RenameConfig, hass: HassObject) => any | Promise<any>
+  (x: HAState, config: RenameConfig, hass: HassObject) => any | Promise<any>
 > = {
   friendly_name: (x) => get_friendly(x),
   name: (x) => get_friendly(x),
   entity_id: (x) => x?.entity_id,
   domain: (x) => x?.entity_id?.split(".")[0],
   state: (x) => x?.state,
-  attribute: (x, m) =>
-    m?.attribute?.split(":").reduce((_x, key) => _x?.[key], x?.attributes),
-  device: async (x, m, hass) => {
+  attribute: (x, c) =>
+    c?.attribute?.split(":").reduce((_x, key) => _x?.[key], x?.attributes),
+  device: async (x, _c, hass) => {
     const [entities, devices] = await Promise.all([
       getEntities(hass),
       getDevices(hass),
@@ -95,7 +49,7 @@ const NAME_EXTRACTORS: Record<
     if (!dev) return undefined;
     return dev.name_by_user ?? dev.name;
   },
-  area: async (x, m, hass) => {
+  area: async (x, _c, hass) => {
     const [entities, devices, areas] = await Promise.all([
       getEntities(hass),
       getDevices(hass),
@@ -111,7 +65,7 @@ const NAME_EXTRACTORS: Record<
     if (!area) return undefined;
     return area.name;
   },
-  remove_device: async (x, m, hass) => {
+  remove_device: async (x, _c, hass) => {
     const [entities, devices] = await Promise.all([
       getEntities(hass),
       getDevices(hass),
@@ -123,7 +77,7 @@ const NAME_EXTRACTORS: Record<
     if (!dev) return friendly;
     return strip_prefix(friendly, dev.name_by_user ?? dev.name);
   },
-  remove_area: async (x, m, hass) => {
+  remove_area: async (x, _c, hass) => {
     const [entities, devices, areas] = await Promise.all([
       getEntities(hass),
       getDevices(hass),
@@ -143,7 +97,6 @@ const NAME_EXTRACTORS: Record<
 };
 
 export async function get_renamer(hass: HassObject, config: RenameConfig) {
-  // Require at least one of method or type
   if (!config.method && config.type === undefined) return (x: EntityList) => x;
 
   const rename = async (
@@ -171,16 +124,17 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
         const device_name = dev?.name_by_user ?? dev?.name;
         const area_name = area?.name;
 
-        let name: string | undefined;
+        let name: string;
 
         if (config.type !== undefined) {
-          // HA-style composition path
-          name = await get_name_by_type(
-            config.type,
-            config.separator ?? " ",
-            state,
-            hass
-          );
+          // HA-native path: delegate to hass.formatEntityName so the output
+          // always matches what the HA frontend would display.
+          if (typeof hass.formatEntityName !== "function") return entity;
+          const items = to_ha_items(config.type);
+          const options = config.separator !== undefined
+            ? { separator: config.separator }
+            : undefined;
+          name = hass.formatEntityName(state, items, options);
         } else {
           // Single-method extraction path
           const extract = NAME_EXTRACTORS[config.method!];
@@ -189,9 +143,6 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
           if (raw === undefined) return entity;
           name = String(raw);
         }
-
-        if (name === undefined) return entity;
-        name = String(name);
 
         const original_name = name;
 
@@ -240,4 +191,3 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
 
   return rename;
 }
-
