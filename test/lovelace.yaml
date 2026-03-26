@@ -7,6 +7,7 @@ views:
   - !include lovelace/options.yaml
   - !include lovelace/template.yaml
   - !include lovelace/sorting.yaml
+  - !include lovelace/rename.yaml
   - !include lovelace/pagination.yaml
   - !include lovelace/unique.yaml
   - !include lovelace/errors.yaml

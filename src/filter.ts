@@ -19,6 +19,7 @@ export const RULES: Record<
   type: async (hass, value) => undefined,
   options: async (hass, value) => undefined,
   sort: async (hass, value) => undefined,
+  rename: async (hass, value) => undefined,
 
   domain: async (hass, value) => {
     const match = await matcher(value);

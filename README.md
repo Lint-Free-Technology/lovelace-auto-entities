@@ -31,6 +31,7 @@ card_as_row: <card_as_row>
 else: <else>
 unique: <unique>
 sort: <sort_method>
+rename: <rename_method>
 ```
 
 | Option | Type | Description | Default |
@@ -44,6 +45,7 @@ sort: <sort_method>
 | `show_empty` | `true`/`false` | Whether to display the card if there are no entities | `true` |
 | `else` | Dashboard card\* | Card to display if the main card has no entities. Overrides `show_empty` | |
 | `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
+| `rename` | [Rename config](#renaming-entities) | How to rename the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
 | `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
 
@@ -89,6 +91,7 @@ Special options:
 | `options` | Map of configuration options to apply to the entity when passed to the card |
 | `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card |
 | `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
+| `rename` | [Rename config](#renaming-entities) applied to entities in _this filter only_ |
 
 NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
 
@@ -276,6 +279,173 @@ sort:
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
+
+## Renaming entities
+
+Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
+
+The initial name comes from one of two sources — `type` (Home Assistant-style name composition) or `method` (single-value extraction). When both are specified, **`type` takes precedence and `method` is ignored**. The `find`/`replace`/`prepend`/`append`/`eval_js` string operations are then applied to the result. If neither `type` nor `method` is set, string operations are applied to the entity's friendly name directly.
+
+```yaml
+rename:
+  # Option A — Home Assistant name parts (uses hass.formatEntityName)
+  # When set, this takes precedence over method.
+  type: <type>           # string or list — see below
+  separator: <separator>
+
+  # Option B — single-value method (used only when type is not set)
+  method: <method>
+  attribute: <attribute>
+
+  # Applied after whichever option is used
+  # (if neither type nor method is set, these apply to the friendly name)
+  find: <find>
+  replace: <replace>
+  prepend: <prepend>
+  append: <append>
+  eval_js: <eval_js>
+```
+
+### Option A — `type` (Home Assistant-style `hass.formatEntityName`)
+
+Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does via `hass.formatEntityName`. This gives a name that always matches what Home Assistant itself would display.
+
+- `type:` A single part name or a list of part names. Each part can be one of:
+  - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring Home Assistant's behaviour.
+  - `device` — the device name
+  - `area` — the area name
+  - `floor` — the floor name
+  - `{type: text, text: "..."}` — a literal string (YAML only)
+- `separator:` String used to join multiple parts. Defaults to `" "` (space).
+
+> **Note:** The visual editor lets you pick name parts from a multi-select list, but it does not support drag-to-reorder. To control the order of parts precisely, use YAML directly.
+
+```yaml
+# Just the entity part (no device prefix) — equivalent to HA's "entity" name
+rename:
+  type: entity
+
+# Device + entity, comma-separated
+rename:
+  type:
+    - device
+    - entity
+  separator: ", "
+
+# Area prefix followed by the entity name
+rename:
+  type:
+    - area
+    - entity
+```
+
+### Option B — `method` (other single-value extraction)
+
+> **Note:** When `type` is also set, `method` is ignored — `type` always takes precedence.
+
+- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
+- `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
+
+| Method | Description |
+| --- | --- |
+| `friendly_name` | Use the entity's friendly name (default HA name) |
+| `name` | Same as `friendly_name` |
+| `entity_id` | Use the full entity ID |
+| `domain` | Use the entity domain only |
+| `state` | Use the current state value |
+| `attribute` | Use a specific attribute (requires `attribute:`) |
+| `device` | Use the device name |
+| `area` | Use the area name |
+| `remove_device` | Strip the device name prefix from the friendly name automatically |
+| `remove_area` | Strip the area name prefix from the friendly name automatically |
+
+### Automatic device/area name removal (`method`)
+
+The `remove_device` and `remove_area` methods let you strip the device or area name prefix from the friendly name **without needing to know the name in advance**.
+
+```yaml
+rename:
+  method: remove_device
+```
+
+e.g. device "Smart Plug", entity "Smart Plug energy" → "energy"
+
+```yaml
+rename:
+  method: remove_area
+```
+
+e.g. area "Living Room", entity "Living Room temperature" → "temperature"
+
+Both methods fall back gracefully to the original friendly name when no device or area is associated with the entity.
+
+> **Note:** Using `type: entity` is the preferred modern approach and delegates to Home Assistant's own logic. Use `remove_device`/`remove_area` for older Home Assistant versions or when you need exact prefix-stripping behaviour.
+
+### String operations (common options)
+
+These apply after the name has been extracted by either `method` or `type`:
+
+- `find:` A JavaScript regular expression string. Matches in the extracted name are replaced with `replace`.
+- `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
+- `prepend:` A string to prepend to the name.
+- `append:` A string to append to the name.
+- `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (HA state object), `name` (extracted name before find/replace).
+
+### Rename examples
+
+Get just the entity part using `hass.formatEntityName` (recommended):
+
+```yaml
+rename:
+  type: entity
+```
+
+Device and entity joined with " — ":
+
+```yaml
+rename:
+  type:
+    - device
+    - entity
+  separator: " — "
+```
+
+Remove a known prefix from all sensors:
+
+```yaml
+rename:
+  method: friendly_name
+  find: "^Living Room "
+  replace: ""
+```
+
+Strip the device name prefix automatically:
+
+```yaml
+rename:
+  method: remove_device
+```
+
+Append the current state value using a JS template:
+
+```yaml
+rename:
+  method: friendly_name
+  append: " (${state?.state})"
+  eval_js: true
+```
+
+Prepend the area name if one is set (per-filter rename):
+
+```yaml
+filter:
+  include:
+    - domain: sensor
+      rename:
+        method: friendly_name
+        prepend: "${area ? area + ': ' : ''}"
+        eval_js: true
+```
 
 ## Entity options
 

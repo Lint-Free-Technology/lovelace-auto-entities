@@ -1,0 +1,225 @@
+x-anchors:
+  desc: &desc
+    type: markdown
+    style:
+      ha-markdown:
+        $: |
+          code {
+            font-size: 8pt !important;
+            line-height: normal;
+            white-space: pre-wrap;
+            }
+  card: &card
+    type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+
+title: Rename
+cards:
+  - <<: *desc
+    content: |
+      ## 0: Base card
+
+      ```
+      type: custom:auto-entities
+      card:
+        type: entities
+        show_header_toggle: false
+      ```
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 1: Rename using friendly_name (default, no change)
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+          rename:
+            method: friendly_name
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+        rename:
+          method: friendly_name
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 2: Rename – remove a prefix using find/replace
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+          rename:
+            method: friendly_name
+            find: "^sensor "
+            replace: ""
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+        rename:
+          method: friendly_name
+          find: "^sensor "
+          replace: ""
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3: Rename – append state using eval_js
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+          rename:
+            method: friendly_name
+            append: " (${state?.state})"
+            eval_js: true
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+        rename:
+          method: friendly_name
+          append: " (${state?.state})"
+          eval_js: true
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 4: Rename – use device name as the entity name
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+                device: "*"
+          rename:
+            method: device
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              device: "*"
+        rename:
+          method: device
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 5: Rename – use area name as the entity name
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: light
+                area: "*"
+          rename:
+            method: area
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: light
+              area: "*"
+        rename:
+          method: area
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 6: Rename – per-filter rename with eval_js (prepend area)
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                rename:
+                  method: friendly_name
+                  prepend: "${area ? area + ': ' : ''}"
+                  eval_js: true
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              rename:
+                method: friendly_name
+                prepend: "${area ? area + ': ' : ''}"
+                eval_js: true
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 7: Rename – remove device name prefix automatically
+
+          Without knowing the device name, strip it from the entity's
+          friendly name. E.g. device "Smart Plug", entity
+          "Smart Plug energy" → "energy".
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                device: "*"
+          rename:
+            method: remove_device
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              device: "*"
+        rename:
+          method: remove_device
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 8: Rename – remove area name prefix automatically
+
+          Without knowing the area name, strip it from the entity's
+          friendly name. E.g. area "Living Room", entity
+          "Living Room temperature" → "temperature".
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+                area: "*"
+          rename:
+            method: remove_area
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              area: "*"
+        rename:
+          method: remove_area

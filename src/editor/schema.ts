@@ -320,6 +320,98 @@ export const sortSchema = (method) => {
   return schema;
 };
 
+export const renameSchema = (method, type?) => {
+  const knownMethods = [
+    "friendly_name", "entity_id", "domain", "state", "attribute",
+    "device", "area", "remove_device", "remove_area",
+  ];
+
+  if (method && !knownMethods.includes(method))
+    return [
+      {
+        type: "Constant",
+        name: "GUI editor not available",
+        value: `Renaming by ${method} is not supported by the GUI editor. Please switch to the CODE EDITOR to access all options.`,
+      },
+    ];
+
+  return [
+    // ── Home Assistant name parts (hass.formatEntityName) ────────────────
+    {
+      type: "constant",
+      name: "Home Assistant name parts:",
+      value: "",
+    },
+    {
+      type: "grid",
+      name: "",
+      schema: [
+        {
+          name: "type",
+          label: "Name parts",
+          selector: {
+            select: {
+              multiple: true,
+              custom_value: false,
+              options: [
+                { value: "entity", label: "Entity" },
+                { value: "device", label: "Device" },
+                { value: "area", label: "Area" },
+                { value: "floor", label: "Floor" },
+              ],
+            },
+          },
+        },
+        { name: "separator", label: "Separator", selector: { text: {} } },
+      ],
+    },
+    // ── Other (single-value extraction) ──────────────────────────────────
+    {
+      type: "constant",
+      name: "Other (single-value extraction):",
+      value: "",
+    },
+    {
+      name: "method",
+      label: "Other rename method",
+      type: "select",
+      options: [
+        ["", "—  None  —"],
+        ["friendly_name", "Friendly Name"],
+        ["entity_id", "Entity ID"],
+        ["domain", "Entity Domain"],
+        ["state", "Entity State"],
+        ["attribute", "Attribute"],
+        ["device", "Device Name"],
+        ["area", "Area Name"],
+        ["remove_device", "Remove Device Name prefix"],
+        ["remove_area", "Remove Area Name prefix"],
+      ],
+    },
+    {
+      name: "attribute",
+      label: "Attribute (required when method is 'attribute'):",
+      selector: { text: {} },
+    },
+    // ── String operations ─────────────────────────────────────────────────
+    {
+      type: "constant",
+      name: "String operations (applied in order: find/replace → prepend → append):",
+      value: "",
+    },
+    {
+      type: "grid",
+      name: "",
+      schema: [
+        { name: "find", label: "Find (regex)", selector: { text: {} } },
+        { name: "replace", label: "Replace with", selector: { text: {} } },
+        { name: "prepend", label: "Prepend", selector: { text: {} } },
+        { name: "append", label: "Append", selector: { text: {} } },
+      ],
+    },
+  ];
+};
+
 export const cardOptionsSchema = [
   {
     type: "grid",
