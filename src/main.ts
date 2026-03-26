@@ -245,7 +245,9 @@ class AutoEntities extends LitElement {
         const sorter = filter.sort?.method
           ? await get_sorter(this.hass, filter.sort)
           : (x) => x;
-        const renamer = filter.rename?.method
+        const rename_has_type = filter.rename?.type !== undefined &&
+          !(Array.isArray(filter.rename.type) && filter.rename.type.length === 0);
+        const renamer = (filter.rename?.method || rename_has_type)
           ? await get_renamer(this.hass, filter.rename)
           : (x) => x;
 
@@ -296,7 +298,9 @@ class AutoEntities extends LitElement {
     entities = await sorter(entities);
 
     // Global rename
-    const renamer = this._config.rename?.method
+    const global_rename_has_type = this._config.rename?.type !== undefined &&
+      !(Array.isArray(this._config.rename.type) && this._config.rename.type.length === 0);
+    const renamer = (this._config.rename?.method || global_rename_has_type)
       ? await get_renamer(this.hass, this._config.rename)
       : (x) => x;
     entities = await renamer(entities);

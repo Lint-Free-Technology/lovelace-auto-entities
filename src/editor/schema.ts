@@ -336,38 +336,10 @@ export const renameSchema = (method, type?) => {
     ];
 
   return [
-    // ── Single-value method ───────────────────────────────────────────────
+    // ── Home Assistant name parts (hass.formatEntityName) ────────────────
     {
       type: "constant",
-      name: "Method (single-value extraction):",
-      value: "",
-    },
-    {
-      name: "method",
-      label: "Rename method",
-      type: "select",
-      options: [
-        ["", "—  None  —"],
-        ["friendly_name", "Friendly Name"],
-        ["entity_id", "Entity ID"],
-        ["domain", "Entity Domain"],
-        ["state", "Entity State"],
-        ["attribute", "Attribute"],
-        ["device", "Device Name"],
-        ["area", "Area Name"],
-        ["remove_device", "Remove Device Name prefix"],
-        ["remove_area", "Remove Area Name prefix"],
-      ],
-    },
-    {
-      name: "attribute",
-      label: "Attribute (required when method is 'attribute'):",
-      selector: { text: {} },
-    },
-    // ── HA name parts (hass.formatEntityName) ────────────────────────────
-    {
-      type: "constant",
-      name: "HA name parts — alternative to method (uses hass.formatEntityName):",
+      name: "Home Assistant name parts — uses hass.formatEntityName (Option A):",
       value: "",
     },
     {
@@ -393,6 +365,34 @@ export const renameSchema = (method, type?) => {
         { name: "separator", label: "Separator", selector: { text: {} } },
       ],
     },
+    // ── Other (single-value extraction) ──────────────────────────────────
+    {
+      type: "constant",
+      name: "Other (single-value extraction, Option B — overridden by Option A):",
+      value: "",
+    },
+    {
+      name: "method",
+      label: "Other rename method",
+      type: "select",
+      options: [
+        ["", "—  None  —"],
+        ["friendly_name", "Friendly Name"],
+        ["entity_id", "Entity ID"],
+        ["domain", "Entity Domain"],
+        ["state", "Entity State"],
+        ["attribute", "Attribute"],
+        ["device", "Device Name"],
+        ["area", "Area Name"],
+        ["remove_device", "Remove Device Name prefix"],
+        ["remove_area", "Remove Area Name prefix"],
+      ],
+    },
+    {
+      name: "attribute",
+      label: "Attribute (required when method is 'attribute'):",
+      selector: { text: {} },
+    },
     // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
@@ -408,16 +408,6 @@ export const renameSchema = (method, type?) => {
         { name: "prepend", label: "Prepend", selector: { text: {} } },
         { name: "append", label: "Append", selector: { text: {} } },
       ],
-    },
-    {
-      type: "constant",
-      name: "JavaScript template options:",
-      value: "",
-    },
-    {
-      name: "eval_js",
-      type: "boolean",
-      label: "Enable JS templates in find/replace/prepend/append (use ${entity_id}, ${entity}, ${device}, ${area}, ${state}, ${name})",
     },
   ];
 };

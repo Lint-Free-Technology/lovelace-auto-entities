@@ -284,15 +284,16 @@ sort:
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
 
-There are two mutually exclusive ways to extract the initial name — `type` (HA-style name composition) and `method` (single-value). Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
+There are two mutually exclusive ways to extract the initial name — `type` (Home Assistant-style name composition) and `method` (single-value). When both are specified, **`type` takes precedence and `method` is ignored**. Both support the same `find`/`replace`/`prepend`/`append`/`eval_js` string operations afterwards.
 
 ```yaml
 rename:
-  # Option A — HA name parts (uses hass.formatEntityName)
+  # Option A — Home Assistant name parts (uses hass.formatEntityName)
+  # When set, this takes precedence over method.
   type: <type>           # string or list — see below
   separator: <separator>
 
-  # Option B — single-value method
+  # Option B — single-value method (used only when type is not set)
   method: <method>
   attribute: <attribute>
 
@@ -304,12 +305,12 @@ rename:
   eval_js: <eval_js>
 ```
 
-### Option A — `type` (HA-style `hass.formatEntityName`)
+### Option A — `type` (Home Assistant-style `hass.formatEntityName`)
 
-Composes the entity name from one or more named parts, exactly as the HA frontend does via `hass.formatEntityName`. This gives a name that always matches what HA itself would display.
+Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does via `hass.formatEntityName`. This gives a name that always matches what Home Assistant itself would display.
 
 - `type:` A single part name or a list of part names. Each part can be one of:
-  - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring HA's behaviour.
+  - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring Home Assistant's behaviour.
   - `device` — the device name
   - `area` — the area name
   - `floor` — the floor name
@@ -335,7 +336,9 @@ rename:
     - entity
 ```
 
-### Option B — `method`
+### Option B — `method` (other single-value extraction)
+
+> **Note:** When `type` is also set, `method` is ignored — `type` always takes precedence.
 
 - `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
 - `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
@@ -373,7 +376,7 @@ e.g. area "Living Room", entity "Living Room temperature" → "temperature"
 
 Both methods fall back gracefully to the original friendly name when no device or area is associated with the entity.
 
-> **Note:** Using `type: entity` is the preferred modern approach and delegates to HA's own logic. Use `remove_device`/`remove_area` for older HA versions or when you need exact prefix-stripping behaviour.
+> **Note:** Using `type: entity` is the preferred modern approach and delegates to Home Assistant's own logic. Use `remove_device`/`remove_area` for older Home Assistant versions or when you need exact prefix-stripping behaviour.
 
 ### String operations (common options)
 
