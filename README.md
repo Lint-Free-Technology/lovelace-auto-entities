@@ -286,6 +286,18 @@ Entities can be renamed either on a filter-by-filter basis by adding a `rename:`
 
 The initial name comes from one of two sources — `type` (Home Assistant-style name composition) or `method` (single-value extraction). When both are specified, **`type` takes precedence and `method` is ignored**. The `find`/`replace`/`prepend`/`append`/`eval_js` string operations are then applied to the result. If neither `type` nor `method` is set, string operations are applied to the entity's friendly name directly.
 
+> [!TIP]
+> If the card you are using supports Home Assistant `name:` config option you can use that in `options:` on your filter as an altrnative to `rename:` - `type` can be `entity`, `device`, `area`, `floor`.
+>
+> ```yaml
+>   filter:
+>     include:
+>       - options:
+>           name:
+>             - type: area
+>             - type: entity
+> ````
+
 ```yaml
 rename:
   # Option A — Home Assistant name parts (uses hass.formatEntityName)
