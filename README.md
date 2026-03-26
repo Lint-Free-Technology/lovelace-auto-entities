@@ -318,6 +318,8 @@ Composes the entity name from one or more named parts, exactly as the Home Assis
   - `{type: text, text: "..."}` — a literal string (YAML only)
 - `separator:` String used to join multiple parts. Defaults to `" "` (space).
 
+> **Note:** The visual editor lets you pick name parts from a multi-select list, but it does not support drag-to-reorder. To control the order of parts precisely, use YAML directly.
+
 ```yaml
 # Just the entity part (no device prefix) — equivalent to HA's "entity" name
 rename:
