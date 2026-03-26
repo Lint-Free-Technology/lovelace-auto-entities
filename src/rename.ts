@@ -126,7 +126,10 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
 
         let name: string;
 
-        if (config.type !== undefined) {
+        const has_type = config.type !== undefined &&
+          !(Array.isArray(config.type) && config.type.length === 0);
+
+        if (has_type) {
           // HA-native path: delegate to hass.formatEntityName so the output
           // always matches what the HA frontend would display.
           if (typeof hass.formatEntityName !== "function") return entity;
