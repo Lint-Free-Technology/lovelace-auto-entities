@@ -320,6 +320,70 @@ export const sortSchema = (method) => {
   return schema;
 };
 
+export const renameSchema = (method) => {
+  const schema: any[] = [
+    {
+      name: "method",
+      label: "Rename method",
+      type: "select",
+      options: [
+        ["friendly_name", "Friendly Name"],
+        ["entity_id", "Entity ID"],
+        ["domain", "Entity Domain"],
+        ["state", "Entity State"],
+        ["attribute", "Attribute"],
+        ["device", "Device Name"],
+        ["area", "Area Name"],
+      ],
+    },
+  ];
+
+  if (method !== undefined && !schema[0].options.some(([k, v]) => k === method))
+    return [
+      {
+        type: "Constant",
+        name: "GUI editor not available",
+        value: `Renaming by ${method} is not supported by the GUI editor.
+        Please switch to the CODE EDITOR to access all options.`,
+      },
+    ];
+
+  schema.push(
+    {
+      name: "attribute",
+      label: "Attribute:",
+      selector: { text: {} },
+    },
+    {
+      type: "constant",
+      name: "String operations (applied in order: find/replace → prepend → append):",
+      value: "",
+    },
+    {
+      type: "grid",
+      name: "",
+      schema: [
+        { name: "find", label: "Find (regex)", selector: { text: {} } },
+        { name: "replace", label: "Replace with", selector: { text: {} } },
+        { name: "prepend", label: "Prepend", selector: { text: {} } },
+        { name: "append", label: "Append", selector: { text: {} } },
+      ],
+    },
+    {
+      type: "constant",
+      name: "JavaScript template options:",
+      value: "",
+    },
+    {
+      name: "eval_js",
+      type: "boolean",
+      label: "Enable JS templates in find/replace/prepend/append (use ${entity_id}, ${entity}, ${device}, ${area}, ${state}, ${name})",
+    }
+  );
+
+  return schema;
+};
+
 export const cardOptionsSchema = [
   {
     type: "grid",

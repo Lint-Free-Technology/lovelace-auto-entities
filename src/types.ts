@@ -9,6 +9,16 @@ export interface SortConfig {
   ip?: boolean;
 }
 
+export interface RenameConfig {
+  method: string;
+  attribute?: string;
+  find?: string;
+  replace?: string;
+  prepend?: string;
+  append?: string;
+  eval_js?: boolean;
+}
+
 interface FilterConfig {
   domain?: string;
   entity_id?: string;
@@ -36,6 +46,7 @@ interface FilterConfig {
 
   options?: any;
   sort?: SortConfig;
+  rename?: RenameConfig;
   type?: string;
 }
 
@@ -55,6 +66,7 @@ export interface AutoEntitiesConfig {
   else?: any;
   unique?: boolean | string;
   sort?: any;
+  rename?: RenameConfig;
 
   entity_ids?: any[];
 }

@@ -5,6 +5,7 @@ import { loadHaForm, compare_deep } from "../helpers";
 
 import "./auto-entities-filter-editor";
 import "./auto-entities-sorting-editor";
+import "./auto-entities-rename-editor";
 import "./auto-entities-card-editor";
 import "./auto-entities-help";
 
@@ -86,6 +87,11 @@ class AutoEntitiesEditor extends LitElement {
         ._config=${this._config}
         @config-changed=${this._config_changed}
       ></auto-entities-sorting-editor>`,
+      Rename: () => html`<auto-entities-rename-editor
+        .hass=${this.hass}
+        ._config=${this._config}
+        @config-changed=${this._config_changed}
+      ></auto-entities-rename-editor>`,
       Card: () => html`<auto-entities-card-editor
         .hass=${this.hass}
         .lovelace=${this.lovelace}

@@ -7,6 +7,7 @@ import {
 } from "./helpers/templates";
 import { get_filter, RULES } from "./filter";
 import { get_sorter } from "./sort";
+import { get_renamer } from "./rename";
 import {
   AutoEntitiesConfig,
   EntityList,
@@ -244,6 +245,9 @@ class AutoEntities extends LitElement {
         const sorter = filter.sort?.method
           ? await get_sorter(this.hass, filter.sort)
           : (x) => x;
+        const renamer = filter.rename?.method
+          ? await get_renamer(this.hass, filter.rename)
+          : (x) => x;
 
         const post_process = async (entity) =>
           await process_entity(
@@ -262,6 +266,8 @@ class AutoEntities extends LitElement {
             const count = filter.sort?.count ?? Infinity;
             add = add.slice(start, start + count);
           }
+          // Filter-local rename
+          add = await renamer(add);
           add = await Promise.all(add.map(post_process));
           return add;
         };
@@ -288,6 +294,12 @@ class AutoEntities extends LitElement {
       ? await get_sorter(this.hass, this._config.sort)
       : (x) => x;
     entities = await sorter(entities);
+
+    // Global rename
+    const renamer = this._config.rename?.method
+      ? await get_renamer(this.hass, this._config.rename)
+      : (x) => x;
+    entities = await renamer(entities);
 
     // Unique
     if (this._config.unique) {
