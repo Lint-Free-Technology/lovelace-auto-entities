@@ -410,6 +410,11 @@ export const renameSchema = (method, type?) => {
         { name: "append", label: "Append", selector: { text: {} } },
       ],
     },
+    {
+      name: "eval_js",
+      type: "boolean",
+      label: "Evaluate Javascript on replace, append, prepend options",
+    },
   ];
 };
 
