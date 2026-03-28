@@ -322,7 +322,7 @@ export const sortSchema = (method) => {
 
 export const renameSchema = (method, type?) => {
   const knownMethods = [
-    "friendly_name", "entity_id", "domain", "state", "attribute",
+    "friendly_name", "entity_id", "domain", "state", "state_translated", "attribute",
     "device", "area", "remove_device", "remove_area",
   ];
 
@@ -381,6 +381,7 @@ export const renameSchema = (method, type?) => {
         ["entity_id", "Entity ID"],
         ["domain", "Entity Domain"],
         ["state", "Entity State"],
+        ["state_translated", "Entity State Translated"],
         ["attribute", "Attribute"],
         ["device", "Device Name"],
         ["area", "Area Name"],
