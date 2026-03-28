@@ -355,7 +355,7 @@ rename:
 
 > **Note:** When `type` is also set, `method` is ignored — `type` always takes precedence.
 
-- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
+- `method:` One of `friendly_name`, `name`, `entity_id`, `domain`, `state`, `state_translated`, `attribute`, `device`, `area`, `remove_device`, or `remove_area`.
 - `attribute:` Attribute to use as the name if `method: attribute`. Can be an _object attribute_ (e.g. `attribute: rgb_color:2`).
 
 | Method | Description |
@@ -365,6 +365,7 @@ rename:
 | `entity_id` | Use the full entity ID |
 | `domain` | Use the entity domain only |
 | `state` | Use the current state value |
+| `state_translated` | Use the formatted/translated state value |
 | `attribute` | Use a specific attribute (requires `attribute:`) |
 | `device` | Use the device name |
 | `area` | Use the area name |
@@ -401,7 +402,7 @@ These apply after the name has been extracted by either `method` or `type`:
 - `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
 - `prepend:` A string to prepend to the name.
 - `append:` A string to append to the name.
-- `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (HA state object), `name` (extracted name before find/replace).
+- `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `name` (extracted name before find/replace).
 
 ### Rename examples
 
@@ -443,7 +444,7 @@ Append the current state value using a JS template:
 ```yaml
 rename:
   method: friendly_name
-  append: " (${state?.state})"
+  append: " (${state})"
   eval_js: true
 ```
 

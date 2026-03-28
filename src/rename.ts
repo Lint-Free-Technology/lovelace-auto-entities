@@ -94,6 +94,9 @@ const NAME_EXTRACTORS: Record<
     if (!area) return friendly;
     return strip_prefix(friendly, area.name);
   },
+  state_translated: (_x, _c, hass) => {
+    return hass.formatEntityState ? hass.formatEntityState(_x) : _x?.state;
+  },
 };
 
 function has_string_ops(config: RenameConfig): boolean {
@@ -164,12 +167,16 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
         const eval_str = (str: string): string => {
           if (!config.eval_js) return str;
           try {
+            const state_translated = hass.formatEntityState
+              ? hass.formatEntityState(state)
+              : state?.state;
             const fn = new Function(
               "entity_id",
               "entity",
               "device",
               "area",
               "state",
+              "state_translated",
               "name",
               `"use strict"; return \`${str}\`;`
             );
@@ -178,7 +185,8 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
               entity_name,
               device_name,
               area_name,
-              state,
+              state?.state,
+              state_translated,
               original_name
             );
           } catch (e) {

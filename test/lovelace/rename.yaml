@@ -87,7 +87,7 @@ cards:
               - domain: sensor
           rename:
             method: friendly_name
-            append: " (${state?.state})"
+            append: " (${state})"
             eval_js: true
           ```
       - <<: *card
@@ -96,8 +96,54 @@ cards:
             - domain: sensor
         rename:
           method: friendly_name
-          append: " (${state?.state})"
+          append: " (${state})"
           eval_js: true
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3b: Rename – append translated state using eval_js (state_translated)
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+          rename:
+            method: friendly_name
+            append: " (${state_translated})"
+            eval_js: true
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+        rename:
+          method: friendly_name
+          append: " (${state_translated})"
+          eval_js: true
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 3c: Rename – use state_translated as method
+
+          ```
+          <<: *card
+          filter:
+            include:
+              - domain: sensor
+          rename:
+            method: state_translated
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+        rename:
+          method: state_translated
 
   - type: vertical-stack
     cards:
