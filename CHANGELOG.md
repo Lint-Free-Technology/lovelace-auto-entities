@@ -1,3 +1,9 @@
+## [2.1.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2026-03-28)
+
+### ⚙️ Miscellaneous
+
+* Add state_translated rename method and eval_js variable for replace/prepend/append ([#32](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/32)) ([21c0aa5](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/21c0aa53936adfceda081696c01af242704e1cb6))
+
 ## [2.1.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.0.0...v2.1.0-beta.1) (2026-03-26)
 
 ### ⭐ New Features
