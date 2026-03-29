@@ -70,7 +70,7 @@ interface FilterConfig {
   or?: FilterConfig[];
 
   options?: any;
-  sort?: SortConfig;
+  sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
   type?: string;
 }
@@ -90,7 +90,7 @@ export interface AutoEntitiesConfig {
   show_empty?: boolean;
   else?: any;
   unique?: boolean | string;
-  sort?: any;
+  sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
 
   entity_ids?: any[];

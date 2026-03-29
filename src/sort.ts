@@ -95,26 +95,48 @@ const COMPARISONS: Record<
       : undefined,
 };
 
-export async function get_sorter(hass: HassObject, method: SortConfig) {
-  const prepare = COMPARISONS[method.method];
-  if (!prepare) return (x) => x;
+export async function get_sorter(
+  hass: HassObject,
+  method: SortConfig | SortConfig[]
+) {
+  const methods = Array.isArray(method) ? method : [method];
 
-  if (
-    ["last_changed", "last_updated", "last_triggered"].includes(method.method)
-  )
-    method.numeric = true;
+  const validMethods = methods
+    .filter((m) => COMPARISONS[m.method])
+    .map((m) =>
+      ["last_changed", "last_updated", "last_triggered"].includes(m.method)
+        ? { ...m, numeric: true }
+        : m
+    );
+
+  if (validMethods.length === 0) return (x) => x;
 
   const sort = async (
     values: LovelaceRowConfig[]
   ): Promise<LovelaceRowConfig[]> => {
-    const map = await Promise.all(
-      values.map(async (x) => [
-        x,
-        await prepare(hass.states[x.entity], method, hass),
-      ])
+    // Pre-compute comparison values for all levels
+    const valueMaps = await Promise.all(
+      validMethods.map((m) =>
+        Promise.all(
+          values.map((x) => COMPARISONS[m.method](hass.states[x.entity], m, hass))
+        )
+      )
     );
-    map.sort((a, b) => compare(a[1], b[1], method));
-    return map.map((x) => x[0]);
+
+    const indices = values.map((_, i) => i);
+    indices.sort((a, b) => {
+      for (let level = 0; level < validMethods.length; level++) {
+        const result = compare(
+          valueMaps[level][a],
+          valueMaps[level][b],
+          validMethods[level]
+        );
+        if (result !== 0) return result;
+      }
+      return 0;
+    });
+
+    return indices.map((i) => values[i]);
   };
   return sort;
 }
