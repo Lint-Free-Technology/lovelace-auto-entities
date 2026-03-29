@@ -47,14 +47,17 @@ function compare(_a: any, _b: any, method: SortConfig) {
 
 const COMPARISONS: Record<
   string,
-  (x: HAState, method: SortConfig, hass: HassObject) => any | Promise<any>
+  (x: HAState, method: SortConfig, hass: HassObject, entity?: LovelaceRowConfig) => any | Promise<any>
 > = {
   none: (x) => 0,
   domain: (x) => x?.entity_id?.split(".")[0],
   entity_id: (x) => x?.entity_id,
+  /** Original HA friendly name — unaffected by any rename: config. */
   friendly_name: (x) =>
     x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
-  name: (x) => x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
+  /** Display name after rename has been applied. Falls back to HA friendly name if no rename was applied. */
+  name: (x, _m, _hass, entity) =>
+    entity?.name || x?.attributes?.friendly_name || x?.entity_id?.split(".")[1],
   device: async (x, m, hass) => {
     const [entities, devices] = await Promise.all([
       getEntities(hass),
@@ -118,7 +121,7 @@ export async function get_sorter(
     const valueMaps = await Promise.all(
       validMethods.map((m) =>
         Promise.all(
-          values.map((x) => COMPARISONS[m.method](hass.states[x.entity], m, hass))
+          values.map((x) => COMPARISONS[m.method](hass.states[x.entity], m, hass, x))
         )
       )
     );

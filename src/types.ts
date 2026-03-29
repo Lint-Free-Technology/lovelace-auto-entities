@@ -99,6 +99,7 @@ export interface AutoEntitiesConfig {
 export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
+  name?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;
