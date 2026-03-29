@@ -275,7 +275,8 @@ export const sortSchema = (method) => {
       options: [
         ["domain", "Entity Domain"],
         ["entity_id", "Entity ID"],
-        ["friendly_name", "Friendly Name"],
+        ["name", "Name (after rename)"],
+        ["friendly_name", "Friendly Name (original, before rename)"],
         ["state", "Entity State"],
         ["last_changed", "Last Change"],
         ["last_updated", "Last Update"],

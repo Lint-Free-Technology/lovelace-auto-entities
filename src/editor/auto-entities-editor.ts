@@ -82,16 +82,16 @@ class AutoEntitiesEditor extends LitElement {
         ._config=${this._config}
         @config-changed=${this._config_changed}
       ></auto-entities-filter-editor>`,
-      Sorting: () => html`<auto-entities-sorting-editor
-        .hass=${this.hass}
-        ._config=${this._config}
-        @config-changed=${this._config_changed}
-      ></auto-entities-sorting-editor>`,
       Rename: () => html`<auto-entities-rename-editor
         .hass=${this.hass}
         ._config=${this._config}
         @config-changed=${this._config_changed}
       ></auto-entities-rename-editor>`,
+      Sorting: () => html`<auto-entities-sorting-editor
+        .hass=${this.hass}
+        ._config=${this._config}
+        @config-changed=${this._config_changed}
+      ></auto-entities-sorting-editor>`,
       Card: () => html`<auto-entities-card-editor
         .hass=${this.hass}
         .lovelace=${this.lovelace}

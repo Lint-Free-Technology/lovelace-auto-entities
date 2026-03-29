@@ -242,9 +242,11 @@ class AutoEntities extends LitElement {
           return async () => [filter as LovelaceRowConfig];
 
         const filters = await get_filter(this.hass, filter);
-        const sorter = filter.sort?.method
-          ? await get_sorter(this.hass, filter.sort)
-          : (x) => x;
+        const filterSort = filter.sort;
+        const sorter =
+          (Array.isArray(filterSort) ? filterSort.length > 0 : filterSort?.method)
+            ? await get_sorter(this.hass, filterSort)
+            : (x) => x;
         const rename_has_type = filter.rename?.type !== undefined &&
           !(Array.isArray(filter.rename.type) && filter.rename.type.length === 0);
         const rename_has_string_ops = !!(filter.rename?.find !== undefined ||
@@ -264,16 +266,19 @@ class AutoEntities extends LitElement {
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
+          // Filter-local rename
+          add = await renamer(add);
           // Filter-local sort
           add = await sorter(add);
           // Filter-local pagination
-          if (filter.sort?.count || filter.sort?.first) {
-            const start = filter.sort?.first ?? 0;
-            const count = filter.sort?.count ?? Infinity;
+          const filterSortPagination = Array.isArray(filter.sort)
+            ? filter.sort[0]
+            : filter.sort;
+          if (filterSortPagination?.count || filterSortPagination?.first) {
+            const start = filterSortPagination?.first ?? 0;
+            const count = filterSortPagination?.count ?? Infinity;
             add = add.slice(start, start + count);
           }
-          // Filter-local rename
-          add = await renamer(add);
           add = await Promise.all(add.map(post_process));
           return add;
         };
@@ -295,12 +300,6 @@ class AutoEntities extends LitElement {
     // Exclude
     entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
 
-    // Global sort
-    const sorter = this._config.sort?.method
-      ? await get_sorter(this.hass, this._config.sort)
-      : (x) => x;
-    entities = await sorter(entities);
-
     // Global rename
     const global_rename_has_type = this._config.rename?.type !== undefined &&
       !(Array.isArray(this._config.rename.type) && this._config.rename.type.length === 0);
@@ -312,6 +311,14 @@ class AutoEntities extends LitElement {
       ? await get_renamer(this.hass, this._config.rename)
       : (x) => x;
     entities = await renamer(entities);
+
+    // Global sort
+    const globalSort = this._config.sort;
+    const sorter =
+      (Array.isArray(globalSort) ? globalSort.length > 0 : globalSort?.method)
+        ? await get_sorter(this.hass, globalSort)
+        : (x) => x;
+    entities = await sorter(entities);
 
     // Unique
     if (this._config.unique) {
@@ -333,9 +340,12 @@ class AutoEntities extends LitElement {
     }
 
     // Pagination
-    if (this._config.sort?.count || this._config.sort?.first) {
-      const start = this._config.sort?.first ?? 0;
-      const count = this._config.sort?.count ?? Infinity;
+    const globalSortPagination = Array.isArray(this._config.sort)
+      ? this._config.sort[0]
+      : this._config.sort;
+    if (globalSortPagination?.count || globalSortPagination?.first) {
+      const start = globalSortPagination?.first ?? 0;
+      const count = globalSortPagination?.count ?? Infinity;
       entities = entities.slice(start, start + count);
     }
 

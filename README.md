@@ -30,8 +30,8 @@ show_empty: <show_empty>
 card_as_row: <card_as_row>
 else: <else>
 unique: <unique>
-sort: <sort_method>
 rename: <rename_method>
+sort: <sort_method>
 ```
 
 | Option | Type | Description | Default |
@@ -44,8 +44,8 @@ rename: <rename_method>
 | &nbsp;&nbsp;`exclude` | List of [Filters](#filters) | A list of filters specifying which entities to remove from the card | |
 | `show_empty` | `true`/`false` | Whether to display the card if there are no entities | `true` |
 | `else` | Dashboard card\* | Card to display if the main card has no entities. Overrides `show_empty` | |
-| `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `rename` | [Rename config](#renaming-entities) | How to rename the entities of the card | `none` |
+| `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
 | `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
 
@@ -90,8 +90,8 @@ Special options:
 | --- | --- |
 | `options` | Map of configuration options to apply to the entity when passed to the card |
 | `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card |
-| `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
 | `rename` | [Rename config](#renaming-entities) applied to entities in _this filter only_ |
+| `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
 
 NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
 
@@ -254,32 +254,6 @@ filter:
 
 The example above matches any entity that has a `entity_id` attribute - i.e. all kinds of group entities.
 
-## Sorting entities
-
-Entities can be sorted, either on a filter-by-filter basis by adding a `sort:` option to the filter, or all at once after all filters have been applied using the `sort:` option of `auto-entities` itself.
-
-Sorting methods are specified as:
-
-```yaml
-sort:
-  method: <method>
-  reverse: <reverse>
-  ignore_case: <ignore_case>
-  attribute: <attribute>
-  first: <first>
-  count: <count>
-  numeric: <numeric>
-  ip: <ip>
-```
-
-- `method:` **Required** One of `domain`, `entity_id`, `name`, `device`, `area`, `state`, `attribute`, `last_changed` `last_updated` or `last_triggered`.
-- `reverse:` Set to `true` to reverse the order. Default: `false`.
-- `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
-- `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
-- `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
-- `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
-- `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
-
 ## Renaming entities
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
@@ -300,7 +274,7 @@ The initial name comes from one of two sources — `type` (Home Assistant-style 
 
 ```yaml
 rename:
-  # Option A — Home Assistant name parts (uses hass.formatEntityName)
+  # Option A — Home Assistant name parts
   # When set, this takes precedence over method.
   type: <type>           # string or list — see below
   separator: <separator>
@@ -318,9 +292,9 @@ rename:
   eval_js: <eval_js>
 ```
 
-### Option A — `type` (Home Assistant-style `hass.formatEntityName`)
+### Option A — `type` (Home Assistant style)
 
-Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does via `hass.formatEntityName`. This gives a name that always matches what Home Assistant itself would display.
+Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does. This gives a name that always matches what Home Assistant itself would display with the same name config.
 
 - `type:` A single part name or a list of part names. Each part can be one of:
   - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring Home Assistant's behaviour.
@@ -458,6 +432,59 @@ filter:
         method: friendly_name
         prepend: "${area ? area + ': ' : ''}"
         eval_js: true
+```
+
+## Sorting entities
+
+Entities can be sorted, either on a filter-by-filter basis by adding a `sort:` option to the filter, or all at once after all filters have been applied using the `sort:` option of `auto-entities` itself.
+
+Sorting methods are specified as:
+
+```yaml
+sort:
+  method: <method>
+  reverse: <reverse>
+  ignore_case: <ignore_case>
+  attribute: <attribute>
+  first: <first>
+  count: <count>
+  numeric: <numeric>
+  ip: <ip>
+```
+
+- `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
+  - `name` — sorts by the entity's display name **after** any `rename:` transformation. Falls back to the Home Assistant friendly name when no rename is configured.
+  - `friendly_name` — sorts by the entity's original Home Assistant friendly name, **unaffected** by any `rename:` configuration.
+- `reverse:` Set to `true` to reverse the order. Default: `false`.
+- `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
+- `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
+- `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
+- `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
+- `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
+
+### Multiple sort levels
+
+To sort by multiple criteria (e.g. primary sort by domain, secondary sort by name as a tiebreaker), supply an **array** of sort configs. The entities are first ordered by the first sort config; when two entities compare equal on that level, the next sort config is used, and so on.
+
+> [!NOTE]
+> Multiple sort levels must be configured in the **CODE EDITOR**. The GUI editor will show an info message when an array is detected.
+
+```yaml
+sort:
+  - method: domain
+  - method: friendly_name
+    ignore_case: true
+```
+
+`first` and `count` pagination, when used with a multi-level sort array, are taken from the **first** element in the array:
+
+```yaml
+sort:
+  - method: last_changed
+    reverse: true
+    count: 10        # show only the 10 most recently changed
+  - method: friendly_name
+    ignore_case: true
 ```
 
 ## Entity options

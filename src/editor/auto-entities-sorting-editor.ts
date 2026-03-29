@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { property, state } from "lit/decorators.js";
-import { AutoEntitiesConfig } from "../types";
+import { AutoEntitiesConfig, SortConfig } from "../types";
 import { sortSchema } from "./schema";
 
 class AutoEntitiesSortingEditor extends LitElement {
@@ -17,7 +17,17 @@ class AutoEntitiesSortingEditor extends LitElement {
   }
 
   render() {
-    const data = this._config.sort ?? {};
+    if (Array.isArray(this._config.sort)) {
+      return html`
+        <div>
+          <ha-alert alert-type="info">
+            Multiple sort levels are configured. Please use the
+            <b>CODE EDITOR</b> to edit them.
+          </ha-alert>
+        </div>
+      `;
+    }
+    const data = (this._config.sort as SortConfig) ?? ({} as SortConfig);
     return html`
       <div>
         <ha-form
