@@ -274,7 +274,7 @@ The initial name comes from one of two sources — `type` (Home Assistant-style 
 
 ```yaml
 rename:
-  # Option A — Home Assistant name parts (uses hass.formatEntityName)
+  # Option A — Home Assistant name parts
   # When set, this takes precedence over method.
   type: <type>           # string or list — see below
   separator: <separator>
@@ -292,9 +292,9 @@ rename:
   eval_js: <eval_js>
 ```
 
-### Option A — `type` (Home Assistant-style `hass.formatEntityName`)
+### Option A — `type` (Home Assistant style)
 
-Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does via `hass.formatEntityName`. This gives a name that always matches what Home Assistant itself would display.
+Composes the entity name from one or more named parts, exactly as the Home Assistant frontend does. This gives a name that always matches what Home Assistant itself would display with the same name config.
 
 - `type:` A single part name or a list of part names. Each part can be one of:
   - `entity` — the entity's own name from the registry (without device prefix). Entities that have no separate name fall back to the device name, mirroring Home Assistant's behaviour.
@@ -453,7 +453,7 @@ sort:
 ```
 
 - `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
-  - `name` — sorts by the entity's display name **after** any `rename:` transformation. Falls back to the HA friendly name when no rename is configured.
+  - `name` — sorts by the entity's display name **after** any `rename:` transformation. Falls back to the Home Assistant friendly name when no rename is configured.
   - `friendly_name` — sorts by the entity's original Home Assistant friendly name, **unaffected** by any `rename:` configuration.
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
