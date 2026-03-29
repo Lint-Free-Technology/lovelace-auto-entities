@@ -1,3 +1,9 @@
+## [2.1.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2026-03-29)
+
+### ⭐ New Features
+
+* Allow multiple sort levels. Move sort after rename allowing sort on name after rename ([#33](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/33)) ([f590ef9](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/f590ef9b354ff51d9701ab50c09954fb88e173a3))
+
 ## [2.1.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2026-03-28)
 
 ### ⚙️ Miscellaneous
