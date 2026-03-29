@@ -280,6 +280,31 @@ sort:
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
+### Multiple sort levels
+
+To sort by multiple criteria (e.g. primary sort by domain, secondary sort by name as a tiebreaker), supply an **array** of sort configs. The entities are first ordered by the first sort config; when two entities compare equal on that level, the next sort config is used, and so on.
+
+> [!NOTE]
+> Multiple sort levels must be configured in the **CODE EDITOR**. The GUI editor will show an info message when an array is detected.
+
+```yaml
+sort:
+  - method: domain
+  - method: friendly_name
+    ignore_case: true
+```
+
+`first` and `count` pagination, when used with a multi-level sort array, are taken from the **first** element in the array:
+
+```yaml
+sort:
+  - method: last_changed
+    reverse: true
+    count: 10        # show only the 10 most recently changed
+  - method: friendly_name
+    ignore_case: true
+```
+
 ## Renaming entities
 
 Entities can be renamed either on a filter-by-filter basis by adding a `rename:` option to the filter, or all at once after all filters have been applied using the `rename:` option of `auto-entities` itself.
