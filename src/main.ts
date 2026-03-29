@@ -266,6 +266,8 @@ class AutoEntities extends LitElement {
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
+          // Filter-local rename
+          add = await renamer(add);
           // Filter-local sort
           add = await sorter(add);
           // Filter-local pagination
@@ -277,8 +279,6 @@ class AutoEntities extends LitElement {
             const count = filterSortPagination?.count ?? Infinity;
             add = add.slice(start, start + count);
           }
-          // Filter-local rename
-          add = await renamer(add);
           add = await Promise.all(add.map(post_process));
           return add;
         };
@@ -300,14 +300,6 @@ class AutoEntities extends LitElement {
     // Exclude
     entities = entities.filter((e) => !exclude_filters.some((f) => f(e)));
 
-    // Global sort
-    const globalSort = this._config.sort;
-    const sorter =
-      (Array.isArray(globalSort) ? globalSort.length > 0 : globalSort?.method)
-        ? await get_sorter(this.hass, globalSort)
-        : (x) => x;
-    entities = await sorter(entities);
-
     // Global rename
     const global_rename_has_type = this._config.rename?.type !== undefined &&
       !(Array.isArray(this._config.rename.type) && this._config.rename.type.length === 0);
@@ -319,6 +311,14 @@ class AutoEntities extends LitElement {
       ? await get_renamer(this.hass, this._config.rename)
       : (x) => x;
     entities = await renamer(entities);
+
+    // Global sort
+    const globalSort = this._config.sort;
+    const sorter =
+      (Array.isArray(globalSort) ? globalSort.length > 0 : globalSort?.method)
+        ? await get_sorter(this.hass, globalSort)
+        : (x) => x;
+    entities = await sorter(entities);
 
     // Unique
     if (this._config.unique) {

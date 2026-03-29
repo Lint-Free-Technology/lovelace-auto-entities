@@ -3,27 +3,6 @@ import { property, state } from "lit/decorators.js";
 import { AutoEntitiesConfig, SortConfig } from "../types";
 import { sortSchema } from "./schema";
 
-/**
- * HA's YAML editor can sometimes convert a YAML array into a numbered object
- * (e.g. `["a","b"]` → `{"0":"a","1":"b"}`). This helper normalizes such
- * values back to a proper JS array so the rest of the editor can rely on
- * `Array.isArray()`.
- */
-function normalizeSortConfig(
-  sort: any
-): SortConfig | SortConfig[] | undefined {
-  if (!sort || Array.isArray(sort)) return sort;
-  if (typeof sort === "object") {
-    const keys = Object.keys(sort);
-    if (keys.length > 0 && keys.every((k) => /^\d+$/.test(k))) {
-      return keys
-        .sort((a, b) => Number(a) - Number(b))
-        .map((k) => sort[k]) as SortConfig[];
-    }
-  }
-  return sort as SortConfig;
-}
-
 class AutoEntitiesSortingEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
   @property() hass;
@@ -38,8 +17,7 @@ class AutoEntitiesSortingEditor extends LitElement {
   }
 
   render() {
-    const sort = normalizeSortConfig(this._config?.sort);
-    if (Array.isArray(sort)) {
+    if (Array.isArray(this._config.sort)) {
       return html`
         <div>
           <ha-alert alert-type="info">
@@ -49,7 +27,7 @@ class AutoEntitiesSortingEditor extends LitElement {
         </div>
       `;
     }
-    const data = (sort as SortConfig) ?? ({} as SortConfig);
+    const data = (this._config.sort as SortConfig) ?? ({} as SortConfig);
     return html`
       <div>
         <ha-form
