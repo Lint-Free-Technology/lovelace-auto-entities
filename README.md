@@ -272,7 +272,7 @@ sort:
   ip: <ip>
 ```
 
-- `method:` **Required** One of `domain`, `entity_id`, `name`, `device`, `area`, `state`, `attribute`, `last_changed` `last_updated` or `last_triggered`.
+- `method:` **Required** One of `domain`, `entity_id`, `friendly_name`, `name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`. `friendly_name` and `name` are identical aliases — both sort by the entity's Home Assistant friendly name. Note: sorting is applied **before** any `rename:` transformation.
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
 - `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
