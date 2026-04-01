@@ -1,3 +1,14 @@
+## [2.1.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.0.0...v2.1.0) (2026-04-01)
+
+### ⭐ New Features
+
+* Add `rename` option for dynamic entity name overrides including Home Assistant type options (entity, device, area, floor)([#29](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/29)) ([e4fa72f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e4fa72f4715ae1642324d3b75be125dda4db4db4))
+* Allow multiple sort levels. Move sort after rename allowing sort on name after rename ([#33](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/33)) ([f590ef9](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/f590ef9b354ff51d9701ab50c09954fb88e173a3))
+
+### ⚙️ Miscellaneous
+
+* Add state_translated rename method and eval_js variable for replace/prepend/append ([#32](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/32)) ([21c0aa5](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/21c0aa53936adfceda081696c01af242704e1cb6))
+
 ## [2.1.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0-beta.2...v2.1.0-beta.3) (2026-03-29)
 
 ### ⭐ New Features
