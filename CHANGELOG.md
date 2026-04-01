@@ -1,3 +1,9 @@
+## [2.2.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0...v2.2.0-beta.1) (2026-04-01)
+
+### ⭐ New Features
+
+* **sort:** support reverse-only sort config to reverse current list ([#36](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/36)) ([0279dee](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/0279dee12685fa6a0a42b450408a06e172cf4ff6))
+
 ## [2.1.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.0.0...v2.1.0) (2026-04-01)
 
 ### ⭐ New Features
