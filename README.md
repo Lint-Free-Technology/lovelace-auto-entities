@@ -66,6 +66,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
 | `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
 | `group` :ab: | Entities in the group | `group.living_room_lights` |
+| `group_expanded` :ab: | Entities in the group, recursively expanding any nested groups | `group.all_lights` |
 | `area` :ab: | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
 | `floor` :ab: | Entities on a given floor. Also matches all entities belonging to a Device on that floor. | `Second`, `Basement` |
 | `level` | Entities on a given level. | `2`, `>1` |
