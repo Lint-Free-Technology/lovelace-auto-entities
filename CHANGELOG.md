@@ -1,3 +1,9 @@
+## [2.2.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0-beta.1...v2.2.0-beta.2) (2026-04-01)
+
+### ⭐ New Features
+
+* **filter:** Add group_expanded filter with recursive group expansion ([#37](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/37)) ([30b4a02](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/30b4a02592498d1253c5b5178470ffcaf1aeed06))
+
 ## [2.2.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0...v2.2.0-beta.1) (2026-04-01)
 
 ### ⭐ New Features
