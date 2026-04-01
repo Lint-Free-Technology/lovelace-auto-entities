@@ -11,6 +11,7 @@ const ruleKeySelector = {
     ["entity_id", "Entity ID"],
     ["floor", "Floor"],
     ["group", "Group"],
+    ["group_expanded", "Group expanded"],
     ["hidden_by", "Hidden by"],
     ["integration", "Integration"],
     ["label", "Label"],
@@ -69,6 +70,14 @@ const filterValueSelector = {
       } 
     }
   },
+  group_expanded: { 
+    choose: {
+      choices: {
+        group: { selector: { entity: {} } },
+        custom: { selector: { text: {} } }
+      } 
+    }
+  },
   integration: { 
     choose: {
       choices: {
@@ -109,6 +118,11 @@ const filterChooseValidators = {
     choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
   },
   group: {
+    validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
+    choose_valid: (value) => { return { group: value, active_choice: "group" }; },
+    choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
+  },
+  group_expanded: {
     validator: async (hass, value) => { return getEntities(hass).then((entities) => { return value in entities; }).catch(() => { return false; }); },
     choose_valid: (value) => { return { group: value, active_choice: "group" }; },
     choose_custom: (value) => { return { custom: value, active_choice: "custom" }; },
