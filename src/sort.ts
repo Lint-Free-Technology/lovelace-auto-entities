@@ -112,7 +112,10 @@ export async function get_sorter(
         : m
     );
 
-  if (validMethods.length === 0) return (x) => x;
+  if (validMethods.length === 0) {
+    if (methods.some((m) => m.reverse)) return (x) => [...x].reverse();
+    return (x) => x;
+  }
 
   const sort = async (
     values: LovelaceRowConfig[]
