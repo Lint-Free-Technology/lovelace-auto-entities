@@ -9,6 +9,41 @@ export interface SortConfig {
   ip?: boolean;
 }
 
+/**
+ * HA-style entity name part. Mirrors the EntityNameItem type from the HA frontend.
+ * - `"entity"` / `{type:"entity"}` — the entity's own name (from registry original_name / user name)
+ * - `"device"` / `{type:"device"}` — device name
+ * - `"area"` / `{type:"area"}` — area name
+ * - `"floor"` / `{type:"floor"}` — floor name
+ * - `{type:"text", text:"..."}` — literal text
+ */
+export type EntityNameItem =
+  | "entity"
+  | "device"
+  | "area"
+  | "floor"
+  | { type: "entity" | "device" | "area" | "floor" }
+  | { type: "text"; text: string };
+
+export interface RenameConfig {
+  /** Single-value extraction method. Mutually exclusive with `type`. */
+  method?: string;
+  /**
+   * HA-style name composition — one or more EntityNameItem parts (or a plain
+   * type string such as `"entity"`). Parts are joined with `separator`.
+   * Mutually exclusive with `method`.
+   */
+  type?: string | EntityNameItem | EntityNameItem[];
+  /** Separator used when `type` is an array. Defaults to `" "`. */
+  separator?: string;
+  attribute?: string;
+  find?: string;
+  replace?: string;
+  prepend?: string;
+  append?: string;
+  eval_js?: boolean;
+}
+
 interface FilterConfig {
   domain?: string;
   entity_id?: string;
@@ -35,7 +70,8 @@ interface FilterConfig {
   or?: FilterConfig[];
 
   options?: any;
-  sort?: SortConfig;
+  sort?: SortConfig | SortConfig[];
+  rename?: RenameConfig;
   type?: string;
 }
 
@@ -54,7 +90,8 @@ export interface AutoEntitiesConfig {
   show_empty?: boolean;
   else?: any;
   unique?: boolean | string;
-  sort?: any;
+  sort?: SortConfig | SortConfig[];
+  rename?: RenameConfig;
 
   entity_ids?: any[];
 }
@@ -62,6 +99,7 @@ export interface AutoEntitiesConfig {
 export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
+  name?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;
@@ -94,6 +132,8 @@ export interface HassObject {
   formatEntityState: (stateObj, state?) => string;
   formatEntityAttributeValue: (stateObj, attribute, value?) => string;
   formatEntityAttributeName: (stateObj, attribute) => string;
+  /** Available in HA 2024.x+. Used for HA-style entity name composition. */
+  formatEntityName?: (stateObj: any, type: any, options?: { separator?: string }) => string;
   connection: {
     subscribeEvents: (callback: (event: any) => void, eventType: string) => Promise<SubscriptionUnsubscribe>;
   };
