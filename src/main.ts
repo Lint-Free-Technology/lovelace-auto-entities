@@ -244,7 +244,7 @@ class AutoEntities extends LitElement {
         const filters = await get_filter(this.hass, filter);
         const filterSort = filter.sort;
         const sorter =
-          (Array.isArray(filterSort) ? filterSort.length > 0 : filterSort?.method)
+          (Array.isArray(filterSort) ? filterSort.length > 0 : filterSort?.method !== undefined || filterSort?.reverse === true)
             ? await get_sorter(this.hass, filterSort)
             : (x) => x;
         const rename_has_type = filter.rename?.type !== undefined &&
@@ -315,7 +315,7 @@ class AutoEntities extends LitElement {
     // Global sort
     const globalSort = this._config.sort;
     const sorter =
-      (Array.isArray(globalSort) ? globalSort.length > 0 : globalSort?.method)
+      (Array.isArray(globalSort) ? globalSort.length > 0 : globalSort?.method !== undefined || globalSort?.reverse === true)
         ? await get_sorter(this.hass, globalSort)
         : (x) => x;
     entities = await sorter(entities);
