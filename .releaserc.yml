@@ -73,7 +73,7 @@ releaseRules:
   - type: test
     release: false
   - type: style
-    release: false
+    release: patch
   - type: ci
     release: false
   - type: build
