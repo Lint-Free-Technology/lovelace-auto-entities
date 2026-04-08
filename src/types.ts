@@ -41,6 +41,7 @@ export interface RenameConfig {
   replace?: string;
   prepend?: string;
   append?: string;
+  trim?: boolean;
   eval_js?: boolean;
 }
 

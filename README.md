@@ -377,6 +377,7 @@ These apply after the name has been extracted by either `method` or `type`:
 - `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
 - `prepend:` A string to prepend to the name.
 - `append:` A string to append to the name.
+- `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations.
 - `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `name` (extracted name before find/replace).
 
 ### Rename examples

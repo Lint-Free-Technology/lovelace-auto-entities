@@ -104,7 +104,8 @@ function has_string_ops(config: RenameConfig): boolean {
     config.find !== undefined ||
     config.replace !== undefined ||
     config.prepend !== undefined ||
-    config.append !== undefined
+    config.append !== undefined ||
+    config.trim === true
   );
 }
 
@@ -205,6 +206,9 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
         }
         if (config.append !== undefined) {
           name = name + eval_str(config.append);
+        }
+        if (config.trim) {
+          name = name.trim();
         }
 
         return { ...entity, name };
