@@ -175,7 +175,7 @@ cards:
     cards:
       - <<: *desc
         content: |
-          ## 5: eval_js in options (state object access)
+          ## 5: eval_js in options (stateObj attribute access)
 
           ```
           - <<: *card
@@ -184,7 +184,7 @@ cards:
                 - domain: sensor
                   options:
                     eval_js: true
-                    name: ${ state.attributes.friendly_name }
+                    name: ${ stateObj.attributes.friendly_name }
           ```
       - <<: *card
         filter:
@@ -192,4 +192,4 @@ cards:
             - domain: sensor
               options:
                 eval_js: true
-                name: ${ state.attributes.friendly_name }
+                name: ${ stateObj.attributes.friendly_name }
