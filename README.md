@@ -493,8 +493,6 @@ sort:
 
 In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
 
-When `eval_js: true` is set inside `options:`, `${...}` template expressions are evaluated. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `stateObj` (the full HA state object, e.g. `stateObj.attributes.friendly_name`).
-
 ## Examples
 
 Show all entities, except yahoo weather, groups and zones in a glance card:
