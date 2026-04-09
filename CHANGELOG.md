@@ -1,3 +1,14 @@
+## [2.2.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0-beta.2...v2.2.0-beta.3) (2026-04-09)
+
+### ⭐ New Features
+
+* **rename:** Add `trim` option to rename configuration ([#41](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/41)) ([96c4735](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/96c47358ecfa7e18a0f76bb2f1a27229153028f9))
+* **rename:** Support arrays for find/replace to enable multiple sequential operations ([#44](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/44)) ([8f62f85](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/8f62f85f4c295fd48d16a8454038f3515bb9a6a8))
+
+### 🐞 Bug Fixes
+
+* **eval_js:** restore full state object in options eval_js templates ([#42](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/42)) ([53ab1ef](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/53ab1efbb87630531bcfef85cbe450c36e1b41fa))
+
 ## [2.2.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0-beta.1...v2.2.0-beta.2) (2026-04-01)
 
 ### ⭐ New Features
