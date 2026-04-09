@@ -412,7 +412,7 @@ export const renameSchema = (method, type?) => {
     // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
-      name: "String operations (applied in order: find/replace → prepend → append → trim):",
+      name: "String operations (applied in order: find/replace → prepend → append → trim). Find/replace can be a single value or a list of values in YAML.",
       value: "",
     },
     {
