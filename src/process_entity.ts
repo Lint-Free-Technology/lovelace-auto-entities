@@ -27,7 +27,7 @@ export const process_entity = async (hass: HassObject, entity, entity_id) => {
   // - entity (the Entity name if applicable)
   // - device (the name of the Device the entity belongs to if applicable)
   // - area (the name of the Area the entity is in if applicable)
-  // - state (the state value of the entity as a string)
+  // - state (the full state object of the entity, e.g. state.state, state.attributes)
   // - state_translated (the translated/formatted state value of the entity)
   if (entity.eval_js === true) {
     const evl = new Function(
@@ -51,7 +51,7 @@ export const process_entity = async (hass: HassObject, entity, entity_id) => {
         ent?.name_by_user ?? ent?.name,
         dev?.name_by_user ?? dev?.name,
         area?.name_by_user ?? area?.name,
-        state?.state,
+        state,
         state_translated
       );
     } catch (error) {

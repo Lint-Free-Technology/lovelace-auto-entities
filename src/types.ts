@@ -1,5 +1,5 @@
 export interface SortConfig {
-  method: string;
+  method?: string;
   reverse?: boolean;
   ignore_case?: boolean;
   attribute?: string;
@@ -37,10 +37,11 @@ export interface RenameConfig {
   /** Separator used when `type` is an array. Defaults to `" "`. */
   separator?: string;
   attribute?: string;
-  find?: string;
-  replace?: string;
+  find?: string | string[];
+  replace?: string | string[];
   prepend?: string;
   append?: string;
+  trim?: boolean;
   eval_js?: boolean;
 }
 

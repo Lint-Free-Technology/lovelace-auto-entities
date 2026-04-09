@@ -1,3 +1,26 @@
+## [2.2.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0-beta.2...v2.2.0-beta.3) (2026-04-09)
+
+### ⭐ New Features
+
+* **rename:** Add `trim` option to rename configuration ([#41](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/41)) ([96c4735](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/96c47358ecfa7e18a0f76bb2f1a27229153028f9))
+* **rename:** Support arrays for find/replace to enable multiple sequential operations ([#44](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/44)) ([8f62f85](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/8f62f85f4c295fd48d16a8454038f3515bb9a6a8))
+
+### 🐞 Bug Fixes
+
+* **eval_js:** restore full state object in options eval_js templates ([#42](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/42)) ([53ab1ef](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/53ab1efbb87630531bcfef85cbe450c36e1b41fa))
+
+## [2.2.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0-beta.1...v2.2.0-beta.2) (2026-04-01)
+
+### ⭐ New Features
+
+* **filter:** Add group_expanded filter with recursive group expansion ([#37](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/37)) ([30b4a02](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/30b4a02592498d1253c5b5178470ffcaf1aeed06))
+
+## [2.2.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0...v2.2.0-beta.1) (2026-04-01)
+
+### ⭐ New Features
+
+* **sort:** support reverse-only sort config to reverse current list ([#36](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/36)) ([0279dee](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/0279dee12685fa6a0a42b450408a06e172cf4ff6))
+
 ## [2.1.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.0.0...v2.1.0) (2026-04-01)
 
 ### ⭐ New Features

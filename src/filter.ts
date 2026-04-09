@@ -47,6 +47,25 @@ export const RULES: Record<
       entity.entity_id
     );
   },
+  group_expanded: async (hass, value) => {
+    const groupId = (typeof value === "object" && value.active_choice) ? value[value.active_choice] : value;
+    const expandGroup = (id: string, result: string[], visited = new Set<string>()): void => {
+      if (visited.has(id)) return;
+      visited.add(id);
+      const members: string[] = hass.states[id]?.attributes?.entity_id ?? [];
+      members.forEach((memberId) => {
+        if (hass.states[memberId]?.attributes?.entity_id) {
+          expandGroup(memberId, result, visited);
+        } else {
+          result.push(memberId);
+        }
+      });
+    };
+    const expanded: string[] = [];
+    expandGroup(groupId, expanded);
+    const entities = new Set(expanded);
+    return (entity) => entities.has(entity.entity_id);
+  },
   attributes: async (hass, value) => {
     value as Record<string, any>;
     const matchers = await Promise.all(

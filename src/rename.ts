@@ -104,7 +104,8 @@ function has_string_ops(config: RenameConfig): boolean {
     config.find !== undefined ||
     config.replace !== undefined ||
     config.prepend !== undefined ||
-    config.append !== undefined
+    config.append !== undefined ||
+    config.trim === true
   );
 }
 
@@ -195,16 +196,27 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
         };
 
         if (config.find !== undefined) {
-          name = name.replace(
-            new RegExp(config.find, "g"),
-            eval_str(config.replace ?? "")
-          );
+          const finds = Array.isArray(config.find) ? config.find : [config.find];
+          const replaces = Array.isArray(config.replace)
+            ? config.replace
+            : config.replace !== undefined
+            ? [config.replace]
+            : [];
+          for (let i = 0; i < finds.length; i++) {
+            name = name.replace(
+              new RegExp(finds[i], "g"),
+              eval_str(replaces[i] ?? "")
+            );
+          }
         }
         if (config.prepend !== undefined) {
           name = eval_str(config.prepend) + name;
         }
         if (config.append !== undefined) {
           name = name + eval_str(config.append);
+        }
+        if (config.trim) {
+          name = name.trim();
         }
 
         return { ...entity, name };

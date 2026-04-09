@@ -66,6 +66,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
 | `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
 | `group` :ab: | Entities in the group | `group.living_room_lights` |
+| `group_expanded` :ab: | Entities in the group, recursively expanding any nested groups | `group.all_lights` |
 | `area` :ab: | Entities in a given area. Also matches all entities belonging to a Device in the area. | `Kitchen` |
 | `floor` :ab: | Entities on a given floor. Also matches all entities belonging to a Device on that floor. | `Second`, `Basement` |
 | `level` | Entities on a given level. | `2`, `>1` |
@@ -285,8 +286,8 @@ rename:
 
   # Applied after whichever option is used
   # (if neither type nor method is set, these apply to the friendly name)
-  find: <find>
-  replace: <replace>
+  find: <find>           # string or list — see below
+  replace: <replace>     # string or list — see below
   prepend: <prepend>
   append: <append>
   eval_js: <eval_js>
@@ -372,10 +373,11 @@ Both methods fall back gracefully to the original friendly name when no device o
 
 These apply after the name has been extracted by either `method` or `type`:
 
-- `find:` A JavaScript regular expression string. Matches in the extracted name are replaced with `replace`.
-- `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
+- `find:` A JavaScript regular expression string, **or a list of regex strings** for multiple sequential replacements. Matches in the extracted name are replaced with the corresponding `replace` entry.
+- `replace:` Replacement string for `find`, **or a list of replacement strings** matching the `find` list. Defaults to `""` (empty string, i.e. the match is removed). When `find` is a list and `replace` is shorter, missing entries default to `""`. Operations are applied in order.
 - `prepend:` A string to prepend to the name.
 - `append:` A string to append to the name.
+- `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations.
 - `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `name` (extracted name before find/replace).
 
 ### Rename examples
@@ -405,6 +407,19 @@ rename:
   find: "^Living Room "
   replace: ""
 ```
+
+Strip multiple patterns in sequence (list find/replace):
+
+```yaml
+rename:
+  method: friendly_name
+  find:
+    - " energy daily"
+    - "- plug"
+  trim: true
+```
+
+> **Note:** `find` and `replace` lists are applied sequentially — each pair is processed in order. When `replace` has fewer entries than `find`, missing entries default to `""`. List find/replace can only be configured in YAML; the GUI editor will display a notice when lists are in use.
 
 Strip the device name prefix automatically:
 

@@ -170,3 +170,26 @@ cards:
             - domain: light
               options:
                 icon: mdi:lamp
+
+  - type: vertical-stack
+    cards:
+      - <<: *desc
+        content: |
+          ## 5: eval_js in options (state object access)
+
+          ```
+          - <<: *card
+            filter:
+              include:
+                - domain: sensor
+                  options:
+                    eval_js: true
+                    name: ${ state.attributes.friendly_name }
+          ```
+      - <<: *card
+        filter:
+          include:
+            - domain: sensor
+              options:
+                eval_js: true
+                name: ${ state.attributes.friendly_name }
