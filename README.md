@@ -286,8 +286,8 @@ rename:
 
   # Applied after whichever option is used
   # (if neither type nor method is set, these apply to the friendly name)
-  find: <find>
-  replace: <replace>
+  find: <find>           # string or list — see below
+  replace: <replace>     # string or list — see below
   prepend: <prepend>
   append: <append>
   eval_js: <eval_js>
@@ -373,8 +373,8 @@ Both methods fall back gracefully to the original friendly name when no device o
 
 These apply after the name has been extracted by either `method` or `type`:
 
-- `find:` A JavaScript regular expression string. Matches in the extracted name are replaced with `replace`.
-- `replace:` Replacement string for `find`. Defaults to `""` (empty string, i.e. the match is removed).
+- `find:` A JavaScript regular expression string, **or a list of regex strings** for multiple sequential replacements. Matches in the extracted name are replaced with the corresponding `replace` entry.
+- `replace:` Replacement string for `find`, **or a list of replacement strings** matching the `find` list. Defaults to `""` (empty string, i.e. the match is removed). When `find` is a list and `replace` is shorter, missing entries default to `""`. Operations are applied in order.
 - `prepend:` A string to prepend to the name.
 - `append:` A string to append to the name.
 - `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations.
@@ -407,6 +407,22 @@ rename:
   find: "^Living Room "
   replace: ""
 ```
+
+Strip multiple patterns in sequence (list find/replace):
+
+```yaml
+rename:
+  method: friendly_name
+  find:
+    - " energy daily"
+    - "- plug"
+  replace:
+    - ""
+    - ""
+  trim: true
+```
+
+> **Note:** `find` and `replace` lists are applied sequentially — each pair is processed in order. When `replace` has fewer entries than `find`, missing entries default to `""`. List find/replace can only be configured in YAML; the GUI editor will display a notice when lists are in use.
 
 Strip the device name prefix automatically:
 
