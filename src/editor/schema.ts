@@ -412,7 +412,7 @@ export const renameSchema = (method, type?) => {
     // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
-      name: "String operations (applied in order: find/replace → prepend → append):",
+      name: "String operations (applied in order: find/replace → prepend → append → trim):",
       value: "",
     },
     {
@@ -424,6 +424,11 @@ export const renameSchema = (method, type?) => {
         { name: "prepend", label: "Prepend", selector: { text: {} } },
         { name: "append", label: "Append", selector: { text: {} } },
       ],
+    },
+    {
+      name: "trim",
+      type: "boolean",
+      label: "Trim whitespace from result",
     },
     {
       name: "eval_js",
