@@ -416,9 +416,6 @@ rename:
   find:
     - " energy daily"
     - "- plug"
-  replace:
-    - ""
-    - ""
   trim: true
 ```
 
