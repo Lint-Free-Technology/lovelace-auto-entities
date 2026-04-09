@@ -335,7 +335,7 @@ export const sortSchema = (method) => {
   return schema;
 };
 
-export const renameSchema = (method, type?) => {
+export const renameSchema = (method, type?, find?, replace?) => {
   const knownMethods = [
     "friendly_name", "entity_id", "domain", "state", "state_translated", "attribute",
     "device", "area", "remove_device", "remove_area",
@@ -415,16 +415,27 @@ export const renameSchema = (method, type?) => {
       name: "String operations (applied in order: find/replace → prepend → append → trim). Find/replace can be a single value or a list of values in YAML.",
       value: "",
     },
-    {
-      type: "grid",
-      name: "",
-      schema: [
-        { name: "find", label: "Find (regex)", selector: { text: {} } },
-        { name: "replace", label: "Replace with", selector: { text: {} } },
-        { name: "prepend", label: "Prepend", selector: { text: {} } },
-        { name: "append", label: "Append", selector: { text: {} } },
-      ],
-    },
+    ...(Array.isArray(find) || Array.isArray(replace)
+      ? [
+          {
+            type: "Constant",
+            name: "Find/Replace as list",
+            value:
+              "Find/Replace are configured as lists and cannot be edited in the GUI editor. Please switch to the CODE EDITOR to modify them.",
+          },
+        ]
+      : [
+          {
+            type: "grid",
+            name: "",
+            schema: [
+              { name: "find", label: "Find (regex)", selector: { text: {} } },
+              { name: "replace", label: "Replace with", selector: { text: {} } },
+              { name: "prepend", label: "Prepend", selector: { text: {} } },
+              { name: "append", label: "Append", selector: { text: {} } },
+            ],
+          },
+        ]),
     {
       name: "trim",
       type: "boolean",
