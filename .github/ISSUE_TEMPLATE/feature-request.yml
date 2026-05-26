@@ -16,6 +16,6 @@ body:
       label: Linked discussion
       description: Please link the discussion which has 10 or more upvotes. Invalid input here will mean this Feature Request will be migrated to a discussion for upvoting.
       placeholder: |
-        "#1234"
+        #1234
     validations:
       required: true
