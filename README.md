@@ -90,9 +90,63 @@ Special options:
 | Option | Description |
 | --- | --- |
 | `options` | Map of configuration options to apply to the entity when passed to the card |
-| `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card |
+| `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card. Special values `divider` and `section` insert a visual divider or section heading — see [Special types](#special-types-divider-and-section) below. |
 | `rename` | [Rename config](#renaming-entities) applied to entities in _this filter only_ |
 | `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
+
+### Special types (divider and section)
+
+Two built-in special types can be inserted anywhere in the `filter.include` list to add visual structure to an `entities` card:
+
+| Type | Description |
+| --- | --- |
+| `divider` | Inserts a horizontal divider line between the entities above and below it |
+| `section` | Inserts a section heading. Accepts an optional `label` to display as the heading text |
+
+**`type: divider`** — no additional options required:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  include:
+    - domain: light
+    - type: divider
+    - domain: switch
+```
+
+**`type: section`** — optionally supply a `label`:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  include:
+    - domain: light
+    - type: section
+      label: Switches
+    - domain: switch
+```
+
+The `label` for a section accepts either a plain string (legacy form) or the choose-selector object form produced by the visual editor. Both are equivalent and supported:
+
+Legacy (plain string) form:
+```yaml
+    - type: section
+      label: My Section Title
+```
+
+Choose selector (visual editor) form:
+```yaml
+    - type: section
+      label:
+        custom: My Section Title
+        active_choice: custom
+```
+
+> **Note:** Special type entries (`divider`, `section`) are inserted as-is into the card entity list. They are **not** subject to `filter.exclude` rules and do not count towards entity matching.
 
 NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
 
