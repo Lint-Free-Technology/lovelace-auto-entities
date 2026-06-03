@@ -2,6 +2,16 @@ import { CardController } from "./base";
 
 const WAIT_TIMEOUT_MS = 3000;
 const WAIT_INTERVAL_MS = 100;
+const WAIT_INTERVAL_MAX_MS = 500;
+
+interface UpdatableChartElement extends Element {
+  requestUpdate?: (propertyName?: string) => void;
+}
+
+interface CardWithElement extends Element {
+  shadowRoot?: ShadowRoot | null;
+  _element?: Element & { shadowRoot?: ShadowRoot | null };
+}
 
 export class HistoryGraphCardController extends CardController {
   async afterCardUpdated(): Promise<void> {
@@ -18,18 +28,22 @@ export class HistoryGraphCardController extends CardController {
     return this.host.getClientRects().length > 0;
   }
 
-  private async waitForChartBase(): Promise<any | undefined> {
+  private async waitForChartBase(): Promise<UpdatableChartElement | undefined> {
     const started = Date.now();
+    let wait = WAIT_INTERVAL_MS;
     while (Date.now() - started < WAIT_TIMEOUT_MS) {
-      const card = this.host.card as any;
+      const card = this.host.card as CardWithElement | undefined;
       const chart = this.findChartBase(card);
       if (chart) return chart;
-      await new Promise((resolve) => window.setTimeout(resolve, WAIT_INTERVAL_MS));
+      await new Promise((resolve) => window.setTimeout(resolve, wait));
+      wait = Math.min(wait * 2, WAIT_INTERVAL_MAX_MS);
     }
     return undefined;
   }
 
-  private findChartBase(card: any): any | undefined {
+  private findChartBase(
+    card: CardWithElement | undefined
+  ): UpdatableChartElement | undefined {
     if (!card) return undefined;
 
     const roots: Array<Element | ShadowRoot> = [card];
@@ -47,7 +61,9 @@ export class HistoryGraphCardController extends CardController {
     return undefined;
   }
 
-  private findInTree(root: Element | ShadowRoot): any | undefined {
+  private findInTree(
+    root: Element | ShadowRoot
+  ): UpdatableChartElement | undefined {
     const stack: Array<Element | ShadowRoot> = [root];
 
     while (stack.length) {
@@ -55,7 +71,7 @@ export class HistoryGraphCardController extends CardController {
       if (!current) continue;
 
       if (current instanceof Element) {
-        if (current.localName === "ha-chart-base") return current;
+        if (current.localName === "ha-chart-base") return current as UpdatableChartElement;
         if (current.shadowRoot) stack.push(current.shadowRoot);
         stack.push(...Array.from(current.children));
       } else {
