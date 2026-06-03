@@ -8,10 +8,9 @@ interface UpdatableChartElement extends Element {
   requestUpdate?: (propertyName?: string) => void;
 }
 
-interface CardWithElement extends Element {
-  shadowRoot?: ShadowRoot | null;
-  _element?: Element & { shadowRoot?: ShadowRoot | null };
-}
+type CardWithElement = Element & {
+  _element?: Element;
+};
 
 export class HistoryGraphCardController extends CardController {
   async afterCardUpdated(): Promise<void> {
