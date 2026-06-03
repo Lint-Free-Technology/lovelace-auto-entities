@@ -53,29 +53,12 @@ export class HistoryGraphCardController extends CardController {
     }
 
     for (const root of roots) {
-      const found = this.findInTree(root);
+      const found = this.findInTree(
+        root,
+        (element): element is UpdatableChartElement =>
+          element.localName === "ha-chart-base"
+      );
       if (found) return found;
-    }
-
-    return undefined;
-  }
-
-  private findInTree(
-    root: Element | ShadowRoot
-  ): UpdatableChartElement | undefined {
-    const stack: Array<Element | ShadowRoot> = [root];
-
-    while (stack.length) {
-      const current = stack.pop();
-      if (!current) continue;
-
-      if (current instanceof Element) {
-        if (current.localName === "ha-chart-base") return current as UpdatableChartElement;
-        if (current.shadowRoot) stack.push(current.shadowRoot);
-        stack.push(...Array.from(current.children));
-      } else {
-        stack.push(...Array.from(current.children));
-      }
     }
 
     return undefined;
