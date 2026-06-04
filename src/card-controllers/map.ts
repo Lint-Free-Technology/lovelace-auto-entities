@@ -54,7 +54,7 @@ export class MapCardController extends CardController {
     void this.refreshPromise.catch((err) => {
       console.warn("auto-entities: map fit refresh failed", err);
     });
-  }
+  };
 
   private isHostVisible(): boolean {
     if (!this.host.isConnected || this.host.hidden) return false;
