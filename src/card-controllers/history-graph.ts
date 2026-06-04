@@ -13,6 +13,8 @@ type CardWithElement = Element & {
 };
 
 export class HistoryGraphCardController extends CardController {
+  private refreshPromise?: Promise<void>;
+
   constructor(host: CardControllerHost) {
     super(host);
     this.host.addEventListener(
@@ -38,9 +40,19 @@ export class HistoryGraphCardController extends CardController {
   }
 
   private handleCardVisibilityChanged = (ev: Event): void => {
-    const visible = (ev as CustomEvent<{ value?: boolean }>).detail?.value;
+    const visible = (ev as CustomEvent<{ value: boolean }>).detail?.value;
     if (visible !== true) return;
-    void this.afterCardUpdated();
+    if (this.refreshPromise) return;
+    this.refreshPromise = (async () => {
+      try {
+        await this.afterCardUpdated();
+      } finally {
+        this.refreshPromise = undefined;
+      }
+    })();
+    void this.refreshPromise.catch((err) => {
+      console.warn("auto-entities: history-graph refresh failed", err);
+    });
   };
 
   private isHostVisible(): boolean {
