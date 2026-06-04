@@ -1,3 +1,9 @@
+## [2.3.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0-beta.1...v2.3.0-beta.2) (2026-06-04)
+
+### 🐞 Bug Fixes
+
+* Move history-graph initial render workaround to visibility-driven refresh ([#57](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/57)) ([fe11aca](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/fe11aca2a55c4be988ecf234671ecba13ce48c90)), closes [#54](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/54)
+
 ## [2.3.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0...v2.3.0-beta.1) (2026-06-04)
 
 ### ⭐ New Features
