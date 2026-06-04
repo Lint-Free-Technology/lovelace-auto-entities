@@ -14,6 +14,8 @@ export class CardController {
 
   async afterCardUpdated(): Promise<void> {}
 
+  dispose(): void {}
+
   protected findInTree(
     root: Element | ShadowRoot,
     matcher: (element: Element) => boolean
