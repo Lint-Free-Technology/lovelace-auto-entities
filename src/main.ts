@@ -18,6 +18,8 @@ import pjson from "../package.json";
 import "./editor/auto-entities-editor";
 import { compare_deep } from "./helpers";
 import { process_entity } from "./process_entity";
+import { getCardController } from "./card-controllers";
+import { CardController } from "./card-controllers/base";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -41,6 +43,8 @@ class AutoEntities extends LitElement {
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
   _cardBuiltResolve?;
+  _cardController?: CardController;
+  _cardControllerType?: string;
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -129,6 +133,7 @@ class AutoEntities extends LitElement {
     super.disconnectedCallback();
     unbind_template(this._renderer);
     document.removeEventListener("auto-entities-update", this.update_all.bind(this));
+    this._cardController?.dispose();
   }
 
   async update_all() {
@@ -178,6 +183,11 @@ class AutoEntities extends LitElement {
     const newType = this._cardConfig?.type !== this._config.card?.type;
     this._entities = entities;
     this._cardConfig = JSON.parse(JSON.stringify(this._config.card ?? {}));
+    if (this._cardControllerType !== this._cardConfig.type) {
+      this._cardController?.dispose();
+      this._cardControllerType = this._cardConfig.type;
+      this._cardController = getCardController(this._cardConfig.type, this);
+    }
     const cardEntities = (entities.length > 0) ? 
       entities : 
       CARDS_NO_ENTITY_WORKAROUND.includes(this._cardConfig.type) ? [{ entity: "auto_entities.dummy" }] : [];
@@ -210,7 +220,11 @@ class AutoEntities extends LitElement {
       );
     } else {
       this.dispatchEvent(
-        new Event("card-visibility-changed", { bubbles: true, cancelable: true })
+        new CustomEvent("card-visibility-changed", {
+          detail: { value: !this.hidden },
+          bubbles: true,
+          cancelable: true,
+        })
       );
     }
     if ((this.card as any).requestUpdate) {
