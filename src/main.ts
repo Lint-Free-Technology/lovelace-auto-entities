@@ -132,6 +132,7 @@ class AutoEntities extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     unbind_template(this._renderer);
+    this._cardController?.dispose();
     document.removeEventListener("auto-entities-update", this.update_all.bind(this));
   }
 
@@ -183,6 +184,7 @@ class AutoEntities extends LitElement {
     this._entities = entities;
     this._cardConfig = JSON.parse(JSON.stringify(this._config.card ?? {}));
     if (this._cardControllerType !== this._cardConfig.type) {
+      this._cardController?.dispose();
       this._cardControllerType = this._cardConfig.type;
       this._cardController = getCardController(this._cardConfig.type, this);
     }
@@ -218,14 +220,17 @@ class AutoEntities extends LitElement {
       );
     } else {
       this.dispatchEvent(
-        new Event("card-visibility-changed", { bubbles: true, cancelable: true })
+        new CustomEvent("card-visibility-changed", {
+          detail: { value: !this.hidden },
+          bubbles: true,
+          cancelable: true,
+        })
       );
     }
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
     }
-    await this._cardController?.afterCardUpdated();
   }
 
   async update_entities() {
