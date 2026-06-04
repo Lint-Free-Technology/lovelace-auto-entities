@@ -1,3 +1,4 @@
+import { LitElement } from "lit";
 import { CardController, CardControllerHost } from "./base";
 
 const WAIT_TIMEOUT_MS = 3000;
@@ -36,8 +37,9 @@ export class MapCardController extends CardController {
   private async afterCardVisible(): Promise<void> {
     if (!this.isHostVisible()) return;
 
-    const map = await this.waitForMap();
-    map?.fitMap?.();
+    const map: any = await this.waitForMap();
+    map.leafletMap?.invalidateSize();
+    map.fitMap?.();
   }
 
   private handleCardVisibilityChanged = (ev: Event): void => {
@@ -102,8 +104,8 @@ export class MapCardController extends CardController {
       map &&
       map.clientWidth > 0 &&
       typeof map.fitMap === "function" &&
-      typeof map.leafletMap === "object" &&
-      (leafletType === "object" || leafletType === "function")
+      (typeof map.Leaflet === "object" && map.Leaflet !== null) &&
+      (typeof map.leafletMap === "object" && map.leafletMap !== null)
     );
   }
 }
