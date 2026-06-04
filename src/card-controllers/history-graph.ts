@@ -1,4 +1,4 @@
-import { CardController } from "./base";
+import { CardController, CardControllerHost } from "./base";
 
 const WAIT_TIMEOUT_MS = 3000;
 const WAIT_INTERVAL_MS = 100;
@@ -13,6 +13,21 @@ type CardWithElement = Element & {
 };
 
 export class HistoryGraphCardController extends CardController {
+  constructor(host: CardControllerHost) {
+    super(host);
+    this.host.addEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
+  dispose(): void {
+    this.host.removeEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
   async afterCardUpdated(): Promise<void> {
     if (!this.isHostVisible()) return;
 
@@ -21,6 +36,12 @@ export class HistoryGraphCardController extends CardController {
 
     chart.requestUpdate?.("_themes");
   }
+
+  private handleCardVisibilityChanged = (ev: Event): void => {
+    const visible = (ev as CustomEvent<{ value?: boolean }>).detail?.value;
+    if (visible !== true) return;
+    void this.afterCardUpdated();
+  };
 
   private isHostVisible(): boolean {
     if (!this.host.isConnected || this.host.hidden) return false;
