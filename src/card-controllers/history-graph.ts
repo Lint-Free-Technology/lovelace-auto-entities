@@ -30,7 +30,7 @@ export class HistoryGraphCardController extends CardController {
     );
   }
 
-  async afterCardUpdated(): Promise<void> {
+  private async afterCardVisible(): Promise<void> {
     if (!this.isHostVisible()) return;
 
     const chart = await this.waitForChartBase();
@@ -45,7 +45,7 @@ export class HistoryGraphCardController extends CardController {
     if (this.refreshPromise) return;
     this.refreshPromise = (async () => {
       try {
-        await this.afterCardUpdated();
+        await this.afterCardVisible();
       } finally {
         this.refreshPromise = undefined;
       }
