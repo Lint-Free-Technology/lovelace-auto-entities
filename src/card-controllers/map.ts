@@ -32,6 +32,7 @@ export class MapCardController extends CardController {
     const started = Date.now();
     let wait = WAIT_INTERVAL_MS;
     while (Date.now() - started < WAIT_TIMEOUT_MS) {
+      if (!this.isHostVisible()) return undefined;
       const card = this.host.card as CardWithElement | undefined;
       const map = this.findMap(card);
       if (this.isMapReady(map)) return map;
@@ -63,6 +64,13 @@ export class MapCardController extends CardController {
   }
 
   private isMapReady(map: MapElement | undefined): map is MapElement {
-    return !!(map && map.clientWidth > 0 && map.leafletMap && map.Leaflet);
+    const leafletType = map?.Leaflet ? typeof map.Leaflet : undefined;
+    return !!(
+      map &&
+      map.clientWidth > 0 &&
+      typeof map.fitMap === "function" &&
+      typeof map.leafletMap === "object" &&
+      (leafletType === "object" || leafletType === "function")
+    );
   }
 }
