@@ -1,3 +1,9 @@
+## [2.3.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0-beta.2...v2.3.0-beta.3) (2026-06-04)
+
+### ⭐ New Features
+
+* Add map card controller workaround to force `ha-map` autofit ([#56](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/56)) ([2000cbc](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/2000cbceddf4402651eaac8077ba9de30f945b5d)), closes [#55](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/55)
+
 ## [2.3.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0-beta.1...v2.3.0-beta.2) (2026-06-04)
 
 ### 🐞 Bug Fixes
