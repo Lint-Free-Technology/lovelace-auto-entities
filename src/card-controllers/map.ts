@@ -34,7 +34,7 @@ export class MapCardController extends CardController {
     while (Date.now() - started < WAIT_TIMEOUT_MS) {
       const card = this.host.card as CardWithElement | undefined;
       const map = this.findMap(card);
-      if (map && map.clientWidth > 0 && map.leafletMap && map.Leaflet) return map;
+      if (this.isMapReady(map)) return map;
       await new Promise((resolve) => window.setTimeout(resolve, wait));
       wait = Math.min(wait * 2, WAIT_INTERVAL_MAX_MS);
     }
@@ -60,5 +60,9 @@ export class MapCardController extends CardController {
     }
 
     return undefined;
+  }
+
+  private isMapReady(map: MapElement | undefined): map is MapElement {
+    return !!(map && map.clientWidth > 0 && map.leafletMap && map.Leaflet);
   }
 }
