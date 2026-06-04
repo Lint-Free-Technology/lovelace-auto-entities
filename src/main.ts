@@ -132,8 +132,8 @@ class AutoEntities extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     unbind_template(this._renderer);
-    this._cardController?.dispose();
     document.removeEventListener("auto-entities-update", this.update_all.bind(this));
+    this._cardController?.dispose();
   }
 
   async update_all() {
