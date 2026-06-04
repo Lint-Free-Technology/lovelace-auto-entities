@@ -1,20 +1,13 @@
-## [2.3.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0-beta.2...v2.3.0-beta.3) (2026-06-04)
-
-### ⭐ New Features
-
-* Add map card controller workaround to force `ha-map` autofit ([#56](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/56)) ([2000cbc](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/2000cbceddf4402651eaac8077ba9de30f945b5d)), closes [#55](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/55)
-
-## [2.3.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0-beta.1...v2.3.0-beta.2) (2026-06-04)
-
-### 🐞 Bug Fixes
-
-* Move history-graph initial render workaround to visibility-driven refresh ([#57](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/57)) ([fe11aca](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/fe11aca2a55c4be988ecf234671ecba13ce48c90)), closes [#54](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/54)
-
-## [2.3.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0...v2.3.0-beta.1) (2026-06-04)
+## [2.3.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0...v2.3.0) (2026-06-04)
 
 ### ⭐ New Features
 
 * Add card-controller lifecycle hook and history-graph post-update workaround ([#53](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/53)) ([61dec31](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/61dec31f2704b7a434f5f25312a43e61c7341294)), closes [#54](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/54)
+* Add map card controller workaround to force `ha-map` autofit ([#56](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/56)) ([2000cbc](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/2000cbceddf4402651eaac8077ba9de30f945b5d)), closes [#55](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/55)
+
+### 🐞 Bug Fixes
+
+* Move history-graph initial render workaround to visibility-driven refresh ([#57](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/57)) ([fe11aca](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/fe11aca2a55c4be988ecf234671ecba13ce48c90)), closes [#54](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/54)
 
 ### 📔 Documentation
 
