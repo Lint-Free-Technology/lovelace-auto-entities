@@ -1,4 +1,4 @@
-import { CardController } from "./base";
+import { CardController, CardControllerHost } from "./base";
 
 const WAIT_TIMEOUT_MS = 3000;
 const WAIT_INTERVAL_MS = 50;
@@ -16,11 +16,44 @@ type CardWithElement = Element & {
 };
 
 export class MapCardController extends CardController {
-  async afterCardUpdated(): Promise<void> {
+  private refreshPromise?: Promise<void>;
+
+  constructor(host: CardControllerHost) {
+    super(host);
+    this.host.addEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
+  dispose(): void {
+    this.host.removeEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
+  private async afterCardVisible(): Promise<void> {
     if (!this.isHostVisible()) return;
 
     const map = await this.waitForMap();
     map?.fitMap?.();
+  }
+
+  private handleCardVisibilityChanged = (ev: Event): void => {
+    const visible = (ev as CustomEvent<{ value: boolean }>).detail?.value;
+    if (visible !== true) return;
+    if (this.refreshPromise) return;
+    this.refreshPromise = (async () => {
+      try {
+        await this.afterCardVisible();
+      } finally {
+        this.refreshPromise = undefined;
+      }
+    })();
+    void this.refreshPromise.catch((err) => {
+      console.warn("auto-entities: map fit refresh failed", err);
+    });
   }
 
   private isHostVisible(): boolean {
