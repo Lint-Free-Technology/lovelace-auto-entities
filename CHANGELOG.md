@@ -1,3 +1,13 @@
+## [2.3.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0...v2.3.0-beta.1) (2026-06-04)
+
+### ⭐ New Features
+
+* Add card-controller lifecycle hook and history-graph post-update workaround ([#53](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/53)) ([61dec31](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/61dec31f2704b7a434f5f25312a43e61c7341294)), closes [#54](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/54)
+
+### 📔 Documentation
+
+* add section and divider special type documentation ([99871ba](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/99871ba9a9c73a32f1edb501acf4f1c21b7370d1))
+
 ## [2.2.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.1.0...v2.2.0) (2026-04-09)
 
 ### ⭐ New Features
