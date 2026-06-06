@@ -16,16 +16,6 @@
         "panel": "shared",
         "group": "test"
       }
-    },
-    {
-      "label": "Run hass",
-      "type": "shell",
-      "command": "sudo -E container launch",
-      "problemMatcher": [],
-      "presentation": {
-        "panel": "shared",
-        "group": "test"
-      }
     }
   ]
 }
