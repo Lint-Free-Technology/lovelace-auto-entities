@@ -1,7 +1,7 @@
 .PHONY: ha_up visual_test doc_images_gen doc_images_update
 
 ha_up:
-python tests/ha_server.py
+	HA_VERSION=$(shell tr -d '[:space:]' < tests/HA_VERSION) HA_CONFIG_PATH=tests/ha-config HA_PLUGINS_YAML=tests/plugins.yaml HA_INTEGRATIONS_YAML=tests/integrations.yaml python -m ha_testcontainer.ha_server
 
 visual_test:
 pytest tests/visual/test_scenarios.py
