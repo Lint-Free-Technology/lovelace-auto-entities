@@ -1,4 +1,4 @@
-# fold-entity-row tests
+# auto-entities tests
 
 This repository uses [ha-testcontainer](https://github.com/Lint-Free-Technology/ha-testcontainer)
 for Home Assistant visual tests.
