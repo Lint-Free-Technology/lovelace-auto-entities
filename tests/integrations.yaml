@@ -1,0 +1,3 @@
+# Integrations to load
+#- repo: <repo url> --- IGNORE ---
+#  domain: <domain> --- IGNORE ---

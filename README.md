@@ -114,7 +114,11 @@ filter:
     - domain: light
     - type: divider
     - domain: switch
+  exclude:
+    - entity_id: light.all_lights
 ```
+
+![Basic example](/docs/source/assets/images/01_basic.png)
 
 **`type: section`** — optionally supply a `label`:
 

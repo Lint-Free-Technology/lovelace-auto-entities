@@ -1,3 +1,9 @@
 node_modules/
 .vscode/settings.json
 dist/
+.venv/
+.pytest_cache/
+.ha_env
+**/__pycache__/
+*.egg-info/
+tests/visual/snapshots/*.actual.png

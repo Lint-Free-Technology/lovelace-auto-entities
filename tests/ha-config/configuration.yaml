@@ -1,0 +1,46 @@
+homeassistant:
+  country: US
+  unit_system: metric
+  time_zone: UTC
+
+default_config:
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+demo:
+
+lovelace:
+  mode: storage
+  resource_mode: yaml
+  resources: !include lovelace_resources.yaml
+
+input_number:
+  slider:
+    name: Input number
+    min: 0
+    max: 200
+    step: 25
+
+input_select:
+  select:
+    name: Input select
+    options:
+      - A
+      - B
+      - C
+
+timer:
+  demo_timer:
+    duration: '00:10:00'
+    name: Demo timer
+
+light:
+  - platform: group
+    name: "All Lights"
+    entities:
+      - light.bed_light
+      - light.ceiling_lights
+      - light.kitchen_lights
+      - light.living_room_rgbww_lights
+      - light.office_rgbw_lights
