@@ -58,4 +58,4 @@ def test_scenario(
         run_interactions(ha_page, scenario, ha=ha, key="teardown")
         if theme:
             reset_theme(ha)
-        clear_scenario(ha, ha_lovelace_url_path) 
+        clear_scenario(ha, ha_lovelace_url_path)
