@@ -20,7 +20,7 @@
 {
       "label": "Python: Set up virtual environment",
       "type": "shell",
-      "command": "python3 -m venv .venv && source .venv/bin/activate && pip install -e '.[test]' && playwright install chromium",
+      "command": "python3 -m venv .venv && source .venv/bin/activate && pip install -e '.[test]' && playwright install --with-deps chromium",
       "problemMatcher": [],
       "presentation": {
         "panel": "dedicated",
