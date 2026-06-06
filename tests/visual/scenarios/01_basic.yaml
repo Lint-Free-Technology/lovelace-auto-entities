@@ -1,0 +1,28 @@
+id: basic
+description: Scenario with light filter
+view_path: basic
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - domain: light
+
+assertions:
+  - type: element_present
+    root: hui-entities-card
+    selector: "#states"
+  - type: snapshot
+    name: "01_basic"
+    threshold: 0.02
