@@ -1,0 +1,41 @@
+id: card_grid
+description: Scenario with entity filter  
+view_path: card-grid
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.ceiling_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: grid
+  card_param: cards
+  filter:
+    include:
+      - domain: light
+        state: "on"
+        options:
+          type: entity
+    exclude:
+      - entity_id: light.all_lights
+
+assertions:
+  - type: snapshot
+    name: "12_card_grid"
+    threshold: 0.02

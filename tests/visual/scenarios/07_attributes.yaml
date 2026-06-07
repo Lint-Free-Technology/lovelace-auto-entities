@@ -1,0 +1,18 @@
+id: attributes
+description: Scenario with attribute filter  
+view_path: attributes
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - attributes:
+          device_class: moisture
+
+assertions:
+  - type: snapshot
+    name: "07_attributes"
+    threshold: 0.02

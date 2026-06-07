@@ -28,3 +28,5 @@ _sr.assert_snapshot = partial(_sr.assert_snapshot, snapshots_dir=_sr.SNAPSHOTS_D
 # ---------------------------------------------------------------------------
 
 sys.path.insert(0, str(Path(__file__).parent / "visual"))
+
+import auto_entities_extensions  # noqa: F401

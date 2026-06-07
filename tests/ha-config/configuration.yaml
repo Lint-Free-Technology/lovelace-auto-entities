@@ -2,6 +2,7 @@ homeassistant:
   country: US
   unit_system: metric
   time_zone: UTC
+  customize: !include customize.yaml
 
 default_config:
 
@@ -14,6 +15,10 @@ lovelace:
   mode: storage
   resource_mode: yaml
   resources: !include lovelace_resources.yaml
+
+input_boolean:
+  test_toggle:
+    name: Test Toggle
 
 input_number:
   slider:
@@ -44,3 +49,4 @@ light:
       - light.kitchen_lights
       - light.living_room_rgbww_lights
       - light.office_rgbw_lights
+      - light.entrance_color_white_lights
