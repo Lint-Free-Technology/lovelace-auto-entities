@@ -1,0 +1,24 @@
+id: combined_and
+description: 'combined: And #1'
+view_path: combined-and
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: light
+    - type: section
+    - state: 'on'
+    - type: section
+    - domain: light
+      state: 'on'
+    - type: section
+    - and:
+      - domain: light
+      - state: 'on'
+assertions:
+- type: snapshot
+  name: 32_combined_and
+  threshold: 0.02

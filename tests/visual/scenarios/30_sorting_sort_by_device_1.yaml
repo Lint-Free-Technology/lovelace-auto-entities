@@ -1,0 +1,16 @@
+id: sorting_sort_by_device_1
+description: 'sorting: Sort by device #1'
+view_path: sorting-sort-by-device-1
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: light
+      device: '*'
+assertions:
+- type: snapshot
+  name: 30_sorting_sort_by_device_1
+  threshold: 0.02

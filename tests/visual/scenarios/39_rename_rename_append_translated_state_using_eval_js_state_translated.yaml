@@ -1,0 +1,20 @@
+id: rename_rename_append_translated_state_using_eval_js_state_translated
+description: 'rename: Rename – append translated state using eval_js (state_translated)
+  #1'
+view_path: rename-rename-append-translated-state-using-eval-js-state-translated
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+  rename:
+    method: friendly_name
+    append: ' (${state_translated})'
+    eval_js: true
+assertions:
+- type: snapshot
+  name: 39_rename_rename_append_translated_state_using_eval_js_state_translated
+  threshold: 0.02

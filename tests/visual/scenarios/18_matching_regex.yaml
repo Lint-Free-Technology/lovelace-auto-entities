@@ -1,0 +1,17 @@
+id: matching_regex
+description: 'matching: Regex #1'
+view_path: matching-regex
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - name: /Light/
+    - type: section
+    - name: /Light$/
+assertions:
+- type: snapshot
+  name: 18_matching_regex
+  threshold: 0.02

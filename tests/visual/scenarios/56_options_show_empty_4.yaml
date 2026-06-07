@@ -1,0 +1,19 @@
+id: options_show_empty_4
+description: 'options: show_empty #4'
+view_path: options-show-empty-4
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  else:
+    type: markdown
+    content: All lights are on
+  filter:
+    include:
+    - domain: light
+      state: 'off'
+assertions:
+- type: snapshot
+  name: 56_options_show_empty_4
+  threshold: 0.02

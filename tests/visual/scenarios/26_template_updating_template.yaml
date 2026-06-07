@@ -1,0 +1,24 @@
+id: template_updating_template
+description: 'template: Updating template #1'
+view_path: template-updating-template
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    template: '{{ states.light
+
+      | selectattr("state", "==", "on")
+
+      | map(attribute="entity_id")
+
+      | list
+
+      }}
+
+      '
+assertions:
+- type: snapshot
+  name: 26_template_updating_template
+  threshold: 0.02

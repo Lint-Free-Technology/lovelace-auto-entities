@@ -1,0 +1,19 @@
+id: options_unique_entity_id_2
+description: 'options: Unique entity id #2'
+view_path: options-unique-entity-id-2
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  unique: entity
+  filter:
+    include:
+    - domain: light
+    - domain: light
+      options:
+        icon: mdi:lamp
+assertions:
+- type: snapshot
+  name: 60_options_unique_entity_id_2
+  threshold: 0.02

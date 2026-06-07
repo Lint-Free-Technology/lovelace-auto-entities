@@ -1,0 +1,19 @@
+id: rename_rename_append_state_using_eval_js
+description: 'rename: Rename – append state using eval_js #1'
+view_path: rename-rename-append-state-using-eval-js
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+  rename:
+    method: friendly_name
+    append: ' (${state})'
+    eval_js: true
+assertions:
+- type: snapshot
+  name: 38_rename_rename_append_state_using_eval_js
+  threshold: 0.02

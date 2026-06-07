@@ -1,0 +1,17 @@
+id: options_show_empty_2
+description: 'options: show_empty #2'
+view_path: options-show-empty-2
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  show_empty: false
+  filter:
+    include:
+    - domain: light
+      state: 'off'
+assertions:
+- type: snapshot
+  name: 54_options_show_empty_2
+  threshold: 0.02

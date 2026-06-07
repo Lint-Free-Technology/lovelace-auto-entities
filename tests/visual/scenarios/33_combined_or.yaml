@@ -1,0 +1,17 @@
+id: combined_or
+description: 'combined: Or #1'
+view_path: combined-or
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - or:
+      - domain: light
+      - domain: switch
+assertions:
+- type: snapshot
+  name: 33_combined_or
+  threshold: 0.02

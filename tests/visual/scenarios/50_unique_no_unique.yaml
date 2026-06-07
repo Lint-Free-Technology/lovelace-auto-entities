@@ -1,0 +1,19 @@
+id: unique_no_unique
+description: 'unique: No unique #1'
+view_path: unique-no-unique
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - entity_id: light.bed_light
+    - entity_id: light.bed_light
+      options:
+        secondary_info: last-changed
+    - entity_id: light.bed_light
+assertions:
+- type: snapshot
+  name: 50_unique_no_unique
+  threshold: 0.02

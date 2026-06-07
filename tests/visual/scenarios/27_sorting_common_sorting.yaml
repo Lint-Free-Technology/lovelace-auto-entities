@@ -1,0 +1,18 @@
+id: sorting_common_sorting
+description: 'sorting: Common sorting #1'
+view_path: sorting-common-sorting
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+    - domain: sensor
+  sort:
+    method: state
+assertions:
+- type: snapshot
+  name: 27_sorting_common_sorting
+  threshold: 0.02

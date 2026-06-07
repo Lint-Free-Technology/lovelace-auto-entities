@@ -1,0 +1,17 @@
+id: matching_globbing
+description: 'matching: Globbing #1'
+view_path: matching-globbing
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - name: '*Light'
+    - type: section
+    - name: '*Light*'
+assertions:
+- type: snapshot
+  name: 17_matching_globbing
+  threshold: 0.02

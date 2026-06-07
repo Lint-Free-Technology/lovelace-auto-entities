@@ -1,0 +1,21 @@
+id: sorting_per_filter_sorting
+description: 'sorting: Per filter sorting #1'
+view_path: sorting-per-filter-sorting
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+      sort:
+        method: state
+    - domain: sensor
+      sort:
+        method: state
+        reverse: true
+assertions:
+- type: snapshot
+  name: 28_sorting_per_filter_sorting
+  threshold: 0.02

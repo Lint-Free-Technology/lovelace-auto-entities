@@ -1,0 +1,17 @@
+id: options_unique_matches
+description: 'options: Unique matches #1'
+view_path: options-unique-matches
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  unique: true
+  filter:
+    include:
+    - domain: light
+    - state: 'on'
+assertions:
+- type: snapshot
+  name: 58_options_unique_matches
+  threshold: 0.02

@@ -1,0 +1,18 @@
+id: options_eval_js_in_options_state_object_access
+description: 'options: eval_js in options (state object access) #1'
+view_path: options-eval-js-in-options-state-object-access
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+      options:
+        eval_js: true
+        name: ${ state.attributes.friendly_name }
+assertions:
+- type: snapshot
+  name: 61_options_eval_js_in_options_state_object_access
+  threshold: 0.02

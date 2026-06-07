@@ -1,0 +1,18 @@
+id: rename_rename_remove_area_name_prefix_automatically
+description: 'rename: Rename – remove area name prefix automatically #1'
+view_path: rename-rename-remove-area-name-prefix-automatically
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: sensor
+      area: '*'
+  rename:
+    method: remove_area
+assertions:
+- type: snapshot
+  name: 45_rename_rename_remove_area_name_prefix_automatically
+  threshold: 0.02

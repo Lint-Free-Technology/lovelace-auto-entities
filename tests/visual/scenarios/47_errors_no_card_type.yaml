@@ -1,0 +1,14 @@
+id: errors_no_card_type
+description: 'errors: No card type #1'
+view_path: errors-no-card-type
+card:
+  type: custom:auto-entities
+  card:
+    title: My card
+  filter:
+    include:
+    - domain: light
+assertions:
+- type: snapshot
+  name: 47_errors_no_card_type
+  threshold: 0.02
