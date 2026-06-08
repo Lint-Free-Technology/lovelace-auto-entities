@@ -1,0 +1,37 @@
+id: rename_remove_area_name_prefix_automatically
+description: 'rename: Rename – remove area name prefix automatically #1'
+view_path: rename-remove-area-name-prefix-automatically
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_kitchen_lights
+      brightness: 255
+  - type: device_registry_update
+    entity_id: light.bed_light
+    area_name: bedroom
+  - type: device_registry_update
+    entity_id: light.kitchen_lights
+    area_name: kitchen
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: light
+      area: '*'
+  rename:
+    method: remove_area
+assertions:
+- type: snapshot
+  name: 45_rename_remove_area_name_prefix_automatically
+  threshold: 0.02

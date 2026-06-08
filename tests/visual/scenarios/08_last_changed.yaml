@@ -16,16 +16,6 @@ setup:
     data:
       entity_id: light.bed_light
 
-interactions:
-  - type: wait
-    ms: 6000
-  - type: ha_service
-    domain: light
-    service: turn_on
-    data:
-      entity_id: light.bed_light
-      brightness: 255
-
 card:
   type: custom:auto-entities
   card:

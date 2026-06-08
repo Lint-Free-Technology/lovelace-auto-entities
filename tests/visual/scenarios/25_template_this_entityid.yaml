@@ -1,0 +1,24 @@
+id: template_this_entityid
+description: 'template: this.entityid #1'
+view_path: template-this-entityid
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - domain: light
+      options:
+        name: this.entity_id
+assertions:
+- type: snapshot
+  name: 25_template_this_entityid
+  threshold: 0.02

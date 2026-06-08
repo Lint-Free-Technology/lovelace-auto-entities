@@ -1,0 +1,38 @@
+id: combined_or
+description: 'combined: Or'
+view_path: combined-or
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - or:
+      - domain: light
+        device: '*'
+        state: 'on'
+      - domain: switch
+        entity_id: switch.dec*
+        state: 'on'
+assertions:
+- type: snapshot
+  name: 33_combined_or
+  threshold: 0.02

@@ -1,0 +1,18 @@
+id: options_entity_options
+description: 'options: Entity options #1'
+view_path: options-entity-options
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+    - entity_id: light.bed_light
+      options:
+        name: Lamp
+        icon: mdi:lamp
+assertions:
+- type: snapshot
+  name: 57_options_entity_options
+  threshold: 0.02
