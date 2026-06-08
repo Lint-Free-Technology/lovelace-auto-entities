@@ -1,0 +1,40 @@
+id: hidden_by
+description: Scenario with hidden by user filter
+view_path: hidden_by
+
+setup:
+  - type: ha_service
+    domain: input_boolean
+    service: turn_on
+    data:
+      entity_id: input_boolean.test_toggle
+  - type: entity_update_hidden_by
+    entity_id: input_boolean.test_toggle
+    hidden_by: user
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+    filter:
+      include:
+        - hidden_by: user
+  - type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+    filter:
+      include:
+        - domain: input_boolean
+      exclude:
+        - hidden_by: user
+
+assertions:
+  - type: snapshot
+    name: "11_hidden_by"
+    threshold: 0.02
+
+teardown:
+  - type: entity_update_hidden_by
+    entity_id: input_boolean.test_toggle

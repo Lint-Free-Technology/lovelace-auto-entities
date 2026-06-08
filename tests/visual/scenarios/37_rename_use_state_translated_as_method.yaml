@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: rename_use_state_translated_as_method
+description: 'rename: Rename – use state_translated as method #1'
+view_path: rename-use-state-translated-as-method
 
 setup:
   - type: ha_service
@@ -18,14 +18,10 @@ card:
   filter:
     include:
       - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+  rename:
+    method: state_translated
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 37_rename_use_state_translated_as_method
     threshold: 0.02

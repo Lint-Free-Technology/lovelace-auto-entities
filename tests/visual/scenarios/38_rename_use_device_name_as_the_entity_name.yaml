@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: rename_use_device_name_as_the_entity_name
+description: 'rename: Rename – use device name as the entity name #1'
+view_path: rename-use-device-name-as-the-entity-name
 
 setup:
   - type: ha_service
@@ -18,14 +18,11 @@ card:
   filter:
     include:
       - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+        device: '*'
+  rename:
+    method: device
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 38_rename_use_device_name_as_the_entity_name
     threshold: 0.02

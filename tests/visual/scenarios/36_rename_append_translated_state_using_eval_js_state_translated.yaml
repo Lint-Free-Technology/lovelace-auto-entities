@@ -1,0 +1,32 @@
+id: rename_append_translated_state_using_eval_js_state_translated
+description: 'rename: Rename – append translated state using eval_js (state_translated)
+  #1'
+view_path: rename-append-translated-state-using-eval-js-state-translated
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - domain: light
+  rename:
+    method: friendly_name
+    append: ' (${state_translated})'
+    eval_js: true
+  sort:
+    count: 10
+
+assertions:
+  - type: snapshot
+    name: 36_rename_append_translated_state_using_eval_js_state_translated
+    threshold: 0.02

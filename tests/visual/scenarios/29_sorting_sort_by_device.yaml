@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: sorting_sort_by_device
+description: 'sorting: Sort by device'
+view_path: sorting-sort-by-device
 
 setup:
   - type: ha_service
@@ -18,14 +18,11 @@ card:
   filter:
     include:
       - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+        device: '*'
+        sort:
+          method: device
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 29_sorting_sort_by_device
     threshold: 0.02

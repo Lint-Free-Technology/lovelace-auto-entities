@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: template_this_entityid
+description: 'template: this.entityid #1'
+view_path: template-this-entityid
 
 setup:
   - type: ha_service
@@ -18,14 +18,10 @@ card:
   filter:
     include:
       - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+        options:
+          name: this.entity_id
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 24_template_this_entityid
     threshold: 0.02

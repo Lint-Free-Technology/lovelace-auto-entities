@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: matching_regex
+description: 'matching: Regex #1'
+view_path: matching-regex
 
 setup:
   - type: ha_service
@@ -9,6 +9,11 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
 
 card:
   type: custom:auto-entities
@@ -17,15 +22,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-      - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+      - name: /Light/
+      - type: section
+      - name: /Light$/
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 18_matching_regex
     threshold: 0.02

@@ -1,6 +1,6 @@
-id: basic
-description: Scenario with light filter
-view_path: basic
+id: matching_attributes
+description: 'matching: Attributes #1'
+view_path: matching-attributes
 
 setup:
   - type: ha_service
@@ -18,14 +18,10 @@ card:
   filter:
     include:
       - domain: light
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+        attributes:
+          hs_color:1: '> 50'
 
 assertions:
-  - type: element_present
-    root: hui-entities-card
-    selector: "#states"
   - type: snapshot
-    name: "01_basic"
+    name: 20_matching_attributes
     threshold: 0.02

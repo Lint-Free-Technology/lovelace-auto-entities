@@ -1,0 +1,40 @@
+id: rename_use_area_name_as_the_entity_name
+description: 'rename: Rename – use area name as the entity name #1'
+view_path: rename-use-area-name-as-the-entity-name
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.kitchen_lights
+      brightness: 255
+  - type: device_registry_update
+    entity_id: light.bed_light
+    area_name: bedroom
+  - type: device_registry_update
+    entity_id: light.kitchen_lights
+    area_name: kitchen
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - domain: light
+        area: '*'
+  rename:
+    method: area
+
+assertions:
+  - type: snapshot
+    name: 39_rename_use_area_name_as_the_entity_name
+    threshold: 0.02
