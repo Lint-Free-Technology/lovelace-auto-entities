@@ -1,0 +1,26 @@
+id: doc_readme_wildcards
+description: Scenario with wildcard filters
+view_path: doc-readme-wildcards
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+  filter:
+    include:
+      - name: "Kitchen *"
+      - entity_id: "sensor.outside_*"
+
+doc_image:
+  output: docs/source/assets/images/03_wildcards.png
+  root: auto-entities
+  padding: 16
+  threshold: 0.02

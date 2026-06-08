@@ -1,6 +1,6 @@
-id: doc_readme_basic
-description: Scenario with light filter
-view_path: doc-readme-basic
+id: doc_readme_section_label
+description: Scenario with section filter
+view_path: doc-readme-section-label
 
 setup:
   - type: ha_service
@@ -27,14 +27,15 @@ card:
   filter:
     include:
       - domain: light
-      - type: divider
+      - type: section
+        label: Switches
       - domain: switch
     exclude:
       - entity_id: light.all_lights
       - entity_id: light.all_lights_group
 
 doc_image:
-  output: docs/source/assets/images/01_basic.png
+  output: docs/source/assets/images/02_section_label.png
   root: auto-entities
   padding: 16
   threshold: 0.02

@@ -1,6 +1,6 @@
-id: doc_readme_basic
-description: Scenario with light filter
-view_path: doc-readme-basic
+id: doc_readme_regex
+description: Scenario with regex filters
+view_path: doc-readme-regex
 
 setup:
   - type: ha_service
@@ -14,11 +14,6 @@ setup:
     service: turn_on
     data:
       entity_id: switch.decorative_lights
-  - type: ha_service
-    domain: switch
-    service: turn_on
-    data:
-      entity_id: switch.ac
 
 card:
   type: custom:auto-entities
@@ -26,15 +21,11 @@ card:
     type: entities
   filter:
     include:
-      - domain: light
-      - type: divider
-      - domain: switch
-    exclude:
-      - entity_id: light.all_lights
-      - entity_id: light.all_lights_group
+      - name: "/^.* [Ll]ights?$/"
+      - entity_id: "/sensor.a[1|2]?$/"
 
 doc_image:
-  output: docs/source/assets/images/01_basic.png
+  output: docs/source/assets/images/04_regex.png
   root: auto-entities
   padding: 16
   threshold: 0.02
