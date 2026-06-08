@@ -15,5 +15,5 @@ card:
     count: 10
 assertions:
 - type: snapshot
-  name: 27_sorting_common_sorting
+  name: 26_sorting_common_sorting
   threshold: 0.02

@@ -1,6 +1,6 @@
-id: combined_not
-description: 'combined: Not'
-view_path: combined-not
+id: combined_and
+description: 'combined: And'
+view_path: combined-and
 setup:
   - type: ha_service
     domain: light
@@ -21,11 +21,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - state: 'on'
-      entity_id: /lights$/
-      not:
-        domain: light
+    - and:
+      - domain: light
+        device: '*'
+      - state: 'on'
 assertions:
 - type: snapshot
-  name: 34_combined_not
+  name: 30_combined_and
   threshold: 0.02

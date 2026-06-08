@@ -19,5 +19,5 @@ card:
         reverse: true
 assertions:
 - type: snapshot
-  name: 28_sorting_per_filter_sorting
+  name: 27_sorting_per_filter_sorting
   threshold: 0.02

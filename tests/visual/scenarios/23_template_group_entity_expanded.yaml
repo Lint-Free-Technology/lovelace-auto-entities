@@ -25,5 +25,5 @@ card:
           template: '{{state_attr(config.entity, ''entity_id'')}}'
 assertions:
 - type: snapshot
-  name: 24_template_group_entity_expanded
+  name: 23_template_group_entity_expanded
   threshold: 0.02

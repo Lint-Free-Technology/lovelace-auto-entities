@@ -1,6 +1,6 @@
-id: options_show_empty_2
-description: 'options: show_empty #2'
-view_path: options-show-empty-2
+id: options_show_empty_1
+description: 'options: show_empty #1'
+view_path: options-show-empty-1
 setup:
   - type: ha_service
     domain: light
@@ -12,12 +12,11 @@ card:
   card:
     type: entities
     show_header_toggle: false
-  show_empty: false
   filter:
     include:
     - domain: light
       state: 'on'
 assertions:
 - type: snapshot
-  name: 54_options_show_empty_2
+  name: 45_options_show_empty_1
   threshold: 0.02

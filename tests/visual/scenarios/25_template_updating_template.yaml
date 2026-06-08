@@ -33,5 +33,5 @@ card:
       '
 assertions:
 - type: snapshot
-  name: 26_template_updating_template
+  name: 25_template_updating_template
   threshold: 0.02

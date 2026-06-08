@@ -1,6 +1,6 @@
-id: options_show_empty_4
-description: 'options: show_empty #4'
-view_path: options-show-empty-4
+id: rename_append_state_using_eval_js
+description: 'rename: Rename – append state using eval_js #1'
+view_path: rename-append-state-using-eval-js
 setup:
   - type: ha_service
     domain: light
@@ -13,14 +13,16 @@ card:
   card:
     type: entities
     show_header_toggle: false
-  else:
-    type: markdown
-    content: All lights are on
   filter:
     include:
     - domain: light
-      state: 'off'
+  rename:
+    method: friendly_name
+    append: ' (${state})'
+    eval_js: true
+  sort:
+    count: 10
 assertions:
 - type: snapshot
-  name: 56_options_show_empty_4
+  name: 35_rename_append_state_using_eval_js
   threshold: 0.02

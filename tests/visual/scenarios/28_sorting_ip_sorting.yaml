@@ -9,11 +9,11 @@ card:
   filter:
     include:
     - domain: sensor
-      name: ip*
+      name: 28_sorting_ip_sorting
       sort:
         method: state
         ip: true
 assertions:
 - type: snapshot
-  name: 29_sorting_ip_sorting
+  name: 28_sorting_ip_sorting
   threshold: 0.02

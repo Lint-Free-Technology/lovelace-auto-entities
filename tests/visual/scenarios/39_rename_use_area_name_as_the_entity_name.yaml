@@ -1,6 +1,6 @@
-id: rename_remove_area_name_prefix_automatically
-description: 'rename: Rename – remove area name prefix automatically #1'
-view_path: rename-remove-area-name-prefix-automatically
+id: rename_use_area_name_as_the_entity_name
+description: 'rename: Rename – use area name as the entity name #1'
+view_path: rename-use-area-name-as-the-entity-name
 setup:
   - type: ha_service
     domain: light
@@ -12,7 +12,7 @@ setup:
     domain: light
     service: turn_on
     data:
-      entity_id: light.bed_kitchen_lights
+      entity_id: light.kitchen_lights
       brightness: 255
   - type: device_registry_update
     entity_id: light.bed_light
@@ -30,8 +30,8 @@ card:
     - domain: light
       area: '*'
   rename:
-    method: remove_area
+    method: area
 assertions:
 - type: snapshot
-  name: 45_rename_remove_area_name_prefix_automatically
+  name: 39_rename_use_area_name_as_the_entity_name
   threshold: 0.02
