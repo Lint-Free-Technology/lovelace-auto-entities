@@ -1,6 +1,7 @@
 id: pagination_global_1_10
 description: 'pagination: Global 1-10'
 view_path: pagination-global-1-10
+
 card:
   type: custom:auto-entities
   card:
@@ -8,10 +9,11 @@ card:
     title: Global 1-10
   filter:
     include:
-    - entity_id: sensor.a*
+      - entity_id: sensor.a*
   sort:
     count: 10
+
 assertions:
-- type: snapshot
-  name: 13_pagination_global_1_10
-  threshold: 0.02
+  - type: snapshot
+    name: 13_pagination_global_1_10
+    threshold: 0.02

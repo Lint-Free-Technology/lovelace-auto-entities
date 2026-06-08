@@ -1,6 +1,7 @@
 id: unique_unique
 description: 'unique: Unique'
 view_path: unique-unique
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.bed_light
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -16,10 +18,11 @@ card:
   unique: true
   filter:
     include:
-    - entity_id: light.bed_light
-    - entity_id: light.bed_light
-    - entity_id: light.bed_light
+      - entity_id: light.bed_light
+      - entity_id: light.bed_light
+      - entity_id: light.bed_light
+
 assertions:
-- type: snapshot
-  name: 43_unique_unique
-  threshold: 0.02
+  - type: snapshot
+    name: 43_unique_unique
+    threshold: 0.02

@@ -1,6 +1,7 @@
 id: template_group_entity_expanded
 description: 'template: Group entity expanded #1'
 view_path: template-group-entity-expanded
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -15,15 +17,16 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - group: light.all_lights_group
-      options:
-        type: custom:auto-entities
-        card: 
-          type: entities
-          show_header_toggle: false
-        filter:
-          template: '{{state_attr(config.entity, ''entity_id'')}}'
+      - group: light.all_lights_group
+        options:
+          type: custom:auto-entities
+          card: 
+            type: entities
+            show_header_toggle: false
+          filter:
+            template: '{{state_attr(config.entity, ''entity_id'')}}'
+
 assertions:
-- type: snapshot
-  name: 23_template_group_entity_expanded
-  threshold: 0.02
+  - type: snapshot
+    name: 23_template_group_entity_expanded
+    threshold: 0.02

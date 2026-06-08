@@ -1,6 +1,7 @@
 id: sorting_per_filter_sorting
 description: 'sorting: Per filter sorting #1'
 view_path: sorting-per-filter-sorting
+
 card:
   type: custom:auto-entities
   card:
@@ -8,16 +9,17 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - entity_id: /sensor\.a.$/
-      sort:
-        method: state
-        count: 5
-    - entity_id: /sensor\.a.$/
-      sort:
-        method: state
-        count: 5
-        reverse: true
+      - entity_id: /sensor\.a.$/
+        sort:
+          method: state
+          count: 5
+      - entity_id: /sensor\.a.$/
+        sort:
+          method: state
+          count: 5
+          reverse: true
+
 assertions:
-- type: snapshot
-  name: 27_sorting_per_filter_sorting
-  threshold: 0.02
+  - type: snapshot
+    name: 27_sorting_per_filter_sorting
+    threshold: 0.02

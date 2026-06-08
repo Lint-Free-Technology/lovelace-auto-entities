@@ -1,6 +1,7 @@
 id: sorting_common_sorting
 description: 'sorting: Common sorting #1'
 view_path: sorting-common-sorting
+
 card:
   type: custom:auto-entities
   card:
@@ -8,12 +9,13 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - entity_id: /sensor\.a.$/
-    - entity_id: /sensor\.a.$/
+      - entity_id: /sensor\.a.$/
+      - entity_id: /sensor\.a.$/
   sort:
     method: state
     count: 10
+
 assertions:
-- type: snapshot
-  name: 26_sorting_common_sorting
-  threshold: 0.02
+  - type: snapshot
+    name: 26_sorting_common_sorting
+    threshold: 0.02

@@ -1,6 +1,7 @@
 id: matching_attributes
 description: 'matching: Attributes #1'
 view_path: matching-attributes
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -15,10 +17,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: light
-      attributes:
-        hs_color:1: '> 50'
+      - domain: light
+        attributes:
+          hs_color:1: '> 50'
+
 assertions:
-- type: snapshot
-  name: 20_matching_attributes
-  threshold: 0.02
+  - type: snapshot
+    name: 20_matching_attributes
+    threshold: 0.02

@@ -1,6 +1,7 @@
 id: sorting_ip_sorting
 description: 'sorting: Ip sorting #1'
 view_path: sorting-ip-sorting
+
 card:
   type: custom:auto-entities
   card:
@@ -8,12 +9,13 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: sensor
-      name: ip*
-      sort:
-        method: state
-        ip: true
+      - domain: sensor
+        name: ip*
+        sort:
+          method: state
+          ip: true
+
 assertions:
-- type: snapshot
-  name: 28_sorting_ip_sorting
-  threshold: 0.02
+  - type: snapshot
+    name: 28_sorting_ip_sorting
+    threshold: 0.02

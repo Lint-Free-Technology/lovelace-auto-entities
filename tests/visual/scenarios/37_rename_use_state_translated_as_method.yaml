@@ -1,6 +1,7 @@
 id: rename_use_state_translated_as_method
 description: 'rename: Rename – use state_translated as method #1'
 view_path: rename-use-state-translated-as-method
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -15,10 +17,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: light
+      - domain: light
   rename:
     method: state_translated
+
 assertions:
-- type: snapshot
-  name: 37_rename_use_state_translated_as_method
-  threshold: 0.02
+  - type: snapshot
+    name: 37_rename_use_state_translated_as_method
+    threshold: 0.02
