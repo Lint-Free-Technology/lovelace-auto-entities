@@ -1,6 +1,7 @@
 id: rename_append_state_using_eval_js
 description: 'rename: Rename – append state using eval_js #1'
 view_path: rename-append-state-using-eval-js
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -15,14 +17,15 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: light
+      - domain: light
   rename:
     method: friendly_name
     append: ' (${state})'
     eval_js: true
   sort:
     count: 10
+
 assertions:
-- type: snapshot
-  name: 35_rename_append_state_using_eval_js
-  threshold: 0.02
+  - type: snapshot
+    name: 35_rename_append_state_using_eval_js
+    threshold: 0.02

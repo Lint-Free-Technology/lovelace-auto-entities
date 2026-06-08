@@ -1,6 +1,7 @@
 id: matching_regex
 description: 'matching: Regex #1'
 view_path: matching-regex
+
 setup:
   - type: ha_service
     domain: light
@@ -13,6 +14,7 @@ setup:
     service: turn_on
     data:
       entity_id: switch.decorative_lights
+
 card:
   type: custom:auto-entities
   card:
@@ -20,10 +22,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - name: /Light/
-    - type: section
-    - name: /Light$/
+      - name: /Light/
+      - type: section
+      - name: /Light$/
+
 assertions:
-- type: snapshot
-  name: 18_matching_regex
-  threshold: 0.02
+  - type: snapshot
+    name: 18_matching_regex
+    threshold: 0.02

@@ -1,12 +1,14 @@
 id: options_show_empty_2
 description: 'options: show_empty #2'
 view_path: options-show-empty-2
+
 setup:
   - type: ha_service
     domain: light
     service: turn_off
     data:
       entity_id: light.all_lights
+
 card:
   type: custom:auto-entities
   card:
@@ -15,9 +17,10 @@ card:
   show_empty: false
   filter:
     include:
-    - domain: light
-      state: 'on'
+      - domain: light
+        state: 'on'
+
 assertions:
-- type: snapshot
-  name: 46_options_show_empty_2
-  threshold: 0.02
+  - type: snapshot
+    name: 46_options_show_empty_2
+    threshold: 0.02

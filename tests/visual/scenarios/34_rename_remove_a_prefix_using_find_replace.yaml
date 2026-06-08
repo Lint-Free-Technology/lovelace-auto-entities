@@ -1,6 +1,7 @@
 id: rename_remove_a_prefix_using_find_replace
 description: 'rename: Rename – remove a prefix using find/replace #1'
 view_path: rename-remove-a-prefix-using-find-replace
+
 card:
   type: custom:auto-entities
   card:
@@ -8,14 +9,15 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - entity_id: sensor.a*
+      - entity_id: sensor.a*
   rename:
     method: friendly_name
     find: '^a'
     replace: ''
   sort:
     count: 10
+
 assertions:
-- type: snapshot
-  name: 34_rename_remove_a_prefix_using_find_replace
-  threshold: 0.02
+  - type: snapshot
+    name: 34_rename_remove_a_prefix_using_find_replace
+    threshold: 0.02

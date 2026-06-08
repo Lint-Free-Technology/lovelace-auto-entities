@@ -1,6 +1,7 @@
 id: pagination_local_11_20
 description: 'pagination: Local 11-20'
 view_path: pagination-local-11-20
+
 card:
   type: custom:auto-entities
   card:
@@ -8,11 +9,12 @@ card:
     title: Local 11-20
   filter:
     include:
-    - entity_id: sensor.a*
-      sort:
-        count: 10
-        first: 10
+      - entity_id: sensor.a*
+        sort:
+          count: 10
+          first: 10
+
 assertions:
-- type: snapshot
-  name: 16_pagination_local_11_20
-  threshold: 0.02
+  - type: snapshot
+    name: 16_pagination_local_11_20
+    threshold: 0.02

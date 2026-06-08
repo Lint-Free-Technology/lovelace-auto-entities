@@ -1,6 +1,7 @@
 id: rename_per_filter_rename_with_eval_js_prepend_area
 description: 'rename: Rename – per-filter rename with eval_js (prepend area) #1'
 view_path: rename-per-filter-rename-with-eval-js-prepend-area
+
 setup:
   - type: ha_service
     domain: light
@@ -14,6 +15,7 @@ setup:
   - type: device_registry_update
     entity_id: light.kitchen_lights
     area_name: kitchen
+
 card:
   type: custom:auto-entities
   card:
@@ -21,13 +23,14 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - entity_id: light.bed_light
-    - entity_id: light.kitchen_lights
-      rename:
-        method: friendly_name
-        prepend: '${area ? area + '': '' : ''''}'
-        eval_js: true
+      - entity_id: light.bed_light
+      - entity_id: light.kitchen_lights
+        rename:
+          method: friendly_name
+          prepend: '${area ? area + '': '' : ''''}'
+          eval_js: true
+
 assertions:
-- type: snapshot
-  name: 40_rename_per_filter_rename_with_eval_js_prepend_area
-  threshold: 0.02
+  - type: snapshot
+    name: 40_rename_per_filter_rename_with_eval_js_prepend_area
+    threshold: 0.02

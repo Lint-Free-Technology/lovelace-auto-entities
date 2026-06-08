@@ -1,6 +1,7 @@
 id: matching_comparison
 description: 'matching: Comparison #1'
 view_path: matching-comparison
+
 setup:
   - type: ha_service
     domain: light
@@ -20,6 +21,7 @@ setup:
     data:
       entity_id: light.ceiling_lights
       brightness: 25
+
 card:
   type: custom:auto-entities
   card:
@@ -27,24 +29,25 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - attributes:
-        brightness: '>50'
-    - type: section
-    - attributes:
-        brightness: <150
-    - type: section
-    - attributes:
-        brightness: '!255'
-    - type: section
-    - attributes 1:
-        brightness: '>50'
-      attributes 2:
-        brightness: <150
-    - type: section
-    - attributes:
-        brightness 1: '>50'
-        brightness 2: <150
+      - attributes:
+          brightness: '>50'
+      - type: section
+      - attributes:
+          brightness: <150
+      - type: section
+      - attributes:
+          brightness: '!255'
+      - type: section
+      - attributes 1:
+          brightness: '>50'
+        attributes 2:
+          brightness: <150
+      - type: section
+      - attributes:
+          brightness 1: '>50'
+          brightness 2: <150
+
 assertions:
-- type: snapshot
-  name: 19_matching_comparison
-  threshold: 0.02
+  - type: snapshot
+    name: 19_matching_comparison
+    threshold: 0.02

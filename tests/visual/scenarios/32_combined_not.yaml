@@ -1,12 +1,14 @@
 id: combined_not
 description: 'combined: Not'
 view_path: combined-not
+
 setup:
   - type: ha_service
     domain: light
     service: turn_off
     data:
       entity_id: light.all_lights
+
 setup:
   - type: ha_service
     domain: light
@@ -14,6 +16,7 @@ setup:
     data:
       entity_id: light.bed_light
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -21,11 +24,12 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - state: 'on'
-      entity_id: /lights$/
-      not:
-        domain: light
+      - state: 'on'
+        entity_id: /lights$/
+        not:
+          domain: light
+
 assertions:
-- type: snapshot
-  name: 32_combined_not
-  threshold: 0.02
+  - type: snapshot
+    name: 32_combined_not
+    threshold: 0.02

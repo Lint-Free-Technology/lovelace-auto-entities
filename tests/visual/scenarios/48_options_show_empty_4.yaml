@@ -1,6 +1,7 @@
 id: options_show_empty_4
 description: 'options: show_empty #4'
 view_path: options-show-empty-4
+
 setup:
   - type: ha_service
     domain: light
@@ -8,6 +9,7 @@ setup:
     data:
       entity_id: light.all_lights
       brightness: 255
+
 card:
   type: custom:auto-entities
   card:
@@ -18,9 +20,10 @@ card:
     content: All lights are on
   filter:
     include:
-    - domain: light
-      state: 'off'
+      - domain: light
+        state: 'off'
+
 assertions:
-- type: snapshot
-  name: 48_options_show_empty_4
-  threshold: 0.02
+  - type: snapshot
+    name: 48_options_show_empty_4
+    threshold: 0.02
