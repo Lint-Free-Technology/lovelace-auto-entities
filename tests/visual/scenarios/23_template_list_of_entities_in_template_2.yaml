@@ -1,6 +1,13 @@
 id: template_list_of_entities_in_template_2
 description: 'template: List of entities in template #2'
 view_path: template-list-of-entities-in-template-2
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
 card:
   type: custom:auto-entities
   card:

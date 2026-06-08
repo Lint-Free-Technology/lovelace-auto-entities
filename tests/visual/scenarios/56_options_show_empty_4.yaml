@@ -1,6 +1,13 @@
 id: options_show_empty_4
 description: 'options: show_empty #4'
 view_path: options-show-empty-4
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
 card:
   type: custom:auto-entities
   card:

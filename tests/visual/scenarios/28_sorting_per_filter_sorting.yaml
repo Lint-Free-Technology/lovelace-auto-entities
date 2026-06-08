@@ -8,12 +8,14 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: sensor
+    - entity_id: /sensor\.a.$/
       sort:
         method: state
-    - domain: sensor
+        count: 5
+    - entity_id: /sensor\.a.$/
       sort:
         method: state
+        count: 5
         reverse: true
 assertions:
 - type: snapshot

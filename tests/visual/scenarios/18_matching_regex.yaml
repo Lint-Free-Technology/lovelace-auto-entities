@@ -1,6 +1,18 @@
 id: matching_regex
 description: 'matching: Regex #1'
 view_path: matching-regex
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
 card:
   type: custom:auto-entities
   card:

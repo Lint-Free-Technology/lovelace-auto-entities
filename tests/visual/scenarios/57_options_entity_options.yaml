@@ -8,7 +8,7 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: light
+    - entity_id: light.bed_light
       options:
         name: Lamp
         icon: mdi:lamp

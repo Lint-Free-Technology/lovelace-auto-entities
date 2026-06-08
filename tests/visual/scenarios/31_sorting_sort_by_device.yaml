@@ -1,12 +1,13 @@
-id: options_show_empty_1
-description: 'options: show_empty #1'
-view_path: options-show-empty-1
+id: sorting_sort_by_device
+description: 'sorting: Sort by device'
+view_path: sorting-sort-by-device
 setup:
   - type: ha_service
     domain: light
     service: turn_off
     data:
       entity_id: light.all_lights
+      brightness: 255
 card:
   type: custom:auto-entities
   card:
@@ -15,8 +16,10 @@ card:
   filter:
     include:
     - domain: light
-      state: 'on'
+      device: '*'
+      sort:
+        method: device
 assertions:
 - type: snapshot
-  name: 53_options_show_empty_1
+  name: 31_sorting_sort_by_device
   threshold: 0.02

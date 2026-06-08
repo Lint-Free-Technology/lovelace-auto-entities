@@ -1,6 +1,13 @@
 id: unique_unique_entity
-description: 'unique: Unique Entity #1'
+description: 'unique: Unique Entity'
 view_path: unique-unique-entity
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
 card:
   type: custom:auto-entities
   card:
@@ -11,8 +18,6 @@ card:
     include:
     - entity_id: light.bed_light
     - entity_id: light.bed_light
-      options:
-        secondary_info: last-changed
     - entity_id: light.bed_light
 assertions:
 - type: snapshot

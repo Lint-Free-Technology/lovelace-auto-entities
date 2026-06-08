@@ -1,6 +1,19 @@
 id: combined_and
-description: 'combined: And #1'
+description: 'combined: And'
 view_path: combined-and
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
 card:
   type: custom:auto-entities
   card:
@@ -8,15 +21,9 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: light
-    - type: section
-    - state: 'on'
-    - type: section
-    - domain: light
-      state: 'on'
-    - type: section
     - and:
       - domain: light
+        device: '*'
       - state: 'on'
 assertions:
 - type: snapshot

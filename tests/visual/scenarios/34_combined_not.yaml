@@ -1,6 +1,12 @@
-id: unique_no_unique
-description: 'unique: No unique'
-view_path: unique-no-unique
+id: combined_not
+description: 'combined: Not'
+view_path: combined-not
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
 setup:
   - type: ha_service
     domain: light
@@ -15,10 +21,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - entity_id: light.bed_light
-    - entity_id: light.bed_light
-    - entity_id: light.bed_light
+    - state: 'on'
+      entity_id: /lights$/
+      not:
+        domain: light
 assertions:
 - type: snapshot
-  name: 50_unique_no_unique
+  name: 34_combined_not
   threshold: 0.02

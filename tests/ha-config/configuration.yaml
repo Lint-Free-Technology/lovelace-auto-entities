@@ -50,3 +50,64 @@ light:
       - light.living_room_rgbww_lights
       - light.office_rgbw_lights
       - light.entrance_color_white_lights
+  - platform: group
+    name: "All Lights Group"
+    entities:
+      - light.all_lights
+
+template:
+  - sensor: { name: ip1, state: 192.168.1.10 }
+  - sensor: { name: ip2, state: 192.168.1.100 }
+  - sensor: { name: ip3, state: 192.168.1.2 }
+  - sensor: { name: ip4, state: 192.168.1.200 }
+  - sensor: { name: ip5, state: 192.168.1.21 }
+  - sensor: { name: a1, state: a1 }
+  - sensor: { name: a2, state: a2 }
+  - sensor: { name: a3, state: a3 }
+  - sensor: { name: a4, state: a4 }
+  - sensor: { name: a5, state: a5 }
+  - sensor: { name: a6, state: a6 }
+  - sensor: { name: a7, state: a7 }
+  - sensor: { name: a8, state: a8 }
+  - sensor: { name: a9, state: a9 }
+  - sensor: { name: a10, state: a10 }
+  - sensor: { name: a11, state: a11 }
+  - sensor: { name: a12, state: a12 }
+  - sensor: { name: a13, state: a13 }
+  - sensor: { name: a14, state: a14 }
+  - sensor: { name: a15, state: a15 }
+  - sensor: { name: a16, state: a16 }
+  - sensor: { name: a17, state: a17 }
+  - sensor: { name: a18, state: a18 }
+  - sensor: { name: a19, state: a19 }
+  - sensor: { name: a20, state: a20 }
+  - sensor: { name: a21, state: a21 }
+  - sensor: { name: a22, state: a22 }
+  - sensor: { name: a23, state: a23 }
+  - sensor: { name: a24, state: a24 }
+  - sensor: { name: a25, state: a25 }
+  - sensor: { name: a26, state: a26 }
+  - sensor: { name: a27, state: a27 }
+  - sensor: { name: a28, state: a28 }
+  - sensor: { name: a29, state: a29 }
+  - sensor: { name: a30, state: a30 }
+  - sensor: { name: a31, state: a31 }
+  - sensor: { name: a32, state: a32 }
+  - sensor: { name: a33, state: a33 }
+  - sensor: { name: a34, state: a34 }
+  - sensor: { name: a35, state: a35 }
+  - sensor: { name: a36, state: a36 }
+  - sensor: { name: a37, state: a37 }
+  - sensor: { name: a38, state: a38 }
+  - sensor: { name: a39, state: a39 }
+  - sensor: { name: a40, state: a40 }
+  - sensor: { name: a41, state: a41 }
+  - sensor: { name: a42, state: a42 }
+  - sensor: { name: a43, state: a43 }
+  - sensor: { name: a44, state: a44 }
+  - sensor: { name: a45, state: a45 }
+  - sensor: { name: a46, state: a46 }
+  - sensor: { name: a47, state: a47 }
+  - sensor: { name: a48, state: a48 }
+  - sensor: { name: a49, state: a49 }
+  - sensor: { name: a50, state: a50 }

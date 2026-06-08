@@ -1,12 +1,13 @@
-id: options_show_empty_1
-description: 'options: show_empty #1'
-view_path: options-show-empty-1
+id: matching_attributes
+description: 'matching: Attributes #1'
+view_path: matching-attributes
 setup:
   - type: ha_service
     domain: light
-    service: turn_off
+    service: turn_on
     data:
       entity_id: light.all_lights
+      brightness: 255
 card:
   type: custom:auto-entities
   card:
@@ -15,8 +16,9 @@ card:
   filter:
     include:
     - domain: light
-      state: 'on'
+      attributes:
+        hs_color:1: '> 50'
 assertions:
 - type: snapshot
-  name: 53_options_show_empty_1
+  name: 20_matching_attributes
   threshold: 0.02

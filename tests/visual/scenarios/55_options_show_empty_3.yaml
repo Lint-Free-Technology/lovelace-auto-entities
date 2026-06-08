@@ -1,6 +1,12 @@
 id: options_show_empty_3
 description: 'options: show_empty #3'
 view_path: options-show-empty-3
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
 card:
   type: custom:auto-entities
   card:
@@ -11,7 +17,7 @@ card:
     include:
     - type: section
     - domain: light
-      state: 'off'
+      state: 'on'
 assertions:
 - type: snapshot
   name: 55_options_show_empty_3

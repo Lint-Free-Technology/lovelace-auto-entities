@@ -1,6 +1,25 @@
 id: matching_comparison
 description: 'matching: Comparison #1'
 view_path: matching-comparison
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 100
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.ceiling_lights
+      brightness: 25
 card:
   type: custom:auto-entities
   card:

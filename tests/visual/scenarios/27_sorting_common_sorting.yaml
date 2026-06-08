@@ -8,10 +8,11 @@ card:
     show_header_toggle: false
   filter:
     include:
-    - domain: sensor
-    - domain: sensor
+    - entity_id: /sensor\.a.$/
+    - entity_id: /sensor\.a.$/
   sort:
     method: state
+    count: 10
 assertions:
 - type: snapshot
   name: 27_sorting_common_sorting
