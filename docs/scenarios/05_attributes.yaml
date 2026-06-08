@@ -1,0 +1,33 @@
+id: doc_readme_attributes
+description: Scenario with attribute filters
+view_path: doc-readme-attributes
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+  filter:
+    include:
+      - attributes:
+          battery_level: ">= 10" # Attribute battery_level is 10 or more
+      - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
+      - state: "12" # State is exactly "12" but not e.g. "12.0"
+
+doc_image:
+  output: docs/source/assets/images/05_attributes.png
+  root: auto-entities
+  padding: 16
+  threshold: 0.02

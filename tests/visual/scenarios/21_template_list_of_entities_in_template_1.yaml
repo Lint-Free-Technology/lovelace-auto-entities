@@ -1,0 +1,25 @@
+id: template_list_of_entities_in_template_1
+description: 'template: List of entities in template #1'
+view_path: template-list-of-entities-in-template-1
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    template: '{{ [''light.bed_light'', ''light.kitchen_lights'', {''entity'': ''light.ceiling_lights'',
+      ''icon'': ''mdi:lamp''} ] }}'
+
+assertions:
+  - type: snapshot
+    name: 21_template_list_of_entities_in_template_1
+    threshold: 0.02

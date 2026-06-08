@@ -1,0 +1,31 @@
+id: doc_readme_regex
+description: Scenario with regex filters
+view_path: doc-readme-regex
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+  filter:
+    include:
+      - name: "/^.* [Ll]ights?$/"
+      - entity_id: "/sensor.a[1|2]?$/"
+
+doc_image:
+  output: docs/source/assets/images/04_regex.png
+  root: auto-entities
+  padding: 16
+  threshold: 0.02

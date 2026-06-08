@@ -1,0 +1,27 @@
+id: matching_globbing
+description: 'matching: Globbing #1'
+view_path: matching-globbing
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - name: '*Light'
+      - type: section
+      - name: '*Light*'
+
+assertions:
+  - type: snapshot
+    name: 17_matching_globbing
+    threshold: 0.02

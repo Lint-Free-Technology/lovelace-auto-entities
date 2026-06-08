@@ -1,0 +1,40 @@
+id: doc_readme_basic
+description: Scenario with light filter
+view_path: doc-readme-basic
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.all_lights
+      brightness: 255
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.decorative_lights
+  - type: ha_service
+    domain: switch
+    service: turn_on
+    data:
+      entity_id: switch.ac
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+  filter:
+    include:
+      - domain: light
+      - type: divider
+      - domain: switch
+    exclude:
+      - entity_id: light.all_lights
+      - entity_id: light.all_lights_group
+
+doc_image:
+  output: docs/source/assets/images/01_basic.png
+  root: auto-entities
+  padding: 16
+  threshold: 0.02

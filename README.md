@@ -114,7 +114,11 @@ filter:
     - domain: light
     - type: divider
     - domain: switch
+  exclude:
+    - entity_id: light.all_lights
 ```
+
+![Basic example](/docs/source/assets/images/01_basic.png)
 
 **`type: section`** — optionally supply a `label`:
 
@@ -129,6 +133,8 @@ filter:
       label: Switches
     - domain: switch
 ```
+
+![Example with section label](/docs/source/assets/images/02_section.png)
 
 The `label` for a section accepts either a plain string (legacy form) or the choose-selector object form produced by the visual editor. Both are equivalent and supported:
 
@@ -209,11 +215,13 @@ The list of entities added to the card will be on the form:
 Any filter option can use `*` as a wildcard for string comparison. Note that strings must be quoted when doing this:
 
 ```yaml
-filter:
-  include:
-    - name: "Bedroom *"
-    - entity_id: "sensor.temperature_*_max"
+  filter:
+    include:
+      - name: "Kitchen *"
+      - entity_id: "sensor.outside_*"
 ```
+
+![Example with wildcards](/docs/source/assets/images/03_wildcards.png)
 
 ### Regular expressions
 
@@ -221,12 +229,14 @@ Any filter option can use [javascript Regular Expressions](https://developer.moz
 
 <!--- cSpell:disable --->
 ```yaml
-filter:
-  include:
-    - name: "/^.* [Ll]ight$/"
-    - entity_id: "/sensor.temperature_4[abd]/"
+  filter:
+    include:
+      - name: "/^.* [Ll]ights?$/"
+      - entity_id: "/sensor.a[1|2]?$/"
 ```
 <!--- cSpell:disable --->
+
+![Example with regex filter](/docs/source/assets/images/04_regex.png)
 
 ### Numerical comparison
 
@@ -235,16 +245,17 @@ Any filter option dealing with numerical quantities can use comparison operators
 ```yaml
 filter:
   include:
-    - attributes:
-        battery_level: "<= 50" # Attribute battery_level is 50 or less
-    - state: "> 25" # State is greater than 25
-    - attributes:
-        count: "! 2" # Attribute count is not equal to 2
-    - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
-    - state: "12" # State is exactly "12" but not e.g. "12.0"
+  filter:
+    include:
+      - attributes:
+          battery_level: ">= 10" # Attribute battery_level is 10 or more
+      - state: "= 12" # State is exactly 12 (also matches "12", "12.0" etc.)
+      - state: "12" # State is exactly "12" but not e.g. "12.0"
 ```
 
 > **Note**: Since `>` has a special function in yaml, the quotation marks are mandatory. `"> 25"`
+
+![Example with attributes numerical comparison](/docs/source/assets/images/05_attributes.png)
 
 ### Time since an event
 
@@ -253,13 +264,16 @@ Any filter option dealing with an event time can filter entities by time elapsed
 ```yaml
 filter:
   include:
-    - attributes:
-        last_seen: "> 1h ago" # Entity was seen more than 1 hour ago
-    - last_updated: "< 20m ago" # Entity was updated less than 20 minutes ago
-    - last_triggered: "> 1d ago" # Entity was triggered more than 1 day ago
+    - domain: sensor
+      attributes:
+        custom_date_time: "> 1h ago" # Sensor custom_date_time attribute more than 1 hour ago
+    - domain: light
+      last_updated: "< 1m ago" # Light was updated less than 1 minute ago
 ```
 
 All the numeric comparison operators are available.
+
+![Example with time filter](/docs/source/assets/images/06_time.png)
 
 ### Repeating options
 

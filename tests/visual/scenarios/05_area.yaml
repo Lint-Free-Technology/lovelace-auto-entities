@@ -1,0 +1,38 @@
+id: area
+description: Scenario with area filter  
+view_path: area
+
+setup:
+  - type: device_registry_update
+    entity_id: light.bed_light
+    area_name: bedroom
+  - type: device_registry_update
+    entity_id: light.kitchen_lights
+    area_name: kitchen
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.kitchen_lights
+      brightness: 255
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - area: Bedroom
+      - area: Kitchen
+
+assertions:
+  - type: snapshot
+    name: "05_area"
+    threshold: 0.02

@@ -1,0 +1,35 @@
+id: last_changed
+description: Scenario with last changed filter  
+view_path: last-changed
+
+# last_changed is minutes or greater
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.bed_light
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - last_changed: "< 5"
+        entity_id: light.bed_light
+      - type: section
+      - last_changed: "> 5"
+        entity_id: light.bed_light
+
+assertions:
+  - type: snapshot
+    name: "08_last_changed"
+    threshold: 0.02

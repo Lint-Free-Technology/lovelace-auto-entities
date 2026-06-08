@@ -1,0 +1,4 @@
+input_boolean.test_toggle:
+  hidden: true
+sensor.a1:
+  custom_date_time: "2026-06-08T00:00:00.000Z"

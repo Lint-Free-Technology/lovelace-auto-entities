@@ -1,0 +1,25 @@
+id: options_show_empty_1
+description: 'options: show_empty #1'
+view_path: options-show-empty-1
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - domain: light
+        state: 'on'
+
+assertions:
+  - type: snapshot
+    name: 45_options_show_empty_1
+    threshold: 0.02

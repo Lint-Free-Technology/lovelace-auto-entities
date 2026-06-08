@@ -1,0 +1,37 @@
+id: doc_readme_time
+description: Scenario with time-based filters
+view_path: doc-readme-time
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+  filter:
+    include:
+      - domain: sensor
+        attributes:
+          custom_date_time: "> 1h ago" # Sensor custom_date_time attribute more than 1 hour ago
+      - domain: light
+        state: "on"
+        last_updated: "< 1m ago" # Light was updated (turned on) less than 1 minute ago
+    exclude:
+      - entity_id: light.all_lights
+      - entity_id: light.all_lights_group
+
+doc_image:
+  output: docs/source/assets/images/06_time.png
+  root: auto-entities
+  padding: 16
+  threshold: 0.02
