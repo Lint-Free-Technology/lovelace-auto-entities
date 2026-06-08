@@ -10,7 +10,7 @@ card:
     include:
     - entity_id: light.bed_light
       options:
-        name: 49_options_entity_options
+        name: Lamp
         icon: mdi:lamp
 assertions:
 - type: snapshot

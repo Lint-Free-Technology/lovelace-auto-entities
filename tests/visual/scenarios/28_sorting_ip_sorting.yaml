@@ -9,7 +9,7 @@ card:
   filter:
     include:
     - domain: sensor
-      name: 28_sorting_ip_sorting
+      name: ip*
       sort:
         method: state
         ip: true

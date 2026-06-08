@@ -17,7 +17,7 @@ card:
     include:
     - domain: light
       options:
-        name: 24_template_this_entityid
+        name: this.entity_id
 assertions:
 - type: snapshot
   name: 24_template_this_entityid
