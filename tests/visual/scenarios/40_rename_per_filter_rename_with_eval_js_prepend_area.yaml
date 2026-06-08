@@ -29,5 +29,5 @@ card:
         eval_js: true
 assertions:
 - type: snapshot
-  name: 43_rename_per_filter_rename_with_eval_js_prepend_area
+  name: 40_rename_per_filter_rename_with_eval_js_prepend_area
   threshold: 0.02

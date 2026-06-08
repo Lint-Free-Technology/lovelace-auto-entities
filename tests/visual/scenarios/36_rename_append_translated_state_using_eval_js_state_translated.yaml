@@ -25,5 +25,5 @@ card:
     count: 10
 assertions:
 - type: snapshot
-  name: 39_rename_append_translated_state_using_eval_js_state_translated
+  name: 36_rename_append_translated_state_using_eval_js_state_translated
   threshold: 0.02

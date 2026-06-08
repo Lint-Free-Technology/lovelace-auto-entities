@@ -18,5 +18,5 @@ card:
       ''icon'': ''mdi:lamp''} ] }}'
 assertions:
 - type: snapshot
-  name: 22_template_list_of_entities_in_template_1
+  name: 21_template_list_of_entities_in_template_1
   threshold: 0.02

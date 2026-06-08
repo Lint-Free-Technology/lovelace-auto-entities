@@ -1,6 +1,6 @@
-id: unique_unique_entity
-description: 'unique: Unique Entity'
-view_path: unique-unique-entity
+id: unique_unique
+description: 'unique: Unique'
+view_path: unique-unique
 setup:
   - type: ha_service
     domain: light
@@ -13,7 +13,7 @@ card:
   card:
     type: entities
     show_header_toggle: false
-  unique: entity
+  unique: true
   filter:
     include:
     - entity_id: light.bed_light
@@ -21,5 +21,5 @@ card:
     - entity_id: light.bed_light
 assertions:
 - type: snapshot
-  name: 52_unique_unique_entity
+  name: 43_unique_unique
   threshold: 0.02

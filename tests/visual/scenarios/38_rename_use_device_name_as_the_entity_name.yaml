@@ -1,6 +1,6 @@
-id: rename_append_state_using_eval_js
-description: 'rename: Rename – append state using eval_js #1'
-view_path: rename-append-state-using-eval-js
+id: rename_use_device_name_as_the_entity_name
+description: 'rename: Rename – use device name as the entity name #1'
+view_path: rename-use-device-name-as-the-entity-name
 setup:
   - type: ha_service
     domain: light
@@ -16,13 +16,10 @@ card:
   filter:
     include:
     - domain: light
+      device: '*'
   rename:
-    method: friendly_name
-    append: ' (${state})'
-    eval_js: true
-  sort:
-    count: 10
+    method: device
 assertions:
 - type: snapshot
-  name: 38_rename_append_state_using_eval_js
+  name: 38_rename_use_device_name_as_the_entity_name
   threshold: 0.02

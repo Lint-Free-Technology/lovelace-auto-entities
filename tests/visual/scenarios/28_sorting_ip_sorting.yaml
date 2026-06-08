@@ -15,5 +15,5 @@ card:
         ip: true
 assertions:
 - type: snapshot
-  name: 29_sorting_ip_sorting
+  name: 28_sorting_ip_sorting
   threshold: 0.02

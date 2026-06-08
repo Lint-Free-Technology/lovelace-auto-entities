@@ -1,6 +1,6 @@
-id: rename_use_device_name_as_the_entity_name
-description: 'rename: Rename – use device name as the entity name #1'
-view_path: rename-use-device-name-as-the-entity-name
+id: template_this_entityid
+description: 'template: this.entityid #1'
+view_path: template-this-entityid
 setup:
   - type: ha_service
     domain: light
@@ -16,10 +16,9 @@ card:
   filter:
     include:
     - domain: light
-      device: '*'
-  rename:
-    method: device
+      options:
+        name: this.entity_id
 assertions:
 - type: snapshot
-  name: 41_rename_use_device_name_as_the_entity_name
+  name: 24_template_this_entityid
   threshold: 0.02

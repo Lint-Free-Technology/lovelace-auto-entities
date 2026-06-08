@@ -1,10 +1,10 @@
-id: rename_use_state_translated_as_method
-description: 'rename: Rename – use state_translated as method #1'
-view_path: rename-use-state-translated-as-method
+id: sorting_sort_by_device
+description: 'sorting: Sort by device'
+view_path: sorting-sort-by-device
 setup:
   - type: ha_service
     domain: light
-    service: turn_on
+    service: turn_off
     data:
       entity_id: light.all_lights
       brightness: 255
@@ -16,9 +16,10 @@ card:
   filter:
     include:
     - domain: light
-  rename:
-    method: state_translated
+      device: '*'
+      sort:
+        method: device
 assertions:
 - type: snapshot
-  name: 40_rename_use_state_translated_as_method
+  name: 29_sorting_sort_by_device
   threshold: 0.02

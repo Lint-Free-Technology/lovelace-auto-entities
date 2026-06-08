@@ -1,25 +1,24 @@
-id: sorting_sort_by_device
-description: 'sorting: Sort by device'
-view_path: sorting-sort-by-device
+id: options_show_empty_3
+description: 'options: show_empty #3'
+view_path: options-show-empty-3
 setup:
   - type: ha_service
     domain: light
     service: turn_off
     data:
       entity_id: light.all_lights
-      brightness: 255
 card:
   type: custom:auto-entities
   card:
     type: entities
     show_header_toggle: false
+  show_empty: false
   filter:
     include:
+    - type: section
     - domain: light
-      device: '*'
-      sort:
-        method: device
+      state: 'on'
 assertions:
 - type: snapshot
-  name: 31_sorting_sort_by_device
+  name: 47_options_show_empty_3
   threshold: 0.02

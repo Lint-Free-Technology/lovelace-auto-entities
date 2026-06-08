@@ -1,6 +1,6 @@
-id: template_this_entityid
-description: 'template: this.entityid #1'
-view_path: template-this-entityid
+id: rename_use_state_translated_as_method
+description: 'rename: Rename – use state_translated as method #1'
+view_path: rename-use-state-translated-as-method
 setup:
   - type: ha_service
     domain: light
@@ -16,9 +16,9 @@ card:
   filter:
     include:
     - domain: light
-      options:
-        name: this.entity_id
+  rename:
+    method: state_translated
 assertions:
 - type: snapshot
-  name: 25_template_this_entityid
+  name: 37_rename_use_state_translated_as_method
   threshold: 0.02

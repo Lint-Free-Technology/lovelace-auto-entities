@@ -15,5 +15,5 @@ card:
     count: 10
 assertions:
 - type: snapshot
-  name: 36_rename_using_friendly_name_default_no_change
+  name: 33_rename_using_friendly_name_default_no_change
   threshold: 0.02

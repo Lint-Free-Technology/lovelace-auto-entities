@@ -14,5 +14,5 @@ card:
         icon: mdi:lamp
 assertions:
 - type: snapshot
-  name: 57_options_entity_options
+  name: 49_options_entity_options
   threshold: 0.02

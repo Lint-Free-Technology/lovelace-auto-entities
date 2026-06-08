@@ -17,5 +17,5 @@ card:
     template: '{{ ''light.bed_light, light.kitchen_lights, light.ceiling_lights''}}'
 assertions:
 - type: snapshot
-  name: 23_template_list_of_entities_in_template_2
+  name: 22_template_list_of_entities_in_template_2
   threshold: 0.02
