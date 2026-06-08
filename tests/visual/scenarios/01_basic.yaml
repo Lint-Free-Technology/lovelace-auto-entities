@@ -18,6 +18,9 @@ card:
   filter:
     include:
       - domain: light
+    exclude:
+      - entity_id: light.all_lights
+      - entity_id: light.all_lights_group
 
 assertions:
   - type: element_present

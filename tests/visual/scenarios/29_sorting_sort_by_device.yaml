@@ -5,7 +5,7 @@ view_path: sorting-sort-by-device
 setup:
   - type: ha_service
     domain: light
-    service: turn_off
+    service: turn_on
     data:
       entity_id: light.all_lights
       brightness: 255

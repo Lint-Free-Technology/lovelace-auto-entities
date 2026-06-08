@@ -32,6 +32,7 @@ card:
         state: "on"
     exclude:
       - entity_id: light.all_lights
+      - entity_id: light.all_lights_group
 
 assertions:
   - type: snapshot
