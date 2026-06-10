@@ -336,6 +336,7 @@ class AutoEntities extends LitElement {
 
     // Unique
     if (this._config.unique) {
+      let isFilteredByAttribute = false;
       let sorter = (
         entity: LovelaceRowConfig,
         index: number,
@@ -348,9 +349,33 @@ class AutoEntities extends LitElement {
           index: number,
           self: LovelaceRowConfig[]
         ) => index === self.findIndex((e) => e.entity === entity.entity);
+      } else if (typeof this._config.unique === "string") {
+        const uniqueAttribute = this._config.unique;
+        const seenAttributeValues: any[] = [];
+        entities = entities.filter((entity) => {
+          const attributeValue = uniqueAttribute
+            .split(":")
+            .reduce(
+              (value, key) => value?.[key],
+              this.hass.states[entity.entity]?.attributes
+            );
+
+          if (attributeValue === undefined) return true;
+          if (
+            seenAttributeValues.some((value) =>
+              compare_deep(value, attributeValue)
+            )
+          ) {
+            return false;
+          }
+
+          seenAttributeValues.push(attributeValue);
+          return true;
+        });
+        isFilteredByAttribute = true;
       }
 
-      entities = entities.filter(sorter);
+      if (!isFilteredByAttribute) entities = entities.filter(sorter);
     }
 
     // Pagination

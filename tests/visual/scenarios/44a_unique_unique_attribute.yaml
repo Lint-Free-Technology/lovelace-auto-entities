@@ -1,0 +1,19 @@
+id: unique_unique_attribute
+description: 'unique: Unique Attribute'
+view_path: unique-unique-attribute
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  unique: custom_date_time
+  filter:
+    include:
+      - entity_id: sensor.a1
+      - entity_id: sensor.a2
+
+assertions:
+  - type: snapshot
+    name: 44a_unique_unique_attribute
+    threshold: 0.02
