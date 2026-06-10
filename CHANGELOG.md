@@ -4,11 +4,6 @@
 
 * Add attribute-based `unique` deduplication ([#66](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/66)) ([6a57d9d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/6a57d9d9d80a530a170c1df0ec0d7f3d7b661481))
 
-## [2.4.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0...v2.4.0-beta.1) (2026-06-10)
-
-### ⭐ New Features
-
-* Add attribute-based `unique` deduplication ([#66](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/66)) ([6a57d9d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/6a57d9d9d80a530a170c1df0ec0d7f3d7b661481))
 ## [2.3.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0...v2.3.1) (2026-06-08)
 
 ### 📔 Documentation
