@@ -336,7 +336,7 @@ class AutoEntities extends LitElement {
 
     // Unique
     if (this._config.unique) {
-      let isFilteredByAttribute = false;
+      let isDeduplicatedByAttribute = false;
       let sorter = (
         entity: LovelaceRowConfig,
         index: number,
@@ -351,7 +351,7 @@ class AutoEntities extends LitElement {
         ) => index === self.findIndex((e) => e.entity === entity.entity);
       } else if (typeof this._config.unique === "string") {
         const uniqueAttribute = this._config.unique;
-        const seenAttributeValues: any[] = [];
+        const seenAttributeValues: unknown[] = [];
         entities = entities.filter((entity) => {
           const attributeValue = uniqueAttribute
             .split(":")
@@ -360,6 +360,7 @@ class AutoEntities extends LitElement {
               this.hass.states[entity.entity]?.attributes
             );
 
+          // Keep rows that do not have the configured attribute.
           if (attributeValue === undefined) return true;
           if (
             seenAttributeValues.some((value) =>
@@ -372,10 +373,10 @@ class AutoEntities extends LitElement {
           seenAttributeValues.push(attributeValue);
           return true;
         });
-        isFilteredByAttribute = true;
+        isDeduplicatedByAttribute = true;
       }
 
-      if (!isFilteredByAttribute) entities = entities.filter(sorter);
+      if (!isDeduplicatedByAttribute) entities = entities.filter(sorter);
     }
 
     // Pagination
