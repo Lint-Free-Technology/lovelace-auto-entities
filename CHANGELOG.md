@@ -1,3 +1,18 @@
+## [2.4.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.3.0...v2.4.0-beta.1) (2026-06-10)
+
+### ⭐ New Features
+
+* Add attribute-based `unique` deduplication ([#66](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/66)) ([6a57d9d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/6a57d9d9d80a530a170c1df0ec0d7f3d7b661481))
+
+### 📔 Documentation
+
+* Include some basic visual examples in readme ([7360362](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/73603629f759309454030375e6a5b4707b137418))
+
+### ⚙️ Miscellaneous
+
+* Update all visual tests and generate baseline images ([#64](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/64)) ([45ebda5](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/45ebda5d0cd86194c600400968606b1e94da53fc)), closes [#61](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/61)
+* Use ha-testcontainer for visual tests and document images ([#60](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/60)) ([dfe5052](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/dfe5052207dc1cba79445b32ad79fd4b8fb0742e))
+
 ## [2.3.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.2.0...v2.3.0) (2026-06-04)
 
 ### ⭐ New Features
