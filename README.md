@@ -44,6 +44,7 @@ sort: <sort_method>
 | &nbsp;&nbsp;`exclude` | List of [Filters](#filters) | A list of filters specifying which entities to remove from the card | |
 | `show_empty` | `true`/`false` | Whether to display the card if there are no entities | `true` |
 | `else` | Dashboard card\* | Card to display if the main card has no entities. Overrides `show_empty` | |
+| `unique` | `true`/`entity`/`<attribute>` | Remove duplicates from the final entity list. See [Unique entities](#unique-entities). | |
 | `rename` | [Rename config](#renaming-entities) | How to rename the entities of the card | `none` |
 | `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
@@ -207,6 +208,16 @@ The list of entities added to the card will be on the form:
 - entity: <entity_id>
   <options>
 ```
+
+### Unique entities
+
+Use `unique` to remove duplicates after include/exclude/sort/rename processing:
+
+- `unique: true` — remove exact duplicate entity rows
+- `unique: entity` — keep only one row per `entity_id`
+- `unique: <attribute>` — keep only the first row for each unique attribute value (for example `unique: event_url`)
+
+Attribute paths can be nested with `:` separators (for example `unique: parent:child:id`).
 
 ## Matching rules
 
