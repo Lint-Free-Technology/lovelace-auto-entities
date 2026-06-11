@@ -36,6 +36,7 @@ export class TileCardController extends CardController {
 
     const features = await this.waitForTrendGraphFeatures();
     for (const feature of features) {
+      // Workaround for hidden->visible tile trend features not re-subscribing history.
       feature._unsubscribeHistory?.();
       await feature.firstUpdated?.();
     }
@@ -92,14 +93,14 @@ export class TileCardController extends CardController {
     const features: TrendGraphFeatureElement[] = [];
 
     for (const root of roots) {
-      const stack: Array<Element | ShadowRoot> = [root];
-      while (stack.length) {
-        const current = stack.pop();
+      const queue: Array<Element | ShadowRoot> = [root];
+      while (queue.length) {
+        const current = queue.shift();
         if (!current) continue;
         const children = Array.from(current.children);
-        stack.push(...children);
+        queue.push(...children);
         if (current instanceof Element) {
-          if (current.shadowRoot) stack.push(current.shadowRoot);
+          if (current.shadowRoot) queue.push(current.shadowRoot);
           if (current.localName === "hui-trend-graph-card-feature") {
             const feature = current as TrendGraphFeatureElement;
             if (!seen.has(feature)) {
