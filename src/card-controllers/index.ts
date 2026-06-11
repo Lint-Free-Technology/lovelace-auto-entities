@@ -9,6 +9,16 @@ interface CardControllerExtras {
   entities?: EntityList;
 }
 
+const isTileWithTrendGraph = (entity: unknown): boolean => {
+  if (typeof entity !== "object" || entity === null) return false;
+  const card = entity as { type?: string; features?: Array<{ type?: string }> };
+  return (
+    card.type === "tile" &&
+    Array.isArray(card.features) &&
+    card.features.some((feature) => feature?.type === "trend-graph")
+  );
+};
+
 export const getCardControllerType = (
   type: string | undefined,
   extras?: CardControllerExtras
@@ -20,9 +30,9 @@ export const getCardControllerType = (
     default:
       if (
         extras?.card_param === "cards" &&
-        extras.entities?.some((entity) => entity?.type === "tile")
+        extras.entities?.some(isTileWithTrendGraph)
       ) {
-        return "tile";
+        return "tile-with-trend-graph";
       }
       return undefined;
   }
@@ -38,7 +48,7 @@ export const getCardController = (
       return new HistoryGraphCardController(host);
     case "map":
       return new MapCardController(host);
-    case "tile":
+    case "tile-with-trend-graph":
       return new TileCardController(host);
     default:
       return undefined;
