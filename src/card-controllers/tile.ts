@@ -18,14 +18,17 @@ export class TileCardController extends CardController {
 
   constructor(host: CardControllerHost) {
     super(host);
-    this.host.addEventListener(
+    if (this.host.parentElement?.localName !== "hui-card") {
+      return;
+    }
+    this.host.parentElement.addEventListener(
       "card-visibility-changed",
       this.handleCardVisibilityChanged as EventListener
     );
   }
 
   dispose(): void {
-    this.host.removeEventListener(
+    this.host.parentElement?.removeEventListener(
       "card-visibility-changed",
       this.handleCardVisibilityChanged as EventListener
     );
@@ -59,7 +62,7 @@ export class TileCardController extends CardController {
   };
 
   private isHostVisible(): boolean {
-    if (!this.host.isConnected || this.host.hidden) return false;
+    if (!this.host.isConnected || this.host.hidden || this.host.parentElement?.hidden) return false;
     return this.host.getClientRects().length > 0;
   }
 
