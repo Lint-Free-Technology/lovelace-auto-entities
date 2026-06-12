@@ -1,7 +1,7 @@
 {
   "name": "auto-entities",
   "private": true,
-  "version": "2.4.1-beta.1",
+  "version": "2.4.1-beta.2",
   "type": "module",
   "description": "",
   "scripts": {

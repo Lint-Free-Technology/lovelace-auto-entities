@@ -1,3 +1,9 @@
+## [2.4.1-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.4.1-beta.1...v2.4.1-beta.2) (2026-06-12)
+
+### 🐞 Bug Fixes
+
+* Workarounds for map, history-graph and tile card trend feature not working after edit mode. ([7833547](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/7833547727a91491a4c6f21da02623ca2ac89ce2))
+
 ## [2.4.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.4.0...v2.4.1-beta.1) (2026-06-11)
 
 ### 🐞 Bug Fixes
