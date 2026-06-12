@@ -14,6 +14,8 @@ export class CardController {
 
   async afterCardUpdated(): Promise<void> {}
 
+  connected(): void {}
+
   dispose(): void {}
 
   protected findInTree(

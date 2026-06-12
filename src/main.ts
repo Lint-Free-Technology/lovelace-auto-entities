@@ -128,6 +128,7 @@ class AutoEntities extends LitElement {
       });
     }
     document.addEventListener("auto-entities-update", this.update_all.bind(this));
+    this._cardController?.connected();
   }
   disconnectedCallback() {
     super.disconnectedCallback();

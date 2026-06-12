@@ -23,6 +23,13 @@ export class HistoryGraphCardController extends CardController {
     );
   }
 
+  connected(): void {
+    this.host.addEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
   dispose(): void {
     this.host.removeEventListener(
       "card-visibility-changed",

@@ -27,6 +27,16 @@ export class TileCardController extends CardController {
     );
   }
 
+  connected(): void {
+    if (this.host.parentElement?.localName !== "hui-card") {
+      return;
+    }
+    this.host.parentElement.addEventListener(
+      "card-visibility-changed",
+      this.handleCardVisibilityChanged as EventListener
+    );
+  }
+
   dispose(): void {
     this.host.parentElement?.removeEventListener(
       "card-visibility-changed",
