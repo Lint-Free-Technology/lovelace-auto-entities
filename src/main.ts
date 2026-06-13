@@ -18,7 +18,7 @@ import pjson from "../package.json";
 import "./editor/auto-entities-editor";
 import { compare_deep } from "./helpers";
 import { process_entity } from "./process_entity";
-import { getCardController } from "./card-controllers";
+import { getCardController, getCardControllerType } from "./card-controllers";
 import { CardController } from "./card-controllers/base";
 
 window.queueMicrotask =
@@ -128,6 +128,7 @@ class AutoEntities extends LitElement {
       });
     }
     document.addEventListener("auto-entities-update", this.update_all.bind(this));
+    this._cardController?.connected();
   }
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -183,10 +184,17 @@ class AutoEntities extends LitElement {
     const newType = this._cardConfig?.type !== this._config.card?.type;
     this._entities = entities;
     this._cardConfig = JSON.parse(JSON.stringify(this._config.card ?? {}));
-    if (this._cardControllerType !== this._cardConfig.type) {
+    const cardControllerType = getCardControllerType(this._cardConfig.type, {
+      card_param: this._config.card_param,
+      entities,
+    });
+    if (this._cardControllerType !== cardControllerType) {
       this._cardController?.dispose();
-      this._cardControllerType = this._cardConfig.type;
-      this._cardController = getCardController(this._cardConfig.type, this);
+      this._cardControllerType = cardControllerType;
+      this._cardController = getCardController(this._cardConfig.type, this, {
+        card_param: this._config.card_param,
+        entities,
+      });
     }
     const cardEntities = (entities.length > 0) ? 
       entities : 
