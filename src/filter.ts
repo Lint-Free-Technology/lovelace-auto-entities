@@ -1,4 +1,4 @@
-import { HAState, HassObject, LovelaceRowConfig, StateFilterType } from "./types";
+import { HAState, HassObject, LovelaceRowConfig } from "./types";
 import {
   getAreas,
   getDevices,
@@ -12,12 +12,12 @@ import { hass } from "./helpers/hass";
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
 
-function compareValues(a: string | undefined, operator: string | undefined, b: any): boolean {
+function compareValues(a: string | undefined, operator: string | undefined, b: any, ignoreCase = false): boolean {
   if (a === undefined || a === null) return false;
   if (b === undefined || b === null) return false;
 
-  const strA = String(a).trim();
-  const strB = String(b).trim();
+  let strA = String(a).trim();
+  let strB = String(b).trim();
 
   const numA = parseFloat(strA);
   const numB = parseFloat(strB);
@@ -38,6 +38,11 @@ function compareValues(a: string | undefined, operator: string | undefined, b: a
     }
   }
 
+  if (ignoreCase) {
+    strA = strA.toLowerCase();
+    strB = strB.toLowerCase();
+  }
+
   switch (op) {
     case "<": return strA < strB;
     case "<=": return strA <= strB;
@@ -54,31 +59,34 @@ function compareValues(a: string | undefined, operator: string | undefined, b: a
 
 async function evaluateSingleStateFilter(
   hass: HassObject,
-  item: any
+  item: any,
+  inheritedIgnoreCase = false
 ): Promise<(entityState: string) => boolean> {
   if (item === undefined || item === null) {
     return () => false;
   }
 
   if (typeof item !== "object") {
-    const match = await matcher(item);
+    const match = await matcher(item, inheritedIgnoreCase);
     return (entityState) => match(entityState);
   }
 
+  const ignore_case = item.ignore_case === true || inheritedIgnoreCase;
+
   if ("and" in item && Array.isArray(item.and)) {
     const filters = await Promise.all(
-      item.and.map((subItem: any) => evaluateSingleStateFilter(hass, subItem))
+      item.and.map((subItem: any) => evaluateSingleStateFilter(hass, subItem, ignore_case))
     );
     return (entityState) => filters.every((f) => f(entityState));
   }
   if ("or" in item && Array.isArray(item.or)) {
     const filters = await Promise.all(
-      item.or.map((subItem: any) => evaluateSingleStateFilter(hass, subItem))
+      item.or.map((subItem: any) => evaluateSingleStateFilter(hass, subItem, ignore_case))
     );
     return (entityState) => filters.some((f) => f(entityState));
   }
   if ("not" in item && item.not !== undefined) {
-    const subFilter = await evaluateSingleStateFilter(hass, item.not);
+    const subFilter = await evaluateSingleStateFilter(hass, item.not, ignore_case);
     return (entityState) => !subFilter(entityState);
   }
 
@@ -90,16 +98,16 @@ async function evaluateSingleStateFilter(
     return (entityState) => {
       const targetVal =
         entity_id !== undefined ? hass.states[entity_id]?.state : value;
-      return compareValues(entityState, operator, targetVal);
+      return compareValues(entityState, operator, targetVal, ignore_case);
     };
   } else {
     if (entity_id !== undefined) {
       return (entityState) => {
         const targetVal = hass.states[entity_id]?.state;
-        return compareValues(entityState, "==", targetVal);
+        return compareValues(entityState, "==", targetVal, ignore_case);
       };
     } else if (value !== undefined) {
-      const match = await matcher(value);
+      const match = await matcher(value, ignore_case);
       return (entityState) => match(entityState);
     }
   }

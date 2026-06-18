@@ -272,7 +272,7 @@ filter:
 
 ### Advanced State Filtering
 
-The `state` filter option can also be specified as an object or list of objects. This allows comparisons against other entities, logical compositions (`and`/`or`/`not`), and explicit operators.
+The `state` filter option can also be specified as an object or list of objects. This allows comparisons against other entities, logical compositions (`and`/`or`/`not`), case-insensitive matching, and explicit operators.
 
 ```yaml
 filter:
@@ -282,6 +282,12 @@ filter:
       state:
         operator: "<" # >, <, =, <=, >=, ==, !=
         entity_id: sensor.check_value
+
+    # Filter state with case-insensitivity enabled (e.g. matching "ON", "On", "on")
+    - domain: light
+      state:
+        value: "ON"
+        ignore_case: true
 
     # Group multiple state filters together (implied AND composition)
     - domain: sensor

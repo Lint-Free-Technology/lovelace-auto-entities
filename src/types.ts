@@ -52,6 +52,7 @@ export interface StateFilterObject {
   and?: StateFilterType[];
   or?: StateFilterType[];
   not?: StateFilterType;
+  ignore_case?: boolean;
 }
 
 export type StateFilterType = string | number | StateFilterObject;
