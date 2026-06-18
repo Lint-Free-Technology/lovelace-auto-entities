@@ -135,7 +135,7 @@ filter:
     - domain: switch
 ```
 
-![Example with section label](/docs/source/assets/images/02_section.png)
+![Example with section label](/docs/source/assets/images/02_section_label.png)
 
 The `label` for a section accepts either a plain string (legacy form) or the choose-selector object form produced by the visual editor. Both are equivalent and supported:
 
