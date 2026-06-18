@@ -45,10 +45,21 @@ export interface RenameConfig {
   eval_js?: boolean;
 }
 
+export interface StateFilterObject {
+  operator?: string;
+  value?: any;
+  entity_id?: string;
+  and?: StateFilterType[];
+  or?: StateFilterType[];
+  not?: StateFilterType;
+}
+
+export type StateFilterType = string | number | StateFilterObject;
+
 interface FilterConfig {
   domain?: string;
   entity_id?: string;
-  state?: string;
+  state?: StateFilterType | StateFilterType[];
   name?: string;
   group?: string;
 
@@ -128,11 +139,11 @@ export interface HAState {
 
 type SubscriptionUnsubscribe = () => Promise<void>;
 export interface HassObject {
-  states: HAState[];
+  states: Record<string, HAState>;
   callWS: (_: any) => any;
-  formatEntityState: (stateObj, state?) => string;
-  formatEntityAttributeValue: (stateObj, attribute, value?) => string;
-  formatEntityAttributeName: (stateObj, attribute) => string;
+  formatEntityState: (stateObj: any, state?: any) => string;
+  formatEntityAttributeValue: (stateObj: any, attribute: any, value?: any) => string;
+  formatEntityAttributeName: (stateObj: any, attribute: any) => string;
   /** Available in HA 2024.x+. Used for HA-style entity name composition. */
   formatEntityName?: (stateObj: any, type: any, options?: { separator?: string }) => string;
   connection: {

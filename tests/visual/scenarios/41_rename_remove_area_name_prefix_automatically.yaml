@@ -13,7 +13,7 @@ setup:
     domain: light
     service: turn_on
     data:
-      entity_id: light.bed_kitchen_lights
+      entity_id: light.kitchen_lights
       brightness: 255
   - type: device_registry_update
     entity_id: light.bed_light

@@ -140,12 +140,14 @@ filter:
 The `label` for a section accepts either a plain string (legacy form) or the choose-selector object form produced by the visual editor. Both are equivalent and supported:
 
 Legacy (plain string) form:
+
 ```yaml
     - type: section
       label: My Section Title
 ```
 
 Choose selector (visual editor) form:
+
 ```yaml
     - type: section
       label:
@@ -267,6 +269,36 @@ filter:
 > **Note**: Since `>` has a special function in yaml, the quotation marks are mandatory. `"> 25"`
 
 ![Example with attributes numerical comparison](/docs/source/assets/images/05_attributes.png)
+
+### Advanced State Filtering
+
+The `state` filter option can also be specified as an object or list of objects. This allows comparisons against other entities, logical compositions (`and`/`or`/`not`), and explicit operators.
+
+```yaml
+filter:
+  include:
+    # Filter entities whose state is less than another entity's state
+    - label: batterij
+      state:
+        operator: "<" # >, <, =, <=, >=, ==, !=
+        entity_id: sensor.check_value
+
+    # Group multiple state filters together (implied AND composition)
+    - domain: sensor
+      state:
+        - operator: ">"
+          value: "0"
+        - operator: "<"
+          value: "100"
+
+    # Use explicit logical composition
+    - domain: light
+      state:
+        or:
+          - "on"
+          - operator: "=="
+            entity_id: input_text.custom_match_state
+```
 
 ### Time since an event
 
