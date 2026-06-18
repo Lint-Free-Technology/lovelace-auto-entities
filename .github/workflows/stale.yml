@@ -15,7 +15,7 @@ jobs:
       pull-requests: write
     steps:
       - name: 21 days stale policy
-        uses: actions/stale@v10.0.0
+        uses: actions/stale@v10.3.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 21
