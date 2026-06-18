@@ -1,0 +1,28 @@
+id: state_object_filter_operator_entity
+description: "State filter: operator and entity_id comparison"
+view_path: state-object-filter-operator-entity
+
+setup:
+  - type: ha_service
+    domain: input_number
+    service: set_value
+    data:
+      entity_id: input_number.slider
+      value: 50
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - entity_id: input_number.slider
+        state:
+          operator: "=="
+          entity_id: input_number.slider
+
+assertions:
+  - type: snapshot
+    name: "54_state_object_filter_operator_entity"
+    threshold: 0.02

@@ -31,38 +31,38 @@ export const compare_deep = (a: any, b: any) => {
 
 (window as any).autoEntities_cache = (window as any).autoEntities_cache ?? {};
 const cache = (window as any).autoEntities_cache;
-export function getAreas(hass) {
+export function getAreas(hass: HassObject) {
   cache.areas =
     cache.areas ?? cacheByProperty(hass, "area", "area_id");
   cache.areas_subscription = cache.areas_subscription ?? cacheSubscription(hass, "area", "areas");
   return cache.areas;
 }
-export function getFloors(hass) {
+export function getFloors(hass: HassObject) {
   cache.floors =
     cache.floors ?? cacheByProperty(hass, "floor", "floor_id");
   cache.floors_subscription = cache.floors_subscription ?? cacheSubscription(hass, "floor", "floors");
   return cache.floors;
 }
-export function getDevices(hass) {
+export function getDevices(hass: HassObject) {
   cache.devices =
     cache.devices ?? cacheByProperty(hass, "device", "id");
   cache.devices_subscription = cache.devices_subscription ?? cacheSubscription(hass, "device", "devices");
   return cache.devices;
 }
-export function getEntities(hass) {
+export function getEntities(hass: HassObject) {
   cache.entities =
     cache.entities ?? cacheByProperty(hass, "entity", "entity_id");
   cache.entities_subscription = cache.entities_subscription ?? cacheSubscription(hass, "entity", "entities");
   return cache.entities;
 }
-export function getLabels(hass) {
+export function getLabels(hass: HassObject) {
   cache.labels =
     cache.labels ?? cacheByProperty(hass, "label", "label_id");
   cache.labels_subscription = cache.labels_subscription ?? cacheSubscription(hass, "label", "labels");
   return cache.labels;
 }
 
-export function getConfigEntries(hass, filterType?: string, filterValue?: any) {
+export function getConfigEntries(hass: HassObject, filterType?: string, filterValue?: any) {
   const cacheKey = `config_entries_${filterType ?? "all"}_${String(filterValue)}`;
   cache.config_entries = cache.config_entries ?? {};
   if (!(cacheKey in cache.config_entries)) {

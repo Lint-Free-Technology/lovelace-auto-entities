@@ -1,7 +1,7 @@
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
 
-export async function matcher(pattern: any): Promise<(value: any) => boolean> {
+export async function matcher(pattern: any, ignoreCase = false): Promise<(value: any) => boolean> {
   const matchers = [];
   const transforms = [];
 
@@ -27,7 +27,7 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
         pattern = `/^${pattern}$/`;
       }
 
-      const regex = new RegExp(pattern.slice(1, -1));
+      const regex = new RegExp(pattern.slice(1, -1), ignoreCase ? "i" : undefined);
       matchers.push((value) =>
         typeof value === "string" ? regex.test(value) : false
       );
@@ -84,9 +84,19 @@ export async function matcher(pattern: any): Promise<(value: any) => boolean> {
       matchers.push((value) => parseFloat(value) == parameter);
     }
 
-    matchers.push((value) => value === pattern);
+    if (ignoreCase) {
+      const lowerPattern = pattern.toLowerCase();
+      matchers.push((value) => typeof value === "string" ? value.toLowerCase() === lowerPattern : value === pattern);
+    } else {
+      matchers.push((value) => value === pattern);
+    }
   } else {
-    matchers.push((value) => value === pattern);
+    if (ignoreCase && typeof pattern === "string") {
+      const lowerPattern = (pattern as string).toLowerCase();
+      matchers.push((value) => typeof value === "string" ? value.toLowerCase() === lowerPattern : value === pattern);
+    } else {
+      matchers.push((value) => value === pattern);
+    }
   }
 
   return (value: any) => {
