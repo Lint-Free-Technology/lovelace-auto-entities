@@ -55,7 +55,7 @@ export const process_entity = async (hass: HassObject, entity, entity_id) => {
         state_translated
       );
     } catch (error) {
-      return { error: error.message };
+      return;
     }
   }
 
