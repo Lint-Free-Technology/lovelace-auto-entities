@@ -1,3 +1,10 @@
+## [2.5.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.4.1...v2.5.0-beta.1) (2026-06-18)
+
+### ⭐ New Features
+
+* Add advanced state filtering option ([#78](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/78)) ([60cfe5f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/60cfe5fb40107319f18358a68fdaa4c01e6e0c45)), closes [#77](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/77)
+* Add ignore_case option to rename ([#80](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/80)) ([3e88320](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/3e883201d3f5fe6aed2b85666eac54764fb70055)), closes [#79](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/79)
+
 ## [2.4.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.4.0...v2.4.1) (2026-06-13)
 
 ### 🐞 Bug Fixes
