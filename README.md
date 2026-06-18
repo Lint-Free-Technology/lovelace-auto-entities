@@ -62,7 +62,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | Rule | Matches | Example |
 | --- | --- | --- |
 | `domain` | Entity domain | `light`, `binary_sensor`, `media_player` |
-| `state` | Current state of entity. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
+| `state` | Current state of entity. You can also use [Advanced State Filtering](#advanced-state-filtering) where `state` is an object. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
 | `state_translated` | Current state of entity as translated using Frontend language user setting. For numeric states always use `state` as translated numeric values will include formatting that will give unexpected results e.g. '3.14 s' => 3 | `Éteint`, `Maison`, `Déclenché` |
 | `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
 | `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
