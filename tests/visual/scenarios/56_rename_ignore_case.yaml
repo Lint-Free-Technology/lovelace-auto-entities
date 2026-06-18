@@ -1,0 +1,23 @@
+id: rename_ignore_case
+description: 'rename: Rename with ignore_case: true'
+view_path: rename-ignore-case
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - entity_id: sensor.a1
+      - entity_id: sensor.a2
+  rename:
+    method: friendly_name
+    find: '^A'
+    replace: 'X'
+    ignore_case: true
+
+assertions:
+  - type: snapshot
+    name: 56_rename_ignore_case
+    threshold: 0.02
