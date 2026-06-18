@@ -12,9 +12,112 @@ import { hass } from "./helpers/hass";
 const ago_suffix_regex = /([mhd])\s+ago\s*$/i;
 const default_ago_suffix = "m ago";
 
+function compareValues(a: string | undefined, operator: string | undefined, b: any, ignoreCase = false): boolean {
+  if (a === undefined || a === null) return false;
+  if (b === undefined || b === null) return false;
+
+  let strA = String(a).trim();
+  let strB = String(b).trim();
+
+  const numA = parseFloat(strA);
+  const numB = parseFloat(strB);
+
+  const isNumeric = !isNaN(numA) && !isNaN(numB);
+  const op = operator || "==";
+
+  if (isNumeric) {
+    switch (op) {
+      case "<": return numA < numB;
+      case "<=": return numA <= numB;
+      case ">": return numA > numB;
+      case ">=": return numA >= numB;
+      case "=":
+      case "==": return numA === numB;
+      case "!=":
+      case "!": return numA !== numB;
+    }
+  }
+
+  if (ignoreCase) {
+    strA = strA.toLowerCase();
+    strB = strB.toLowerCase();
+  }
+
+  switch (op) {
+    case "<": return strA < strB;
+    case "<=": return strA <= strB;
+    case ">": return strA > strB;
+    case ">=": return strA >= strB;
+    case "=":
+    case "==": return strA === strB;
+    case "!=":
+    case "!": return strA !== strB;
+  }
+
+  return false;
+}
+
+async function evaluateSingleStateFilter(
+  hass: HassObject,
+  item: any,
+  inheritedIgnoreCase = false
+): Promise<(entityState: string) => boolean> {
+  if (item === undefined || item === null) {
+    return () => false;
+  }
+
+  if (typeof item !== "object") {
+    const match = await matcher(item, inheritedIgnoreCase);
+    return (entityState) => match(entityState);
+  }
+
+  const ignore_case = item.ignore_case === true || inheritedIgnoreCase;
+
+  if ("and" in item && Array.isArray(item.and)) {
+    const filters = await Promise.all(
+      item.and.map((subItem: any) => evaluateSingleStateFilter(hass, subItem, ignore_case))
+    );
+    return (entityState) => filters.every((f) => f(entityState));
+  }
+  if ("or" in item && Array.isArray(item.or)) {
+    const filters = await Promise.all(
+      item.or.map((subItem: any) => evaluateSingleStateFilter(hass, subItem, ignore_case))
+    );
+    return (entityState) => filters.some((f) => f(entityState));
+  }
+  if ("not" in item && item.not !== undefined) {
+    const subFilter = await evaluateSingleStateFilter(hass, item.not, ignore_case);
+    return (entityState) => !subFilter(entityState);
+  }
+
+  const operator = item.operator;
+  const entity_id = item.entity_id;
+  const value = item.value;
+
+  if (operator !== undefined) {
+    return (entityState) => {
+      const targetVal =
+        entity_id !== undefined ? hass.states[entity_id]?.state : value;
+      return compareValues(entityState, operator, targetVal, ignore_case);
+    };
+  } else {
+    if (entity_id !== undefined) {
+      return (entityState) => {
+        const targetVal = hass.states[entity_id]?.state;
+        return compareValues(entityState, "==", targetVal, ignore_case);
+      };
+    } else if (value !== undefined) {
+      const match = await matcher(value, ignore_case);
+      return (entityState) => match(entityState);
+    }
+  }
+
+  return () => false;
+}
+
 export const RULES: Record<
   string,
-  (hass: HassObject, value: any) => Promise<(entity: HAState) => boolean>
+  (hass: HassObject, value: any) => Promise<((entity: HAState) => boolean) | undefined>
 > = {
   type: async (hass, value) => undefined,
   options: async (hass, value) => undefined,
@@ -30,8 +133,14 @@ export const RULES: Record<
     return (entity) => match(entity.entity_id);
   },
   state: async (hass, value) => {
-    const match = await matcher(value);
-    return (entity) => match(entity.state);
+    if (Array.isArray(value)) {
+      const filters = await Promise.all(
+        value.map((item) => evaluateSingleStateFilter(hass, item))
+      );
+      return (entity) => filters.every((f) => f(entity.state));
+    }
+    const filter = await evaluateSingleStateFilter(hass, value);
+    return (entity) => filter(entity.state);
   },
   state_translated: async (hass, value) => {
     const match = await matcher(value);
@@ -71,7 +180,7 @@ export const RULES: Record<
     const matchers = await Promise.all(
       Object.entries(value).map(async ([k, v]) => {
         const attr = k.split(" ")[0];
-        const prepare = (obj) => attr.split(":").reduce((a, x) => a?.[x], obj);
+        const prepare = (obj: any) => attr.split(":").reduce((a: any, x: string) => a?.[x], obj);
         const match = await matcher(v);
         return { prepare, match };
       })
@@ -85,11 +194,11 @@ export const RULES: Record<
     return (entity) => !filter(entity.entity_id);
   },
   and: async (hass, value) => {
-    const filters = await Promise.all(value.map((v) => get_filter(hass, v)));
+    const filters = await Promise.all(value.map((v: any) => get_filter(hass, v)));
     return (entity) => filters.every((x) => x(entity.entity_id));
   },
   or: async (hass, value) => {
-    const filters = await Promise.all(value.map((v) => get_filter(hass, v)));
+    const filters = await Promise.all(value.map((v: any) => get_filter(hass, v)));
     return (entity) => filters.some((x) => x(entity.entity_id));
   },
   device: async (hass, value) => {
@@ -227,7 +336,7 @@ export const RULES: Record<
   last_triggered: async (hass, value) => {
     if (!ago_suffix_regex.test(value)) value = value + default_ago_suffix;
     const match = await matcher(value);
-    return (entity) => match(entity.attributes.last_triggered);
+    return (entity) => match(entity.attributes?.last_triggered);
   },
   integration: async (hass, value) => {
     const [match, entities] = await Promise.all([
@@ -261,7 +370,7 @@ export const RULES: Record<
       getLabels(hass),
     ]);
 
-    const match_label = (lbl) => {
+    const match_label = (lbl: string) => {
       if (match(lbl)) return true;
       const label = labels[lbl];
       return match(label?.name);
@@ -298,9 +407,9 @@ export async function get_filter(
 
   return (entity: string | LovelaceRowConfig) => {
     if (!rules.length) return false;
-    if (typeof entity !== "string") entity = entity.entity;
-    if (!entity) return false;
-    const hass_entity = hass?.states?.[entity];
+    const entity_id = typeof entity === "string" ? entity : entity.entity;
+    if (!entity_id) return false;
+    const hass_entity = hass?.states?.[entity_id];
     if (!hass_entity) return false;
     return rules.every((x) => x(hass_entity));
   };

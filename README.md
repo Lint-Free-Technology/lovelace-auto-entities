@@ -62,7 +62,7 @@ Each filter has a set of rules and will match entities which match **ALL** rules
 | Rule | Matches | Example |
 | --- | --- | --- |
 | `domain` | Entity domain | `light`, `binary_sensor`, `media_player` |
-| `state` | Current state of entity. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
+| `state` | Current state of entity. You can also use [Advanced State Filtering](#advanced-state-filtering) where `state` is an object. | `"on"`, `home`, `"3.14"`, `"Triggered"` |
 | `state_translated` | Current state of entity as translated using Frontend language user setting. For numeric states always use `state` as translated numeric values will include formatting that will give unexpected results e.g. '3.14 s' => 3 | `Éteint`, `Maison`, `Déclenché` |
 | `entity_id` :ab: | Full entity id | `light.bed_light`, `input_binary.weekdays_only` |
 | `name` | Friendly name attribute | `Kitchen lights`, `Front door` |
@@ -140,12 +140,14 @@ filter:
 The `label` for a section accepts either a plain string (legacy form) or the choose-selector object form produced by the visual editor. Both are equivalent and supported:
 
 Legacy (plain string) form:
+
 ```yaml
     - type: section
       label: My Section Title
 ```
 
 Choose selector (visual editor) form:
+
 ```yaml
     - type: section
       label:
@@ -267,6 +269,42 @@ filter:
 > **Note**: Since `>` has a special function in yaml, the quotation marks are mandatory. `"> 25"`
 
 ![Example with attributes numerical comparison](/docs/source/assets/images/05_attributes.png)
+
+### Advanced State Filtering
+
+The `state` filter option can also be specified as an object or list of objects. This allows comparisons against other entities, logical compositions (`and`/`or`/`not`), case-insensitive matching, and explicit operators.
+
+```yaml
+filter:
+  include:
+    # Filter entities whose state is less than another entity's state
+    - label: batterij
+      state:
+        operator: "<" # >, <, =, <=, >=, ==, !=
+        entity_id: sensor.check_value
+
+    # Filter state with case-insensitivity enabled (e.g. matching "ON", "On", "on")
+    - domain: light
+      state:
+        value: "ON"
+        ignore_case: true
+
+    # Group multiple state filters together (implied AND composition)
+    - domain: sensor
+      state:
+        - operator: ">"
+          value: "0"
+        - operator: "<"
+          value: "100"
+
+    # Use explicit logical composition
+    - domain: light
+      state:
+        or:
+          - "on"
+          - operator: "=="
+            entity_id: input_text.custom_match_state
+```
 
 ### Time since an event
 
@@ -458,6 +496,7 @@ These apply after the name has been extracted by either `method` or `type`:
 - `append:` A string to append to the name.
 - `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations.
 - `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `name` (extracted name before find/replace).
+- `ignore_case:` Set to `true` to make the `find` regex case-insensitive (adds the `i` flag). Default: `false`.
 
 ### Rename examples
 

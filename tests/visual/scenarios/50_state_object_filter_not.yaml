@@ -1,0 +1,43 @@
+id: state_object_filter_not
+description: "State filter: NOT operator (not off and not unavailable)"
+view_path: state-object-filter-not
+
+setup:
+  - type: ha_service
+    domain: light
+    service: turn_off
+    data:
+      entity_id: light.all_lights
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.bed_light
+      brightness: 255
+  - type: ha_service
+    domain: light
+    service: turn_on
+    data:
+      entity_id: light.ceiling_lights
+      brightness: 128
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - domain: light
+        state:
+          not:
+            operator: "=="
+            value: "off"
+    exclude:
+      - entity_id: light.all_lights
+      - entity_id: light.all_lights_group
+
+assertions:
+  - type: snapshot
+    name: "50_state_object_filter_not"
+    threshold: 0.02

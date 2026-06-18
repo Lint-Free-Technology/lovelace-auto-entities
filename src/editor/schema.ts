@@ -446,6 +446,11 @@ export const renameSchema = (method, type?, find?, replace?) => {
       type: "boolean",
       label: "Evaluate Javascript on replace, append, prepend options",
     },
+    {
+      name: "ignore_case",
+      type: "boolean",
+      label: "Ignore case during find (regex)",
+    },
   ];
 };
 
