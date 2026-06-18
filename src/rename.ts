@@ -202,9 +202,10 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
             : config.replace !== undefined
             ? [config.replace]
             : [];
+          const flags = config.ignore_case ? "gi" : "g";
           for (let i = 0; i < finds.length; i++) {
             name = name.replace(
-              new RegExp(finds[i], "g"),
+              new RegExp(finds[i], flags),
               eval_str(replaces[i] ?? "")
             );
           }

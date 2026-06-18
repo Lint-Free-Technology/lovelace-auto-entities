@@ -43,6 +43,7 @@ export interface RenameConfig {
   append?: string;
   trim?: boolean;
   eval_js?: boolean;
+  ignore_case?: boolean;
 }
 
 export interface StateFilterObject {
