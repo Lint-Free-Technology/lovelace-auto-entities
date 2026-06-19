@@ -49,6 +49,7 @@ sort: <sort_method>
 | `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
 | `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
+| `fire_dom_event` | Object | An object which can contain multiple objects which define `ll-custom` events to fire each time auto-entities updates the card config. See [Using fire_dom_event to provide card config as event data to other cards](#using-fire_dom_event-to-provide-card-config-as-event-data-to-other-cards) | `none` |
 
 \* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
 \*\* [Entities](https://www.home-assistant.io/dashboards/entities/#options-for-entities)
@@ -623,6 +624,51 @@ sort:
 ## Entity options
 
 In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+
+## Using `fire_dom_event` to provide card config as event data to other cards
+
+The generated card config can be sent as event data so other cards which support event data can use. Cards which support event data in this way include [UIX Forge](https://uix.lf.technology/) and [Expander-card.](https://melled.github.io/lovelace-expander-card/).
+
+To send the event data include an object under `fire_dom_event`. Multiple objects can be included with separate `ll-custom` events being fired for each object.
+
+Example:
+
+```yaml
+type: custom:auto-entities
+fire_dom_event:
+  uix_forge:
+    - forge_id: auto_entities_1
+      replace: true
+      data:
+        config: this.config
+card:
+  type: entities
+filter:
+  # ...
+```
+
+- sends the event `ll-custom` with detail 
+  - `uixForge: { forge_id: "auto_entities_1", replace: true, config: < card generated config >}`
+
+UIX Forge card consuming data with the event spark. The template uses defaults to handle inigtial display when the event data may not be available though this should be short lived as the auto-entties card will fire the event when first updated. The template also does not count any rows which does not have an entity e.g. section.
+
+```yaml
+type: custom:uix-forge
+forge:
+  mold: card
+  sparks:
+    - type: event
+      forge_id: auto_entities_1
+element:
+  type: horizontal-stack
+  cards:
+    - type: markdown
+      text_only: true
+      content: |
+        {{ (uixForge.event.config.entities | default([], true)) |
+            selectattr('entity', 'defined') | list | count if
+            uixForge.event.config is defined else 0 }} ON
+```
 
 ## Examples
 
