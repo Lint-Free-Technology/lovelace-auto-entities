@@ -647,10 +647,10 @@ filter:
   # ...
 ```
 
-- sends the event `ll-custom` with detail 
-  - `uixForge: { forge_id: "auto_entities_1", replace: true, config: < card generated config >}`
+- sends the event `ll-custom` with detail:
+  - `uix_forge: [{"forge_id": "auto_entities_1", "replace": true, "data": {"config": <card generated config>}}]`
 
-UIX Forge card consuming data with the event spark. The template uses defaults to handle inigtial display when the event data may not be available though this should be short lived as the auto-entties card will fire the event when first updated. The template also does not count any rows which does not have an entity e.g. section.
+UIX Forge card consuming data with the event spark. The template uses defaults to handle initial display when the event data may not be available, though this should be short-lived as the auto-entities card will fire the event when first updated. The template also does not count any rows which do not have an entity, e.g., section.
 
 ```yaml
 type: custom:uix-forge

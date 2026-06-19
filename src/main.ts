@@ -105,6 +105,7 @@ class AutoEntities extends LitElement {
       (resolve) => (this._cardBuiltResolve = resolve)
     );
 
+    this._llCustomEvents = {};
     if (this._config.fire_dom_event) {
       for (const [eventName, eventConfig] of Object.entries(
         this._config.fire_dom_event
@@ -248,7 +249,7 @@ class AutoEntities extends LitElement {
       await this.updateComplete;
       (this.card as any).requestUpdate();
     }
-    if (this._llCustomEvents) {
+    if (Object.keys(this._llCustomEvents).length > 0) {
       for (const [eventName, eventConfig] of Object.entries(
         this._llCustomEvents
       )) {
