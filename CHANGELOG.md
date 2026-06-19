@@ -1,3 +1,9 @@
+## [2.6.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.5.1-beta.1...v2.6.0-beta.1) (2026-06-19)
+
+### ⭐ New Features
+
+* Allow to fire dom events which includes generated auto-entities config. ([#105](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/105)) ([903211a](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/903211a5e95ec7003bdc880e0eb5237e3660bed0))
+
 ## [2.5.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.5.0...v2.5.1-beta.1) (2026-06-18)
 
 ### 📦 Dependency Upgrades
