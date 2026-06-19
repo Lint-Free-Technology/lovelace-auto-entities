@@ -89,6 +89,10 @@ interface FilterConfig {
   type?: string;
 }
 
+export interface CustomEventConfig {
+  [key: string]: any;
+}
+
 export interface AutoEntitiesConfig {
   card: any;
   entities: Array<LovelaceRowConfig | string>;
@@ -106,6 +110,7 @@ export interface AutoEntitiesConfig {
   unique?: boolean | string;
   sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
+  fire_dom_event?: CustomEventConfig;
 
   entity_ids?: any[];
 }

@@ -45,6 +45,7 @@ class AutoEntities extends LitElement {
   _cardBuiltResolve?;
   _cardController?: CardController;
   _cardControllerType?: string;
+  _llCustomEvents: { [key: string]: any } = {};
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -103,6 +104,15 @@ class AutoEntities extends LitElement {
     this._cardBuilt = new Promise(
       (resolve) => (this._cardBuiltResolve = resolve)
     );
+
+    this._llCustomEvents = {};
+    if (this._config.fire_dom_event) {
+      for (const [eventName, eventConfig] of Object.entries(
+        this._config.fire_dom_event
+      )) {
+        this._llCustomEvents[eventName] = eventConfig;
+      }
+    }
 
     queueMicrotask(() => this.build_else());
     queueMicrotask(() => this.update_all());
@@ -238,6 +248,14 @@ class AutoEntities extends LitElement {
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
+    }
+    if (Object.keys(this._llCustomEvents).length > 0) {
+      for (const [eventName, eventConfig] of Object.entries(
+        this._llCustomEvents
+      )) {
+        const eventDetail = JSON.parse(JSON.stringify(eventConfig).replace(/"this\.config"/g, JSON.stringify(cardConfig || {})));
+        document.dispatchEvent(new CustomEvent("ll-custom", { detail: { [eventName]: eventDetail }, bubbles: true, cancelable: true }));
+      }
     }
   }
 
