@@ -18,29 +18,6 @@ customElements.whenDefined("ha-yaml-editor").then(() => {
   };
 });
 
-// customElements.whenDefined("ha-selector-object").then(() => {
-//   const HaSelectorObject = customElements.get("ha-selector-object").prototype;
-//   HaSelectorObject._handleChange = function (ev) {
-//     ev.stopPropagation();
-//     this._valueChangedFromChild = true;
-//     const value = ev.target.value;
-//     if (!ev.target.isValid) {
-//       return;
-//     }
-//     if (this.value === value) {
-//       return;
-//     }
-//     this.dispatchEvent(
-//       new CustomEvent("value-changed", {
-//         detail: { value },
-//         bubbles: true,
-//         cancelable: false,
-//         composed: true,
-//       })
-//     );
-//   };
-// });
-
 class AutoEntitiesEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
 
