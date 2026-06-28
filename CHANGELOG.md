@@ -1,3 +1,11 @@
+## [2.6.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0-beta.1...v2.6.0-beta.2) (2026-06-28)
+
+### 🐞 Bug Fixes
+
+* Correct type in filter editor ([390145f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/390145f43e10264cf430551acaca49b9e35657aa))
+* Don't upgrade section label to choose selector ([76a97c6](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/76a97c63d5f922c938f6bf87f34d550f84836b9a)), closes [#110](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/110)
+* Update repo link in card editor ([e22a8e8](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e22a8e844001288b8ea32d68e17204baa5dd09c3))
+
 ## [2.6.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.5.1-beta.1...v2.6.0-beta.1) (2026-06-19)
 
 ### ⭐ New Features
