@@ -9,7 +9,7 @@ class AutoEntitiesHelp extends LitElement {
         <p>
           See
           <a
-            href="https://github.com/thomasloven/lovelace-auto-entities"
+            href="https://github.com/Lint-Free-Technology/lovelace-auto-entities"
             target="_blank"
             rel="noreferrer"
           >
