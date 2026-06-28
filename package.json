@@ -34,5 +34,8 @@
     "@rollup/plugin-babel": {
       "@babel/core": "$@babel/core"
     }
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
   }
 }
