@@ -13,6 +13,7 @@ import {
   EntityList,
   HuiCard,
   LovelaceRowConfig,
+  SPECIAL_TYPES,
 } from "./types";
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
@@ -24,7 +25,6 @@ import { CardController } from "./card-controllers/base";
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
-const HIDDEN_TYPES = ["section", "divider"];
 const CARDS_NO_ENTITY_WORKAROUND = [ "logbook", "map", "history-graph", "statistics-graph" ];
 
 class AutoEntities extends LitElement {
@@ -231,7 +231,7 @@ class AutoEntities extends LitElement {
 
     this.empty =
       entities.length === 0 ||
-      entities.every((e) => HIDDEN_TYPES.includes(e.type));
+      entities.every((e) => SPECIAL_TYPES.includes(e.type));
     if (this._config.card_as_row) {
       this.dispatchEvent(
         new CustomEvent("row-visibility-changed", { detail: { row: this, value: !this.hidden}, bubbles: true, cancelable: true, composed: true })
