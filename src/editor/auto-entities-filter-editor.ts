@@ -177,7 +177,7 @@ class AutoEntitiesFilterEditor extends LitElement {
               <ha-expansion-panel
                 outlined
                 class="drag ${type}"
-                ${type == "include" ? "expanded" : ""}
+                ?expanded=${type === "include"}
               >
                 <div class="handle" slot="leading-icon">
                   <ha-icon .icon=${"mdi:drag"}></ha-icon>

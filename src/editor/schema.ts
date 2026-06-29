@@ -1,4 +1,5 @@
 import { getAreas, getConfigEntries, getDevices, getEntities, getFloors, getLabels } from "../helpers";
+import { SPECIAL_TYPES } from "../types";
 
 const ruleKeySelector = {
   type: "select",
@@ -203,7 +204,8 @@ export const migrate_custom_rule_values = async (hass, config, types, callback) 
   Object.values(Array.isArray(types) ? types : [types]).forEach((type) => {
     if (!config?.filter?.[type]) return;
     Object.values(config?.filter?.[type]).forEach((group, idx) => {
-      const filters = { ...group as Object };
+      const filters: any = { ...group as Object };
+      if (SPECIAL_TYPES.includes(filters.type)) return;
       Object.entries(filters).forEach(([key, value]) => {
         if (key in filterChooseValidators && typeof value === "string") {
           const promise = filterChooseValidators[key].validator(hass, value).then((is_valid) => {

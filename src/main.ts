@@ -13,6 +13,7 @@ import {
   EntityList,
   HuiCard,
   LovelaceRowConfig,
+  SPECIAL_TYPES,
 } from "./types";
 import pjson from "../package.json";
 import "./editor/auto-entities-editor";
@@ -24,7 +25,6 @@ import { CardController } from "./card-controllers/base";
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
 
-const HIDDEN_TYPES = ["section", "divider"];
 const CARDS_NO_ENTITY_WORKAROUND = [ "logbook", "map", "history-graph", "statistics-graph" ];
 
 class AutoEntities extends LitElement {
@@ -45,6 +45,7 @@ class AutoEntities extends LitElement {
   _cardBuiltResolve?;
   _cardController?: CardController;
   _cardControllerType?: string;
+  _llCustomEvents: { [key: string]: any } = {};
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -103,6 +104,15 @@ class AutoEntities extends LitElement {
     this._cardBuilt = new Promise(
       (resolve) => (this._cardBuiltResolve = resolve)
     );
+
+    this._llCustomEvents = {};
+    if (this._config.fire_dom_event) {
+      for (const [eventName, eventConfig] of Object.entries(
+        this._config.fire_dom_event
+      )) {
+        this._llCustomEvents[eventName] = eventConfig;
+      }
+    }
 
     queueMicrotask(() => this.build_else());
     queueMicrotask(() => this.update_all());
@@ -221,7 +231,7 @@ class AutoEntities extends LitElement {
 
     this.empty =
       entities.length === 0 ||
-      entities.every((e) => HIDDEN_TYPES.includes(e.type));
+      entities.every((e) => SPECIAL_TYPES.includes(e.type));
     if (this._config.card_as_row) {
       this.dispatchEvent(
         new CustomEvent("row-visibility-changed", { detail: { row: this, value: !this.hidden}, bubbles: true, cancelable: true, composed: true })
@@ -238,6 +248,14 @@ class AutoEntities extends LitElement {
     if ((this.card as any).requestUpdate) {
       await this.updateComplete;
       (this.card as any).requestUpdate();
+    }
+    if (Object.keys(this._llCustomEvents).length > 0) {
+      for (const [eventName, eventConfig] of Object.entries(
+        this._llCustomEvents
+      )) {
+        const eventDetail = JSON.parse(JSON.stringify(eventConfig).replace(/"this\.config"/g, JSON.stringify(cardConfig || {})));
+        document.dispatchEvent(new CustomEvent("ll-custom", { detail: { [eventName]: eventDetail }, bubbles: true, cancelable: true }));
+      }
     }
   }
 

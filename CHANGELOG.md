@@ -1,3 +1,34 @@
+## [2.6.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0-beta.1...v2.6.0-beta.2) (2026-06-28)
+
+### 🐞 Bug Fixes
+
+* Correct type in filter editor ([390145f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/390145f43e10264cf430551acaca49b9e35657aa))
+* Don't upgrade section label to choose selector ([76a97c6](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/76a97c63d5f922c938f6bf87f34d550f84836b9a)), closes [#110](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/110)
+* Update repo link in card editor ([e22a8e8](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e22a8e844001288b8ea32d68e17204baa5dd09c3))
+
+## [2.6.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.5.1-beta.1...v2.6.0-beta.1) (2026-06-19)
+
+### ⭐ New Features
+
+* Allow to fire dom events which includes generated auto-entities config. ([#105](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/105)) ([903211a](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/903211a5e95ec7003bdc880e0eb5237e3660bed0))
+
+## [2.5.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.5.0...v2.5.1-beta.1) (2026-06-18)
+
+### 📦 Dependency Upgrades
+
+* bump typescript from 5.8.2 to 6.0.3 ([#87](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/87)) ([4a1c972](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/4a1c9721e35019971d8f72a1eabb6e3b5f323254))
+* upgrade to Babel 8 with rollup plugin overrides ([#101](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/101)) ([a90e75e](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/a90e75e432fb3c1b1470107c83ff74dd1082ee9d))
+
+### ⚙️ Miscellaneous
+
+* **deps-dev:** bump handlebars from 4.7.8 to 4.7.9 ([#100](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/100)) ([5dd2c49](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/5dd2c49b03be01f647fe4567ac784383cfbf7169))
+* **deps-dev:** bump js-yaml from 4.1.1 to 4.2.0 ([#91](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/91)) ([0d21239](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/0d21239424d7a0a46eedcc4f8159b75d1627274d))
+* **deps-dev:** bump lodash-es from 4.17.23 to 4.18.1 ([#95](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/95)) ([4f6690a](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/4f6690a8eb868a9626104983b18a34d8fa3f0ae3))
+* **deps-dev:** bump undici from 6.23.0 to 6.27.0 ([#94](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/94)) ([7a8f1fe](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/7a8f1fe4551749e1d8bae46ea4bd88a183d40f18))
+* **deps:** bump @babel/plugin-transform-modules-systemjs ([#92](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/92)) ([d3a6726](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/d3a67269c8f3040e3d33aef81ba248a3e56c4b3f))
+* **deps:** bump lodash from 4.17.23 to 4.18.1 ([#90](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/90)) ([ad4fef9](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/ad4fef9e1102187e2b6b7c7452b29e4262e40cb5))
+* **deps:** bump serialize-javascript and @rollup/plugin-terser ([#93](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/93)) ([e2968d3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e2968d3058e722e6b24fc3dde3ff559956e669ff))
+
 ## [2.5.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.4.1...v2.5.0) (2026-06-18)
 
 ### ⭐ New Features
