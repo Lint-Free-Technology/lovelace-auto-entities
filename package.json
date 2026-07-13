@@ -24,7 +24,7 @@
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "rollup": "^4.62.2",
     "rollup-plugin-typescript2": "^0.37.0",
-    "semantic-release": "^25.0.5",
+    "semantic-release": "^25.0.7",
     "typescript": "^6.0.3"
   },
   "dependencies": {
