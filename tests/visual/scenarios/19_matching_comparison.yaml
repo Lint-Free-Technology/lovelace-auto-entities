@@ -15,12 +15,14 @@ setup:
     data:
       entity_id: light.bed_light
       brightness: 100
+      color_temp_kelvin: 2631
   - type: ha_service
     domain: light
     service: turn_on
     data:
       entity_id: light.ceiling_lights
       brightness: 25
+      color_temp_kelvin: 2631
 
 card:
   type: custom:auto-entities

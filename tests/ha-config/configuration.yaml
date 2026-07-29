@@ -43,6 +43,7 @@ timer:
 light:
   - platform: group
     name: "All Lights"
+    unique_id: uix_all_lights_group
     entities:
       - light.bed_light
       - light.ceiling_lights
@@ -52,6 +53,7 @@ light:
       - light.entrance_color_white_lights
   - platform: group
     name: "All Lights Group"
+    unique_id: uix_all_lights_group_group
     entities:
       - light.all_lights
 
