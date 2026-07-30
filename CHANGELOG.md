@@ -1,4 +1,6 @@
-## [2.6.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0...v2.6.1-beta.1) (2026-07-30)
+## [2.6.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0...v2.6.1) (2026-07-30)
+
+**Requires Home Assistant 2026.8.0(b0) or greater**
 
 ### 🐞 Bug Fixes
 
