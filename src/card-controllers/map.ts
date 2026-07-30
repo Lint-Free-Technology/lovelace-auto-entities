@@ -110,6 +110,7 @@ export class MapCardController extends CardController {
     return !!(
       map &&
       map.clientWidth > 0 &&
+      map.clientHeight > 0 &&
       typeof map.fitMap === "function" &&
       (typeof map.Leaflet === "object" && map.Leaflet !== null) &&
       (typeof map.leafletMap === "object" && map.leafletMap !== null)
