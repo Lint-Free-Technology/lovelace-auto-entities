@@ -6,8 +6,7 @@
   "description": "",
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c --watch",
-    "update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
+    "watch": "rollup -c --watch"
   },
   "author": "Thomas Lovén",
   "license": "MIT",
