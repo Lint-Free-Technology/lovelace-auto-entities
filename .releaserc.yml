@@ -4,8 +4,64 @@ branches:
     prerelease: beta
 
 plugins:
-  - "@semantic-release/commit-analyzer"
-  - "@semantic-release/release-notes-generator"
+  - - "@semantic-release/commit-analyzer"
+    - preset: conventionalcommits
+      releaseRules:
+        - type: feat
+          scope: "major"
+          release: major
+        - type: feat
+          release: minor
+        - type: fix
+          release: patch
+        - type: docs
+          release: patch
+        - type: deps
+          release: patch
+        - type: perf
+          release: minor
+        - type: refactor
+          release: patch
+        - type: chore
+          release: false
+        - type: test
+          release: false
+        - type: style
+          release: patch
+        - type: ci
+          release: false
+        - type: build
+          release: false
+        - breaking: true
+          release: major
+
+  - - "@semantic-release/release-notes-generator"
+    - preset: conventionalcommits
+      presetConfig:
+        types:
+          - type: feat
+            section: ⭐ New Features
+          - type: fix
+            section: 🐞 Bug Fixes
+          - type: perf
+            section: ⚡ Performance Improvements
+          - type: docs
+            section: 📔 Documentation
+          - type: deps
+            section: 📦 Dependency Upgrades
+          - type: refactor
+            section: ⚙️ Miscellaneous
+          - type: test
+            section: ⚙️ Miscellaneous
+          - type: build
+            section: ⚙️ Miscellaneous
+          - type: ci
+            section: ⚙️ Miscellaneous
+          - type: revert
+            section: 🐞 Bug Fixes
+          - type: style
+            section: ⚙️ Miscellaneous
+
   - - "@semantic-release/changelog"
     - changelogFile: CHANGELOG.md
   - - "@semantic-release/npm"
@@ -22,61 +78,3 @@ plugins:
     - assets:
         - path: "dist/auto-entities.js"
           label: "auto-entities.js"
-
-preset: conventionalcommits
-presetConfig:
-  types:
-    - type: feat
-      section: ⭐ New Features
-    - type: fix
-      section: 🐞 Bug Fixes
-    - type: perf
-      section: ⚡ Performance Improvements
-    - type: docs
-      section: 📔 Documentation
-    - type: deps
-      section: 📦 Dependency Upgrades
-    - type: chore
-      section: Chores
-      hidden: true
-    - type: refactor
-      section: ⚙️ Miscellaneous
-    - type: test
-      section: ⚙️ Miscellaneous
-    - type: build
-      section: ⚙️ Miscellaneous
-    - type: ci
-      section: ⚙️ Miscellaneous
-    - type: revert
-      section: 🐞 Bug Fixes
-    - type: style
-      section: ⚙️ Miscellaneous
-
-releaseRules:
-  - type: feat
-    scope: "major"
-    release: major
-  - type: feat
-    release: minor
-  - type: fix
-    release: patch
-  - type: docs
-    release: patch
-  - type: deps
-    release: patch
-  - type: perf
-    release: minor
-  - type: refactor
-    release: patch
-  - type: chore
-    release: false
-  - type: test
-    release: false
-  - type: style
-    release: patch
-  - type: ci
-    release: false
-  - type: build
-    release: false
-  - breaking: true
-    release: major
