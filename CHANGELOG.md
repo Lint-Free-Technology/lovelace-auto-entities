@@ -1,3 +1,17 @@
+## [2.6.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0...v2.6.1) (2026-07-30)
+
+### 🐞 Bug Fixes
+
+* Map card visibility workaround not always fitting map on dashboard load or when editing in UI editor. Wait for map height to be non zero before applying workaround. ([855a0be](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/855a0be9c9bf53c9766a43f222afcf20cac8e216))
+
+### 📦 Dependency Upgrades
+
+* Update to Typescript v7, move to esbuild ([f4bf1b5](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/f4bf1b5a1c90e23cb569effc85d5aa17e089b308))
+
+### ⚙️ Miscellaneous
+
+* Remove tile graph feature and history-graph workarounds now these are fixed in Home Assistant 2026.8.0 ([70bf9b7](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/70bf9b77303b89bf965303a301580ccdd5f6963f))
+
 ## [2.6.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0...v2.6.1-beta.1) (2026-07-30)
 
 ### 🐞 Bug Fixes
