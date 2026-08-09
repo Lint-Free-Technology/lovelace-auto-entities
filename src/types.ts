@@ -46,6 +46,7 @@ export interface RenameConfig {
   trim?: boolean;
   eval_js?: boolean;
   ignore_case?: boolean;
+  capitalize?: boolean;
 }
 
 export interface StateFilterObject {
@@ -158,6 +159,7 @@ export interface HassObject {
   connection: {
     subscribeEvents: (callback: (event: any) => void, eventType: string) => Promise<SubscriptionUnsubscribe>;
   };
+  language?: string;
 }
 
 export type MatchValue = string | number;

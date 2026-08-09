@@ -1,0 +1,23 @@
+id: rename_capitalize
+description: 'rename: Rename with capitalize: true'
+view_path: rename-capitalize
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    show_header_toggle: false
+  filter:
+    include:
+      - entity_id: sensor.a1
+      - entity_id: sensor.a2
+  rename:
+    method: friendly_name
+    find: '^a'
+    replace: 'z'
+    capitalize: true
+
+assertions:
+  - type: snapshot
+    name: 57_rename_capitalize
+    threshold: 0.01

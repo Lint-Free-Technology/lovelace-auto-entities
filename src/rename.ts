@@ -1,4 +1,4 @@
-import { getAreas, getDevices, getEntities } from "./helpers";
+import { capitalizeFirstLetter, getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, RenameConfig, EntityNameItem, EntityList } from "./types";
 
 function strip_prefix(name: string, prefix: string | undefined): string {
@@ -218,6 +218,9 @@ export async function get_renamer(hass: HassObject, config: RenameConfig) {
         }
         if (config.trim) {
           name = name.trim();
+        }
+        if (config.capitalize) {
+          name = capitalizeFirstLetter(name, hass.language);
         }
 
         return { ...entity, name };
