@@ -19,5 +19,5 @@ card:
 
 assertions:
   - type: snapshot
-    name: 58_rename_capitalize
+    name: 57_rename_capitalize
     threshold: 0.01
