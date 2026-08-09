@@ -159,7 +159,7 @@ export interface HassObject {
   connection: {
     subscribeEvents: (callback: (event: any) => void, eventType: string) => Promise<SubscriptionUnsubscribe>;
   };
-  language: any;
+  language?: string;
 }
 
 export type MatchValue = string | number;
