@@ -495,7 +495,8 @@ These apply after the name has been extracted by either `method` or `type`:
 - `replace:` Replacement string for `find`, **or a list of replacement strings** matching the `find` list. Defaults to `""` (empty string, i.e. the match is removed). When `find` is a list and `replace` is shorter, missing entries default to `""`. Operations are applied in order.
 - `prepend:` A string to prepend to the name.
 - `append:` A string to append to the name.
-- `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations.
+- `trim:` Set to `true` to trim leading and trailing whitespace from the name after all other operations, except `capitalize`.
+- `capitalize:` Set to `true` to capitalize the first letter of the name after all other operations, locale aware.
 - `eval_js:` Set to `true` to evaluate `${...}` template expressions in `replace`, `prepend`, and `append`. Available variables: `entity_id`, `entity` (entity name), `device` (device name), `area` (area name), `state` (state value string), `state_translated` (formatted/translated state value), `name` (extracted name before find/replace).
 - `ignore_case:` Set to `true` to make the `find` regex case-insensitive (adds the `i` flag). Default: `false`.
 

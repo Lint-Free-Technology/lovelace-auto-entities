@@ -131,6 +131,12 @@ function cacheSubscription<T>(
   );
 }
 
+export const capitalizeFirstLetter = (str: string, locale: string | string[]) => {
+  if (!str) return str;
+  const [first, ...rest] = str;
+  return [first.toLocaleUpperCase(locale), ...rest].join('');
+};
+
 // Debugging helper
 // (window as any).AutoEntities = {
 //   getAreas,
