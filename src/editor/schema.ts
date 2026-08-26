@@ -293,6 +293,8 @@ export const sortSchema = (method) => {
         ["entity_id", "Entity ID"],
         ["name", "Name (after rename)"],
         ["friendly_name", "Friendly Name (original, before rename)"],
+        ["device", "Device"],
+        ["area", "Area"],
         ["state", "Entity State"],
         ["last_changed", "Last Change"],
         ["last_updated", "Last Update"],
