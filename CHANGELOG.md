@@ -1,3 +1,9 @@
+## [2.7.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.0-beta.1...v2.7.0-beta.2) (2026-08-26)
+
+### 🐞 Bug Fixes
+
+* Add missing area and device sorting options to visual editor ([#148](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/148)) ([8ac2a4d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/8ac2a4dcc1618ee44246d6d5de58440950758d91))
+
 ## [2.7.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.1...v2.7.0-beta.1) (2026-08-09)
 
 ### ⭐ New Features
