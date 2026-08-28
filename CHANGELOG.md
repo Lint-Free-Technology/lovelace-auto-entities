@@ -8,18 +8,6 @@
 
 * Add missing area and device sorting options to visual editor ([#148](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/148)) ([8ac2a4d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/8ac2a4dcc1618ee44246d6d5de58440950758d91))
 
-## [2.7.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.0-beta.1...v2.7.0-beta.2) (2026-08-26)
-
-### 🐞 Bug Fixes
-
-* Add missing area and device sorting options to visual editor ([#148](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/148)) ([8ac2a4d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/8ac2a4dcc1618ee44246d6d5de58440950758d91))
-
-## [2.7.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.1...v2.7.0-beta.1) (2026-08-09)
-
-### ⭐ New Features
-
-* Rename `capitalize` option to capitalize the first letter of the name result after all other operations including `trim`. ([#138](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/138)) ([e71aff4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e71aff4a4094724ecc118b90cc1c5a9e6983ca17)), references [#137](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/137)
-
 ## [2.6.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.0...v2.6.1) (2026-07-30)
 
 **Requires Home Assistant 2026.8.0(b0) or greater**
