@@ -1,13 +1,12 @@
 {
   "name": "auto-entities",
   "private": true,
-  "version": "2.6.1",
+  "version": "2.7.0-beta.2",
   "type": "module",
   "description": "",
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c --watch",
-    "update-card-tools": "npm uninstall card-tools && npm install thomasloven/lovelace-card-tools"
+    "watch": "rollup -c --watch"
   },
   "author": "Thomas Lovén",
   "license": "MIT",
@@ -22,10 +21,10 @@
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^11.0.1",
-    "conventional-changelog-conventionalcommits": "^10.2.1",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
     "rollup-plugin-esbuild": "^6.2.1",
-    "rollup": "^4.62.3",
-    "semantic-release": "^25.0.8",
+    "rollup": "^4.62.5",
+    "semantic-release": "^25.0.9",
     "tslib": "^2.8.1",
     "typescript": "^7.0.2"
   },

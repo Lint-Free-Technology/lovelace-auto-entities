@@ -293,6 +293,8 @@ export const sortSchema = (method) => {
         ["entity_id", "Entity ID"],
         ["name", "Name (after rename)"],
         ["friendly_name", "Friendly Name (original, before rename)"],
+        ["device", "Device"],
+        ["area", "Area"],
         ["state", "Entity State"],
         ["last_changed", "Last Change"],
         ["last_updated", "Last Update"],
@@ -414,13 +416,13 @@ export const renameSchema = (method, type?, find?, replace?) => {
     // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
-      name: "String operations (applied in order: find/replace → prepend → append → trim). Find/replace can be a single value or a list of values in YAML.",
+      name: "String operations (applied in order: find/replace → prepend → append → trim → capitalize). Find/replace can be a single value or a list of values in YAML.",
       value: "",
     },
     ...(Array.isArray(find) || Array.isArray(replace)
       ? [
           {
-            type: "Constant",
+            type: "constant",
             name: "Find/Replace as list",
             value:
               "Find/Replace are configured as lists and cannot be edited in the GUI editor. Please switch to the CODE EDITOR to modify them.",
@@ -442,6 +444,11 @@ export const renameSchema = (method, type?, find?, replace?) => {
       name: "trim",
       type: "boolean",
       label: "Trim whitespace from result",
+    },
+    {
+      name: "capitalize",
+      type: "boolean",
+      label: "Capitalize first letter of result",
     },
     {
       name: "eval_js",
