@@ -1,5 +1,4 @@
 import { CardController, CardControllerHost } from "./base";
-import { MapCardController } from "./map";
 import type { EntityList } from "../types";
 
 interface CardControllerExtras {
@@ -25,8 +24,6 @@ export const getCardController = (
   extras?: CardControllerExtras
 ): CardController | undefined => {
   switch (getCardControllerType(type, extras)) {
-    case "map":
-      return new MapCardController(host);
     default:
       return undefined;
   }
