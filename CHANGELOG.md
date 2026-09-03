@@ -1,3 +1,9 @@
+## [2.7.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.0...v2.7.1-beta.1) (2026-09-03)
+
+### ⚙️ Miscellaneous
+
+* Remove map fit workaround no longer required since HA 2026.9.0. ([5c54105](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/5c54105805299ff999523f777cceaa2871f18db7))
+
 ## [2.7.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.1...v2.7.0) (2026-08-28)
 
 ### ⭐ New Features
