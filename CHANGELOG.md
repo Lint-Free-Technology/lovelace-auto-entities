@@ -8,18 +8,6 @@
 
 * Remove map fit workaround no longer required since HA 2026.9.0. ([5c54105](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/5c54105805299ff999523f777cceaa2871f18db7))
 
-## [2.8.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.1-beta.1...v2.8.0-beta.1) (2026-09-12)
-
-### ⭐ New Features
-
-* Support UIX entity icon styling by reading UIX entity vars in each refresh to prime `icon` and/or `color` config. ([#157](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/157)) ([23f5b9d](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/23f5b9d6249a4709ea76371e752b1b3c49d7bd82))
-
-## [2.7.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.0...v2.7.1-beta.1) (2026-09-03)
-
-### ⚙️ Miscellaneous
-
-* Remove map fit workaround no longer required since HA 2026.9.0. ([5c54105](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/5c54105805299ff999523f777cceaa2871f18db7))
-
 ## [2.7.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.6.1...v2.7.0) (2026-08-28)
 
 ### ⭐ New Features
