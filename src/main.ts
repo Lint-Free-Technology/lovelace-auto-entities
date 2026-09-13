@@ -21,6 +21,7 @@ import { compare_deep } from "./helpers";
 import { process_entity } from "./process_entity";
 import { getCardController, getCardControllerType } from "./card-controllers";
 import { CardController } from "./card-controllers/base";
+import { apply_uix_entity_icon_styling } from "./helpers/uix";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -170,7 +171,15 @@ class AutoEntities extends LitElement {
 
     if (!this.hass) return;
 
-    const entities = await this.update_entities();
+    const useUixEntityIconStyling =
+      this._config.uix_entity_icon_styling === true ||
+      (this._config.filter?.include ?? []).some(
+        (filter) => filter.uix_entity_icon_styling === true
+      );
+    const styles = useUixEntityIconStyling
+      ? window.getComputedStyle(this)
+      : undefined;
+    const entities = await this.update_entities(styles);
     this.update_card(entities);
   }
 
@@ -259,7 +268,7 @@ class AutoEntities extends LitElement {
     }
   }
 
-  async update_entities() {
+  async update_entities(styles?: CSSStyleDeclaration) {
     const format = (entity: LovelaceRowConfig | string): LovelaceRowConfig => {
       if (!entity) return null;
       return typeof entity === "string" ? { entity: entity.trim() } : entity;
@@ -278,8 +287,16 @@ class AutoEntities extends LitElement {
 
     const include_filters = await Promise.all(
       (this._config.filter?.include ?? []).map(async (filter) => {
-        if (filter.type !== undefined)
-          return async () => [filter as LovelaceRowConfig];
+        const useUixEntityIconStyling =
+          filter.uix_entity_icon_styling === true;
+        if (filter.type !== undefined) {
+          const { uix_entity_icon_styling, ...rowConfig } = filter;
+          return async () => [
+            useUixEntityIconStyling
+              ? apply_uix_entity_icon_styling(rowConfig, styles)
+              : rowConfig,
+          ];
+        }
 
         const filters = await get_filter(this.hass, filter);
         const filterSort = filter.sort;
@@ -297,12 +314,16 @@ class AutoEntities extends LitElement {
           ? await get_renamer(this.hass, filter.rename)
           : (x) => x;
 
-        const post_process = async (entity) =>
-          await process_entity(
+        const post_process = async (entity) => {
+          const processed = await process_entity(
             this.hass,
             { ...entity, ...filter.options },
             entity.entity
           );
+          return useUixEntityIconStyling
+            ? apply_uix_entity_icon_styling(processed, styles)
+            : processed;
+        };
 
         return async (entities: EntityList) => {
           let add = entities.filter(filters);
@@ -413,6 +434,12 @@ class AutoEntities extends LitElement {
       const start = globalSortPagination?.first ?? 0;
       const count = globalSortPagination?.count ?? Infinity;
       entities = entities.slice(start, start + count);
+    }
+
+    if (this._config.uix_entity_icon_styling === true) {
+      entities = entities.map((entity) =>
+        apply_uix_entity_icon_styling(entity, styles)
+      );
     }
 
     return entities;

@@ -1,0 +1,64 @@
+id: uix_icon_styling
+description: 'uix_icon_styling: Testing the UIX entity icon styling feature'
+view_path: uix-icon-styling
+theme: uix-entity-icon-styling
+
+setup:
+  - type: ha_service
+    domain: input_boolean
+    service: turn_on
+    data:
+      entity_id: input_boolean.test_toggle
+  - type: wait
+    ms: 1000
+
+cards:
+  - type: custom:auto-entities
+    uix_entity_icon_styling: true
+    card:
+      type: entities
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: input_boolean.test_toggle
+  - type: custom:auto-entities
+    card:
+      type: entities
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: input_boolean.test_toggle
+          uix_entity_icon_styling: true
+
+assertions:
+  - type: object_property_text_equals
+    root: 
+      - hui-grid-section 
+      - div.card:nth-of-type(1) hui-entities-card
+    selector: hui-toggle-entity-row
+    property: _config.icon
+    expected: mdi:lightbulb-on
+  - type: object_property_text_equals
+    root: 
+      - hui-grid-section 
+      - div.card:nth-of-type(1) hui-entities-card
+    selector: hui-toggle-entity-row
+    property: _config.color
+    expected: red
+  - type: object_property_text_equals
+    root: 
+      - hui-grid-section 
+      - div.card:nth-of-type(2) hui-entities-card
+    selector: hui-toggle-entity-row
+    property: _config.icon
+    expected: mdi:lightbulb-on
+  - type: object_property_text_equals
+    root: 
+      - hui-grid-section 
+      - div.card:nth-of-type(2) hui-entities-card
+    selector: hui-toggle-entity-row
+    property: _config.color
+    expected: red
+  - type: snapshot
+    name: 58_uix_icon_styling
+    threshold: 0.01

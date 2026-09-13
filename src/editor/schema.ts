@@ -182,6 +182,7 @@ const ruleSchema = ([key, value], idx) => {
 export const filterSchema = (group) => {
   const filters = { ...group };
   delete filters.options;
+  delete filters.uix_entity_icon_styling;
   return [
     ...Object.entries(filters).map(ruleSchema).filter(Boolean),
     {
@@ -196,6 +197,14 @@ export const filterSchema = (group) => {
     },
   ];
 };
+
+export const stylingSchema = [
+  {
+    name: "uix_entity_icon_styling",
+    type: "boolean",
+    label: "Use UIX entity icon styling",
+  },
+];
 
 export const migrate_custom_rule_values = async (hass, config, types, callback) => {
   const migrations = [];
@@ -231,6 +240,7 @@ export const rule_to_form = (group) => {
   const filters = { ...group };
   const options = { ...group.options };
   delete filters.options;
+  delete filters.uix_entity_icon_styling;
   return Object.assign(
     {},
     ...Object.entries(filters).map(([key, value], idx) => ({
@@ -477,6 +487,11 @@ export const cardOptionsSchema = [
         name: "card_as_row",
         type: "boolean",
         label: "Card as row",
+      },
+      {
+        name: "uix_entity_icon_styling",
+        type: "boolean",
+        label: "Use UIX entity icon styling",
       },
       {
         name: "card_param",

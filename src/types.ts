@@ -89,6 +89,7 @@ interface FilterConfig {
   options?: any;
   sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
+  uix_entity_icon_styling?: boolean;
   type?: string;
 }
 
@@ -114,6 +115,7 @@ export interface AutoEntitiesConfig {
   sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
   fire_dom_event?: CustomEventConfig;
+  uix_entity_icon_styling?: boolean;
 
   entity_ids?: any[];
 }
@@ -122,6 +124,8 @@ export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
   name?: string;
+  icon?: string;
+  color?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

@@ -28,6 +28,7 @@ filter:
 
 show_empty: <show_empty>
 card_as_row: <card_as_row>
+uix_entity_icon_styling: <uix_entity_icon_styling>
 else: <else>
 unique: <unique>
 rename: <rename_method>
@@ -49,6 +50,7 @@ sort: <sort_method>
 | `sort` | [Sort config](#sorting-entities) | How to sort the entities of the card | `none` |
 | `card_param` | string | The parameter of the card to populate with entities | `entities` |
 | `card_as_row` | `true`/`false` | Set to `true` if you use auto-entities card as a nested row in an entities card. | `false` |
+| `uix_entity_icon_styling` | `true`/`false` | Apply UIX per-entity icon and color CSS variables to `icon` and `color` config produced. | `false` |
 | `fire_dom_event` | Object | An object which can contain multiple objects which define `ll-custom` events to fire each time auto-entities updates the card config. See [Using fire_dom_event to provide card config as event data to other cards](#using-fire_dom_event-to-provide-card-config-as-event-data-to-other-cards) | `none` |
 
 \* [Dashboard card](https://www.home-assistant.io/dashboards/cards/) \
@@ -95,6 +97,7 @@ Special options:
 | `type` | If a `type` is given, the filter is handled as a complete entity description and passed along directly to the card. Special values `divider` and `section` insert a visual divider or section heading — see [Special types](#special-types-divider-and-section) below. |
 | `rename` | [Rename config](#renaming-entities) applied to entities in _this filter only_ |
 | `sort` | [Sort config](#sorting-entities) applied to entities in _this filter only_ |
+| `uix_entity_icon_styling` | Apply UIX per-entity icon and color CSS variables to `icon` and `color` config produced by this include filter. |
 
 ### Special types (divider and section)
 
@@ -625,6 +628,23 @@ sort:
 ## Entity options
 
 In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
+
+### UIX entity icon styling
+
+Set `uix_entity_icon_styling: true` on the auto-entities card to apply UIX entity icon styling to every generated row, or set it on an individual include filter to apply it only to rows produced by that filter.
+
+On each auto-entities refresh, the card reads its computed styles once. For an entity such as `light.bed_light`, it copies non-empty values from `--uix-icon-for-light_bed_light` and `--uix-icon-color-for-light_bed_light` into the row's `icon` and `color` configuration respectively. UIX remains responsible for updating the CSS variables; the next auto-entities refresh uses their current values.
+
+```yaml
+type: custom:auto-entities
+card:
+  type: entities
+filter:
+  include:
+    - domain: light
+      uix_entity_icon_styling: true
+    - domain: sensor
+```
 
 ## Using `fire_dom_event` to provide card config as event data to other cards
 

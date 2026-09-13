@@ -123,6 +123,7 @@ export const RULES: Record<
   options: async (hass, value) => undefined,
   sort: async (hass, value) => undefined,
   rename: async (hass, value) => undefined,
+  uix_entity_icon_styling: async (hass, value) => undefined,
 
   domain: async (hass, value) => {
     const match = await matcher(value);

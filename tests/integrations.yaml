@@ -1,3 +1,6 @@
 # Integrations to load
 #- repo: <repo url> --- IGNORE ---
 #  domain: <domain> --- IGNORE ---
+
+- repo: Lint-Free-Technology/uix
+  domain: uix
