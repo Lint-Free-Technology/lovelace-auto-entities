@@ -18,9 +18,11 @@ function compare(_a: any, _b: any, method: SortConfig) {
     }
   }
 
+  const nonNumericLess = method.numeric && method.non_numeric === "less";
+
   if (_a === undefined && _b === undefined) return 0;
-  if (_a === undefined) return gt;
-  if (_b === undefined) return lt;
+  if (_a === undefined) return nonNumericLess ? lt : gt;
+  if (_b === undefined) return nonNumericLess ? gt : lt;
 
   if (method.numeric) {
     if (_a === _b) return 0;

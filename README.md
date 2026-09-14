@@ -587,6 +587,7 @@ sort:
   first: <first>
   count: <count>
   numeric: <numeric>
+  non_numeric: <non_numeric>
   ip: <ip>
 ```
 
@@ -596,6 +597,7 @@ sort:
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
 - `numeric:` Set to `true` to sort by numeric value. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
+- `non_numeric:` When `numeric: true`, treat a non-numeric or missing value as `less` or `greater` than any number. Default: `greater`. This composes with `reverse`: `less` puts non-numeric entities first in ascending order (last when reversed); `greater` puts them last in ascending order (first when reversed).
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).

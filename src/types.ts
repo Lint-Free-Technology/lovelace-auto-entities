@@ -9,6 +9,7 @@ export interface SortConfig {
   count?: number;
   numeric?: boolean;
   ip?: boolean;
+  non_numeric?: "less" | "greater";
 }
 
 /**
