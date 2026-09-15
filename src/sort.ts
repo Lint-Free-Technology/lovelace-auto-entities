@@ -29,13 +29,16 @@ function compare(_a: any, _b: any, method: SortConfig) {
   const bNan = _b === undefined;
   if (aNan && bNan) return 0;
   if (aNan || bNan) {
-    if (nan) {
-      const nanFirst = nan === "first";
-      if (aNan) return nanFirst ? -1 : 1;
-      return nanFirst ? 1 : -1;
+    if (method.numeric === true) {
+      if (aNan) return gt;
+      return lt;
+    } else if (method.numeric === "last") {
+      if (aNan) return 1;
+      return -1;
+    } else if (method.numeric === "first") {
+      if (aNan) return -1;
+      return 1;
     }
-    if (aNan) return gt;
-    return lt;
   }
 
   if (nan) {
