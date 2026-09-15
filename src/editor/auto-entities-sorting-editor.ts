@@ -27,6 +27,16 @@ class AutoEntitiesSortingEditor extends LitElement {
         </div>
       `;
     }
+    if (this._config.sort && typeof this._config.sort.numeric === "object") {
+      return html`
+        <div>
+          <ha-alert alert-type="info">
+            Numeric sort options are configured. Please use the
+            <b>CODE EDITOR</b> to edit them.
+          </ha-alert>
+        </div>
+      `;
+    }
     const data = (this._config.sort as SortConfig) ?? ({} as SortConfig);
     return html`
       <div>

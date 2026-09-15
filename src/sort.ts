@@ -12,17 +12,27 @@ function compare(_a: any, _b: any, method: SortConfig) {
   }
 
   if (method.numeric) {
-    if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {
-      _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
-      _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
-    }
+    _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
+    _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
   }
 
-  const nonNumericLess = method.numeric && method.non_numeric === "less";
-
-  if (_a === undefined && _b === undefined) return 0;
-  if (_a === undefined) return nonNumericLess ? lt : gt;
-  if (_b === undefined) return nonNumericLess ? gt : lt;
+  const aNan = _a === undefined;
+  const bNan = _b === undefined;
+  if (aNan && bNan) return 0;
+  if (aNan || bNan) {
+    if (method.numeric) {
+      // Object form: nan first/last is independent of reverse.
+      // boolean `numeric: true` keeps the historical coupling with reverse.
+      const nanFirst =
+        method.numeric === true
+          ? !!method.reverse
+          : method.numeric.nan === "first";
+      if (aNan) return nanFirst ? -1 : 1;
+      return nanFirst ? 1 : -1;
+    }
+    if (aNan) return gt;
+    return lt;
+  }
 
   if (method.numeric) {
     if (_a === _b) return 0;

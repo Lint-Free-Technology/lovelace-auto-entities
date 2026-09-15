@@ -327,15 +327,6 @@ export const sortSchema = (method) => {
         { name: "ip", type: "boolean", label: "IP address sort" },
       ],
     },
-    {
-      name: "non_numeric",
-      label: "Non-numeric values",
-      type: "select",
-      options: [
-        ["greater", "Greater than numeric"],
-        ["less", "Less than numeric"],
-      ],
-    },
   ];
 
   if (method !== undefined && !schema[0].options.some(([k, v]) => k === method))
