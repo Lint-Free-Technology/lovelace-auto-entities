@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { property, state } from "lit/decorators.js";
-import { AutoEntitiesConfig, SortConfig } from "../types";
-import { sortSchema } from "./schema";
+import { AutoEntitiesConfig } from "../types";
+import { sortSchema, sortDataForForm, sortDataFromForm } from "./schema";
 
 class AutoEntitiesSortingEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -9,7 +9,7 @@ class AutoEntitiesSortingEditor extends LitElement {
 
   _changeSortOptions(ev) {
     if (!this._config) return;
-    const sort = ev.detail.value;
+    const sort = sortDataFromForm(ev.detail.value);
     this._config = { ...this._config, sort };
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: this._config } })
@@ -27,7 +27,7 @@ class AutoEntitiesSortingEditor extends LitElement {
         </div>
       `;
     }
-    const data = (this._config.sort as SortConfig) ?? ({} as SortConfig);
+    const data = sortDataForForm(this._config.sort);
     return html`
       <div>
         <ha-form

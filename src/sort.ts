@@ -1,6 +1,14 @@
 import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
+function numericNanPlacement(
+  numeric: SortConfig["numeric"]
+): false | "first" | "last" {
+  if (numeric === true || numeric === "last") return "last";
+  if (numeric === "first") return "first";
+  return false;
+}
+
 function compare(_a: any, _b: any, method: SortConfig) {
   // lt = a before b (a < b)
   // gt = a after b (a > b)
@@ -11,18 +19,29 @@ function compare(_a: any, _b: any, method: SortConfig) {
     _b = _b?.toLowerCase?.() ?? _b;
   }
 
-  if (method.numeric) {
-    if (!(isNaN(parseFloat(_a)) && isNaN(parseFloat(_b)))) {
-      _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
-      _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
+  const nan = numericNanPlacement(method.numeric);
+  if (nan) {
+    _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
+    _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
+  }
+
+  const aNan = _a === undefined;
+  const bNan = _b === undefined;
+  if (aNan && bNan) return 0;
+  if (aNan || bNan) {
+    if (method.numeric === true) {
+      if (aNan) return gt;
+      return lt;
+    } else if (method.numeric === "last") {
+      if (aNan) return 1;
+      return -1;
+    } else if (method.numeric === "first") {
+      if (aNan) return -1;
+      return 1;
     }
   }
 
-  if (_a === undefined && _b === undefined) return 0;
-  if (_a === undefined) return gt;
-  if (_b === undefined) return lt;
-
-  if (method.numeric) {
+  if (nan) {
     if (_a === _b) return 0;
     return _a < _b ? lt : gt;
   }
