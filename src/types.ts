@@ -1,6 +1,6 @@
 export const SPECIAL_TYPES = ["section", "divider"];
 
-export type NumericSortConfig = boolean | { nan?: "first" | "last" };
+export type NumericSortConfig = boolean | "first" | "last";
 
 export interface SortConfig {
   method?: string;

@@ -1,6 +1,14 @@
 import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
+function numericNanPlacement(
+  numeric: SortConfig["numeric"]
+): false | "first" | "last" {
+  if (numeric === true || numeric === "last") return "last";
+  if (numeric === "first") return "first";
+  return false;
+}
+
 function compare(_a: any, _b: any, method: SortConfig) {
   // lt = a before b (a < b)
   // gt = a after b (a > b)
@@ -11,7 +19,8 @@ function compare(_a: any, _b: any, method: SortConfig) {
     _b = _b?.toLowerCase?.() ?? _b;
   }
 
-  if (method.numeric) {
+  const nan = numericNanPlacement(method.numeric);
+  if (nan) {
     _a = isNaN(parseFloat(_a)) ? undefined : parseFloat(_a);
     _b = isNaN(parseFloat(_b)) ? undefined : parseFloat(_b);
   }
@@ -20,13 +29,8 @@ function compare(_a: any, _b: any, method: SortConfig) {
   const bNan = _b === undefined;
   if (aNan && bNan) return 0;
   if (aNan || bNan) {
-    if (method.numeric) {
-      // Object form: nan first/last is independent of reverse.
-      // boolean `numeric: true` keeps the historical coupling with reverse.
-      const nanFirst =
-        method.numeric === true
-          ? !!method.reverse
-          : method.numeric.nan === "first";
+    if (nan) {
+      const nanFirst = nan === "first";
       if (aNan) return nanFirst ? -1 : 1;
       return nanFirst ? 1 : -1;
     }
@@ -34,7 +38,7 @@ function compare(_a: any, _b: any, method: SortConfig) {
     return lt;
   }
 
-  if (method.numeric) {
+  if (nan) {
     if (_a === _b) return 0;
     return _a < _b ? lt : gt;
   }

@@ -595,9 +595,11 @@ sort:
   - `friendly_name` — sorts by the entity's original Home Assistant friendly name, **unaffected** by any `rename:` configuration.
 - `reverse:` Set to `true` to reverse the order. Default: `false`.
 - `ignore_case:` Set to `true` to make the sort case-insensitive. Default: `false`.
-- `numeric:` Set to `true` to sort by numeric value, or to an object to control how non-numeric values are placed. Default: `false` except for `last_changed`, `last_updated` and `last_triggered` sorting methods.
-  - `true` — sort numerically. Missing or non-numeric values (for example `unknown`) are placed last, or first when `reverse: true`.
-  - `nan:` `first` or `last` — place non-numeric values before or after all numbers. This does **not** follow `reverse`; `reverse` only flips the numeric values. Two non-numeric values compare equal, so a later sort level can order them. Default: `last`.
+- `numeric:` How to sort by numeric value. Default: `off` except for `last_changed`, `last_updated` and `last_triggered` (those use `true`). Two non-numeric values compare equal, so a later sort level can order them.
+  - `false` — do not sort numerically
+  - `true` — sort numerically. Missing/`unknown` values compare as **greater** than any number, so they are last unless `reverse: true` (then they are first)
+  - `last` — sort numerically, with missing/`unknown` values after all numbers. `reverse` does not move them
+  - `first` — sort numerically, with missing/`unknown` values before all numbers. `reverse` does not move them
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
@@ -621,8 +623,7 @@ Non-numeric values such as `unknown` can be pinned first or last while numbers s
 ```yaml
 sort:
   - method: state
-    numeric:
-      nan: last
+    numeric: last
   - method: state
 ```
 
