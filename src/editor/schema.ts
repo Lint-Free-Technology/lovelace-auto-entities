@@ -293,7 +293,6 @@ export const templateSchema = [
 ];
 
 export function sortDataForForm(sort?: SortConfig) {
-  if (!sort) return {};
   const numeric = sort.numeric;
   return { ...sort, numeric };
 }
