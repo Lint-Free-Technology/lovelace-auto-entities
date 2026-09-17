@@ -113,3 +113,8 @@ template:
   - sensor: { name: a48, state: a48 }
   - sensor: { name: a49, state: a49 }
   - sensor: { name: a50, state: a50 }
+  - sensor: { name: mix_1, state: 1 }
+  - sensor: { name: mix_3, state: 3 }
+  - sensor: { name: mix_10, state: 10 }
+  - sensor: { name: mix_na, state: "n/a" }
+  - sensor: { name: mix_offline, state: offline }
