@@ -54,7 +54,11 @@ function compare(_a: any, _b: any, method: SortConfig) {
 
   return (
     (method.reverse ? -1 : 1) *
-    String(_a).localeCompare(String(_b), undefined, method)
+    String(_a).localeCompare(String(_b), undefined, {
+      ...method,
+      // `Intl.Collator` coerces non-empty strings such as "off" to true.
+      numeric: method.numeric === true,
+    })
   );
 }
 
@@ -120,7 +124,8 @@ export async function get_sorter(
   const validMethods = methods
     .filter((m) => COMPARISONS[m.method])
     .map((m) =>
-      ["last_changed", "last_updated", "last_triggered"].includes(m.method) && !m.numeric
+      ["last_changed", "last_updated", "last_triggered"].includes(m.method) &&
+      m.numeric === undefined
         ? { ...m, numeric: true }
         : m
     );

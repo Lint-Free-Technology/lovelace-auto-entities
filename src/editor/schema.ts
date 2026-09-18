@@ -292,27 +292,34 @@ export const templateSchema = [
   },
 ];
 
-export function sortDataForForm(sort?: SortConfig) {
+type FormNumericSortConfig = SortConfig["numeric"] | "default" | "true";
+type FormSortConfig = Omit<SortConfig, "numeric"> & {
+  numeric?: FormNumericSortConfig;
+};
+
+/**
+ * The card configuration distinguishes an omitted numeric setting from an
+ * explicit `false`: timestamp sorts default to numeric only when it is
+ * omitted. Keep that distinction while the GUI form is being edited.
+ */
+export function sortDataForForm(sort?: SortConfig): FormSortConfig {
   if (!sort) return {};
-  const numeric =
-    sort.numeric === true ||
-    sort.numeric === "nan_last" ||
-    sort.numeric === "nan_first"
-      ? sort.numeric
-      : false;
+  const numeric = sort.numeric === undefined ? "default" : sort.numeric;
   return { ...sort, numeric };
 }
 
-export function sortDataFromForm(sort?: SortConfig) {
-  if (!sort) return sort;
-  if (sort.numeric === "off" || sort.numeric === false) {
+export function sortDataFromForm(sort?: FormSortConfig): SortConfig {
+  if (!sort) return undefined;
+  if (sort.numeric === "default") {
     const { numeric, ...rest } = sort;
-    return rest;
+    return rest as SortConfig;
   }
+  // Older saved configurations may still use the string form.
+  if (sort.numeric === "off") return { ...sort, numeric: false };
   if ((sort.numeric as unknown) === "true") {
     return { ...sort, numeric: true };
   }
-  return sort;
+  return sort as SortConfig;
 }
 
 export const sortSchema = (method) => {
@@ -351,6 +358,7 @@ export const sortSchema = (method) => {
           type: "select",
           label: "Numeric sort",
           options: [
+            ["default", "Default (off; on for timestamps)"],
             [false, "Off"],
             [true, "On, non-numeric follows sort direction"],
             ["nan_last", "On, non-numeric last"],
