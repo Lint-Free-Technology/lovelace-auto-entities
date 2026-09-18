@@ -292,7 +292,7 @@ export const templateSchema = [
   },
 ];
 
-type FormNumericSortConfig = SortConfig["numeric"] | "default" | "true";
+type FormNumericSortConfig = SortConfig["numeric"] | "default";
 type FormSortConfig = Omit<SortConfig, "numeric"> & {
   numeric?: FormNumericSortConfig;
 };
@@ -304,7 +304,14 @@ type FormSortConfig = Omit<SortConfig, "numeric"> & {
  */
 export function sortDataForForm(sort?: SortConfig): FormSortConfig {
   if (!sort) return {};
-  const numeric = sort.numeric === undefined ? "default" : sort.numeric;
+  const numeric =
+    sort.numeric === undefined
+      ? "default"
+      : sort.numeric === "off"
+        ? false
+        : sort.numeric === "true"
+          ? true
+          : sort.numeric;
   return { ...sort, numeric };
 }
 

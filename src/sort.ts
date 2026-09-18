@@ -2,7 +2,12 @@ import { getAreas, getDevices, getEntities } from "./helpers";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function isNumericSort(numeric: SortConfig["numeric"]): boolean {
-  return numeric === true || numeric === "nan_first" || numeric === "nan_last";
+  return (
+    numeric === true ||
+    numeric === "true" ||
+    numeric === "nan_first" ||
+    numeric === "nan_last"
+  );
 }
 
 function compare(_a: any, _b: any, method: SortConfig) {
