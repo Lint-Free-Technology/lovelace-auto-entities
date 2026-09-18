@@ -1,0 +1,23 @@
+id: sorting_numeric_nan_tiebreak
+description: 'sorting: two non-numeric values fall through to the next sort level'
+view_path: sorting-numeric-nan-tiebreak
+
+card:
+  type: custom:auto-entities
+  card:
+    type: entities
+    title: nan_last then state reverse
+    show_header_toggle: false
+  filter:
+    include:
+      - entity_id: /sensor\.mix_/
+  sort:
+    - method: state
+      numeric: nan_last
+    - method: state
+      reverse: true
+
+assertions:
+  - type: snapshot
+    name: 62_sorting_numeric_nan_tiebreak
+    threshold: 0.02
