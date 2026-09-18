@@ -1,0 +1,32 @@
+id: sorting_numeric_off
+description: 'sorting: numeric false keeps string order; true orders mixed numbers'
+view_path: sorting-numeric-off
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: numeric false
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: false
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: numeric true
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: true
+
+assertions:
+  - type: snapshot
+    name: 63_sorting_numeric_off
+    threshold: 0.02

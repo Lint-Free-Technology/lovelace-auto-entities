@@ -1,0 +1,12 @@
+uix-entity-icon-styling:
+
+  uix-theme: uix-entity-icon-styling
+
+  uix-root-yaml: |
+    .: |
+      :host {
+        --uix-icon-for-input_boolean_test_toggle:
+        {{ 'mdi:lightbulb-on' if is_state('input_boolean.test_toggle', 'on') else 'mdi:lightbulb-off' }};
+        --uix-icon-color-for-input_boolean_test_toggle:
+        {{ 'red' if is_state('input_boolean.test_toggle', 'on') else 'gray' }};
+      }

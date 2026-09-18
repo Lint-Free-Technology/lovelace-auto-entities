@@ -5,8 +5,11 @@ import {
   filterSchema,
   rule_to_form,
   form_to_rule,
+  stylingSchema,
   nonFilterSchema,
   sortSchema,
+  sortDataForForm,
+  sortDataFromForm,
   templateSchema,
   entitiesSchema,
   isRuleKeySelector,
@@ -109,16 +112,35 @@ class AutoEntitiesFilterEditor extends LitElement {
       return;
 
     const filters = this._getFilters(type);
-    filters[idx] = { ...data };
+    filters[idx] = {
+      ...data,
+      ...(filters[idx].uix_entity_icon_styling === true
+        ? { uix_entity_icon_styling: true }
+        : {}),
+    };
     this._setFilters(type, filters);
   }
 
   _sortChanged(ev, idx, type) {
     ev.stopPropagation();
-    const data = ev.detail.value;
+    const data = sortDataFromForm(ev.detail.value);
 
     const filters = this._getFilters(type);
     filters[idx] = { ...filters[idx], sort: data };
+    this._setFilters(type, filters);
+  }
+
+  _stylingChanged(ev, idx, type) {
+    ev.stopPropagation();
+
+    const filters = this._getFilters(type);
+    const filter = { ...filters[idx] };
+    if (ev.detail.value.uix_entity_icon_styling === true) {
+      filter.uix_entity_icon_styling = true;
+    } else {
+      delete filter.uix_entity_icon_styling;
+    }
+    filters[idx] = filter;
     this._setFilters(type, filters);
   }
 
@@ -208,15 +230,24 @@ class AutoEntitiesFilterEditor extends LitElement {
                         <ha-expansion-panel outlined class="sort">
                           <h4 slot="header">Sorting</h4>
                           <div class="content">
-                            <ha-form
-                              .hass=${this.hass}
-                              .schema=${sortSchema(filter.sort?.method)}
-                              .data=${filter.sort}
-                              .computeLabel=${(s) => s.label ?? s.name}
-                              @value-changed=${(ev) =>
-                                this._sortChanged(ev, idx, type)}
-                            >
-                            </ha-form>
+                            ${Array.isArray(filter.sort)
+                              ? html`
+                                  <ha-alert alert-type="info">
+                                    Multiple sort levels are configured. Please
+                                    use the <b>CODE EDITOR</b> to edit them.
+                                  </ha-alert>
+                                `
+                              : html`
+                                  <ha-form
+                                    .hass=${this.hass}
+                                    .schema=${sortSchema(filter.sort?.method)}
+                                    .data=${sortDataForForm(filter.sort)}
+                                    .computeLabel=${(s) => s.label ?? s.name}
+                                    @value-changed=${(ev) =>
+                                      this._sortChanged(ev, idx, type)}
+                                  >
+                                  </ha-form>
+                                `}
                           </div>
                         </ha-expansion-panel>
                       `
@@ -231,6 +262,27 @@ class AutoEntitiesFilterEditor extends LitElement {
                         >
                         </ha-form>
                       `}
+                  ${type === "include"
+                    ? html`
+                        <ha-expansion-panel outlined class="styling">
+                          <h4 slot="header">Styling</h4>
+                          <div class="content">
+                            <ha-form
+                              .hass=${this.hass}
+                              .schema=${stylingSchema}
+                              .data=${{
+                                uix_entity_icon_styling:
+                                  filter.uix_entity_icon_styling === true,
+                              }}
+                              .computeLabel=${(s) => s.label ?? s.name}
+                              @value-changed=${(ev) =>
+                                this._stylingChanged(ev, idx, type)}
+                            >
+                            </ha-form>
+                          </div>
+                        </ha-expansion-panel>
+                      `
+                    : ""}
                 </div>
               </ha-expansion-panel>
             `

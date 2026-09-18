@@ -1,5 +1,12 @@
 export const SPECIAL_TYPES = ["section", "divider"];
 
+export type NumericSortConfig =
+  | boolean
+  | "off"
+  | "true"
+  | "nan_first"
+  | "nan_last";
+
 export interface SortConfig {
   method?: string;
   reverse?: boolean;
@@ -7,7 +14,7 @@ export interface SortConfig {
   attribute?: string;
   first?: number;
   count?: number;
-  numeric?: boolean;
+  numeric?: NumericSortConfig;
   ip?: boolean;
 }
 
@@ -89,6 +96,7 @@ interface FilterConfig {
   options?: any;
   sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
+  uix_entity_icon_styling?: boolean;
   type?: string;
 }
 
@@ -114,6 +122,7 @@ export interface AutoEntitiesConfig {
   sort?: SortConfig | SortConfig[];
   rename?: RenameConfig;
   fire_dom_event?: CustomEventConfig;
+  uix_entity_icon_styling?: boolean;
 
   entity_ids?: any[];
 }
@@ -122,6 +131,8 @@ export interface LovelaceRowConfig {
   entity?: string;
   type?: string;
   name?: string;
+  icon?: string;
+  color?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

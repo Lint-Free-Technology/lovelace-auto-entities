@@ -1,0 +1,33 @@
+id: sorting_numeric_nan_last
+description: 'sorting: numeric nan_last keeps non-numeric after numbers when reversed'
+view_path: sorting-numeric-nan-last
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: nan_last
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: nan_last
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: nan_last reverse
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: nan_last
+      reverse: true
+
+assertions:
+  - type: snapshot
+    name: 60_sorting_numeric_nan_last
+    threshold: 0.02
