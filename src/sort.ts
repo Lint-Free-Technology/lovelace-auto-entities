@@ -120,7 +120,7 @@ export async function get_sorter(
   const validMethods = methods
     .filter((m) => COMPARISONS[m.method])
     .map((m) =>
-      ["last_changed", "last_updated", "last_triggered"].includes(m.method)
+      ["last_changed", "last_updated", "last_triggered"].includes(m.method) && !m.numeric
         ? { ...m, numeric: true }
         : m
     );
