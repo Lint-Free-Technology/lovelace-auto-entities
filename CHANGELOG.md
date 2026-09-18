@@ -1,3 +1,9 @@
+## [2.8.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.0...v2.8.1-beta.1) (2026-09-18)
+
+### 🐞 Bug Fixes
+
+* **sort:** Add options `nan_last` and `nan_first` to sort option `numeric`. ([#165](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/165)) ([7dbea64](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/7dbea64abf2eed077a3aa331196665712daf5699)), closes [#164](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/164)
+
 ## [2.8.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.7.0...v2.8.0) (2026-09-13)
 
 ### ⭐ New Features
