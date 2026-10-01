@@ -1,5 +1,12 @@
 export const SPECIAL_TYPES = ["section", "divider"];
 
+export type NumericSortConfig =
+  | boolean
+  | "off"
+  | "true"
+  | "nan_first"
+  | "nan_last";
+
 export interface SortConfig {
   method?: string;
   reverse?: boolean;
@@ -7,7 +14,7 @@ export interface SortConfig {
   attribute?: string;
   first?: number;
   count?: number;
-  numeric?: boolean;
+  numeric?: NumericSortConfig;
   ip?: boolean;
 }
 

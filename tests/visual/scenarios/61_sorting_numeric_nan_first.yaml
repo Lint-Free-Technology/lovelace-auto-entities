@@ -1,0 +1,33 @@
+id: sorting_numeric_nan_first
+description: 'sorting: numeric nan_first keeps non-numeric before numbers when reversed'
+view_path: sorting-numeric-nan-first
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: nan_first
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: nan_first
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: nan_first reverse
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.mix_/
+    sort:
+      method: state
+      numeric: nan_first
+      reverse: true
+
+assertions:
+  - type: snapshot
+    name: 61_sorting_numeric_nan_first
+    threshold: 0.02

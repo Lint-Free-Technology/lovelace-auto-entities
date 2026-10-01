@@ -8,6 +8,8 @@ import {
   stylingSchema,
   nonFilterSchema,
   sortSchema,
+  sortDataForForm,
+  sortDataFromForm,
   templateSchema,
   entitiesSchema,
   isRuleKeySelector,
@@ -121,7 +123,7 @@ class AutoEntitiesFilterEditor extends LitElement {
 
   _sortChanged(ev, idx, type) {
     ev.stopPropagation();
-    const data = ev.detail.value;
+    const data = sortDataFromForm(ev.detail.value);
 
     const filters = this._getFilters(type);
     filters[idx] = { ...filters[idx], sort: data };
@@ -228,15 +230,24 @@ class AutoEntitiesFilterEditor extends LitElement {
                         <ha-expansion-panel outlined class="sort">
                           <h4 slot="header">Sorting</h4>
                           <div class="content">
-                            <ha-form
-                              .hass=${this.hass}
-                              .schema=${sortSchema(filter.sort?.method)}
-                              .data=${filter.sort}
-                              .computeLabel=${(s) => s.label ?? s.name}
-                              @value-changed=${(ev) =>
-                                this._sortChanged(ev, idx, type)}
-                            >
-                            </ha-form>
+                            ${Array.isArray(filter.sort)
+                              ? html`
+                                  <ha-alert alert-type="info">
+                                    Multiple sort levels are configured. Please
+                                    use the <b>CODE EDITOR</b> to edit them.
+                                  </ha-alert>
+                                `
+                              : html`
+                                  <ha-form
+                                    .hass=${this.hass}
+                                    .schema=${sortSchema(filter.sort?.method)}
+                                    .data=${sortDataForForm(filter.sort)}
+                                    .computeLabel=${(s) => s.label ?? s.name}
+                                    @value-changed=${(ev) =>
+                                      this._sortChanged(ev, idx, type)}
+                                  >
+                                  </ha-form>
+                                `}
                           </div>
                         </ha-expansion-panel>
                       `

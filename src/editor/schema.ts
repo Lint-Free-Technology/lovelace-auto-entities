@@ -1,5 +1,5 @@
 import { getAreas, getConfigEntries, getDevices, getEntities, getFloors, getLabels } from "../helpers";
-import { SPECIAL_TYPES } from "../types";
+import { SPECIAL_TYPES, SortConfig } from "../types";
 
 const ruleKeySelector = {
   type: "select",
@@ -292,6 +292,43 @@ export const templateSchema = [
   },
 ];
 
+type FormNumericSortConfig = SortConfig["numeric"] | "default";
+type FormSortConfig = Omit<SortConfig, "numeric"> & {
+  numeric?: FormNumericSortConfig;
+};
+
+/**
+ * The card configuration distinguishes an omitted numeric setting from an
+ * explicit `false`: timestamp sorts default to numeric only when it is
+ * omitted. Keep that distinction while the GUI form is being edited.
+ */
+export function sortDataForForm(sort?: SortConfig): FormSortConfig {
+  if (!sort) return {};
+  const numeric =
+    sort.numeric === undefined
+      ? "default"
+      : sort.numeric === "off"
+        ? false
+        : sort.numeric === "true"
+          ? true
+          : sort.numeric;
+  return { ...sort, numeric };
+}
+
+export function sortDataFromForm(sort?: FormSortConfig): SortConfig {
+  if (!sort) return undefined;
+  if (sort.numeric === "default") {
+    const { numeric, ...rest } = sort;
+    return rest as SortConfig;
+  }
+  // Older saved configurations may still use the string form.
+  if (sort.numeric === "off") return { ...sort, numeric: false };
+  if ((sort.numeric as unknown) === "true") {
+    return { ...sort, numeric: true };
+  }
+  return sort as SortConfig;
+}
+
 export const sortSchema = (method) => {
   const schema: any[] = [
     {
@@ -323,7 +360,18 @@ export const sortSchema = (method) => {
       schema: [
         { name: "reverse", type: "boolean", label: "Reverse" },
         { name: "ignore_case", type: "boolean", label: "Ignore case" },
-        { name: "numeric", type: "boolean", label: "Numeric sort" },
+        {
+          name: "numeric",
+          type: "select",
+          label: "Numeric sort",
+          options: [
+            ["default", "Default (off; on for timestamps)"],
+            [false, "Off"],
+            [true, "On, non-numeric follows sort direction"],
+            ["nan_last", "On, non-numeric last"],
+            ["nan_first", "On, non-numeric first"],
+          ],
+        },
         { name: "ip", type: "boolean", label: "IP address sort" },
       ],
     },
