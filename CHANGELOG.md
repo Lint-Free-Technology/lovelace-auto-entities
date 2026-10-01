@@ -1,4 +1,4 @@
-## [2.8.1-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.0...v2.8.1-beta.1) (2026-09-18)
+## [2.8.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.0...v2.8.1) (2026-10-01)
 
 ### 🐞 Bug Fixes
 
