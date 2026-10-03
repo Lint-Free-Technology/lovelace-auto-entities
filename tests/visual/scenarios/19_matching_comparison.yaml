@@ -38,7 +38,7 @@ card:
           brightness: <150
       - type: section
       - attributes:
-          brightness: '!255'
+          brightness: '!=255'
       - type: section
       - attributes 1:
           brightness: '>50'
