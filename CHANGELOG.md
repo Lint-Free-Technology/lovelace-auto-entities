@@ -1,3 +1,9 @@
+## [2.8.2-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.1...v2.8.2-beta.1) (2026-10-03)
+
+### 🐞 Bug Fixes
+
+* exclude equal values from numeric inequality filters ([#176](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/176)) ([912c2f0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/912c2f0b410a44c62bbd6f9c5c19a99624178502))
+
 ## [2.8.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.0...v2.8.1) (2026-10-01)
 
 ### 🐞 Bug Fixes
