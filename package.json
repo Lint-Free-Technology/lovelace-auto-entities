@@ -6,7 +6,6 @@
   "description": "",
   "scripts": {
     "build": "rollup -c",
-    "test": "node --experimental-strip-types --test tests/match.test.mjs",
     "watch": "rollup -c --watch"
   },
   "author": "Thomas Lovén",

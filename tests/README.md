@@ -18,6 +18,20 @@ pip install -e '.[test]'
 playwright install --with-deps chromium
 ```
 
+## Browser smoke tests
+
+After building the card, run the filter smoke tests with the same Python and
+Playwright dependencies:
+
+```bash
+npm run build
+pytest tests/test_matcher_smoke.py
+```
+
+These tests load the built card in Chromium with synthetic Home Assistant states
+and inspect the entities passed to its inner card. They do not start Home Assistant
+or compare screenshots.
+
 ## Setup and run tests (VS Code tasks or CLI)
 
 Home Assistant test version is read from `tests/HA_VERSION`.
