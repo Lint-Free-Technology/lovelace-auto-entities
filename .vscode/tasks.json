@@ -51,6 +51,17 @@
       }
     },
     {
+      "label": "pytest: Smoke tests (no scenarios)",
+      "type": "shell",
+      "command": "source .venv/bin/activate && pytest @tests/smoke.txt",
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "panel": "shared",
+        "group": "pytest"
+      }
+    },
+    {
       "label": "pytest: Visual scenarios",
       "type": "shell",
       "command": "source .venv/bin/activate && if [ -f .ha_env ]; then source .ha_env; fi; pytest tests/visual/test_scenarios.py",
