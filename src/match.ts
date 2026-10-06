@@ -75,7 +75,7 @@ export async function matcher(pattern: any, ignoreCase = false): Promise<(value:
       const parameter = parseFloat(pattern.substring(1));
       matchers.push((value) => parseFloat(value) > parameter);
     }
-    if (pattern.startsWith("!")) {
+    if (pattern.startsWith("!") && !pattern.startsWith("!=")) {
       const parameter = parseFloat(pattern.substring(1));
       matchers.push((value) => parseFloat(value) != parameter);
     }
