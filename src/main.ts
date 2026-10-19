@@ -41,6 +41,7 @@ class AutoEntities extends LitElement {
 
   _entities: EntityList;
   _cardConfig;
+  _templateResolved = false;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
   _cardBuiltResolve?;
@@ -92,6 +93,11 @@ class AutoEntities extends LitElement {
       }
     }
 
+    if (config.filter?.template !== this._config?.filter?.template) {
+      this._template = undefined;
+      this._templateResolved = false;
+    }
+
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
@@ -124,6 +130,12 @@ class AutoEntities extends LitElement {
       this._template = tpl.split(/[\s,]+/);
     } else {
       this._template = tpl;
+    }
+    // bind_template emits an empty placeholder before the first result arrives.
+    if (!this._templateResolved && tpl !== "") {
+      this._templateResolved = true;
+      window.clearTimeout(this._updateCooldown.timer);
+      this._updateCooldown.timer = undefined;
     }
     queueMicrotask(() => this.update_all());
   };
@@ -158,6 +170,8 @@ class AutoEntities extends LitElement {
       this.else.preview = this.preview;
     }
 
+    if (!this.hass) return;
+
     if (this._updateCooldown.timer) {
       this._updateCooldown.rerun = true;
       return;
@@ -168,8 +182,6 @@ class AutoEntities extends LitElement {
         if (this._updateCooldown.rerun) this.update_all();
       }, 500);
     }
-
-    if (!this.hass) return;
 
     const useUixEntityIconStyling =
       this._config.uix_entity_icon_styling === true ||
