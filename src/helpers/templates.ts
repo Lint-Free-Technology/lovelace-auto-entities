@@ -5,6 +5,8 @@ interface CachedTemplate {
   template: string;
   variables: object;
   value: string;
+  generation: number;
+  hasResult: boolean;
   callbacks: Set<(string) => void>;
   unsubscribe: Promise<() => Promise<void>>;
 }
@@ -14,11 +16,18 @@ interface RenderTemplateResult {
   listeners: any;
 }
 
+export interface TemplateSubscription {
+  generation: number;
+  isPlaceholder: boolean;
+}
+
 (window as any).cardMod_template_cache =
   (window as any).cardMod_template_cache || {};
 
 const cachedTemplates: Record<string, CachedTemplate> = (window as any)
   .cardMod_template_cache;
+
+let templateGeneration = 0;
 
 function template_updated(
   key: string,
@@ -29,6 +38,7 @@ function template_updated(
     return;
   }
   cache.value = result.result;
+  cache.hasResult = true;
   cache.callbacks.forEach((f) => f(result.result));
 }
 
@@ -40,7 +50,8 @@ export function hasTemplate(str) {
 export async function bind_template(
   callback: (string) => void,
   template: string,
-  variables: object
+  variables: object,
+  onSubscription?: (subscription: TemplateSubscription) => void
 ): Promise<void> {
   const hs = await hass();
   const connection = hs.connection;
@@ -49,7 +60,6 @@ export async function bind_template(
   let cache = cachedTemplates[cacheKey];
   if (!cache) {
     unbind_template(callback);
-    callback("");
 
     variables = {
       user: hs.user.name,
@@ -62,6 +72,8 @@ export async function bind_template(
       template,
       variables,
       value: "",
+      generation: ++templateGeneration,
+      hasResult: false,
       callbacks: new Set([callback]),
       unsubscribe: connection.subscribeMessage(
         (result: RenderTemplateResult) => template_updated(cacheKey, result),
@@ -72,10 +84,22 @@ export async function bind_template(
         }
       ),
     };
+    onSubscription?.({ generation: cache.generation, isPlaceholder: true });
+    callback("");
   } else {
-    if (!cache.callbacks.has(callback)) unbind_template(callback);
-    callback(cache.value);
-    cache.callbacks.add(callback);
+    // Caches created before this version do not have timing metadata.
+    cache.generation ??= ++templateGeneration;
+    cache.hasResult ??= cache.value !== "";
+    const isNewCallback = !cache.callbacks.has(callback);
+    if (isNewCallback) {
+      unbind_template(callback);
+      onSubscription?.({
+        generation: cache.generation,
+        isPlaceholder: !cache.hasResult,
+      });
+      callback(cache.value);
+      cache.callbacks.add(callback);
+    }
   }
 }
 

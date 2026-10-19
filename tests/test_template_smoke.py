@@ -35,8 +35,16 @@ def template_page(page: Page) -> Iterator[Page]:
                         if (message.type !== 'render_template') {
                             throw new Error(`Unexpected subscription: ${message.type}`);
                         }
-                        templateCallbacks.set(message.template, callback);
-                        return async () => templateCallbacks.delete(message.template);
+                        const callbacks = templateCallbacks.get(message.template)
+                            ?? new Set();
+                        callbacks.add(callback);
+                        templateCallbacks.set(message.template, callbacks);
+                        return async () => {
+                            callbacks.delete(callback);
+                            if (callbacks.size === 0) {
+                                templateCallbacks.delete(message.template);
+                            }
+                        };
                     },
                 },
             };
@@ -58,7 +66,8 @@ def template_page(page: Page) -> Iterator[Page]:
                 document.body.append(testCard);
             };
             window.emitTemplate = (result, template = '{{ first }}') => {
-                const callback = templateCallbacks.get(template);
+                const callbacks = templateCallbacks.get(template);
+                const callback = [...(callbacks ?? [])].at(-1);
                 if (!callback) throw new Error(`Missing subscription: ${template}`);
                 callback({ result });
             };
@@ -126,6 +135,18 @@ def test_empty_list_is_a_resolved_template_result(template_page):
     assert page.evaluate("cardEntries()") == [{"entity": "light.later"}]
 
 
+def test_empty_string_is_a_resolved_template_result(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate('')")
+    page.evaluate("emitTemplate(['light.later'])")
+    page.clock.run_for(499)
+    assert page.evaluate("cardEntries()") == []
+    page.clock.run_for(1)
+    assert page.evaluate("cardEntries()") == [{"entity": "light.later"}]
+
+
 def test_changed_template_renders_its_first_result_immediately(template_page):
     page = template_page
     page.evaluate("mountCard()")
@@ -139,6 +160,26 @@ def test_changed_template_renders_its_first_result_immediately(template_page):
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.second'], '{{ second }}')")
     assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+
+
+def test_changed_template_config_renders_first_result_immediately(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.first'])")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
+    page.evaluate(
+        """testCard.setConfig({
+            card: { type: 'entities' },
+            entities: ['light.static'],
+            filter: { template: '{{ first }}' },
+        })"""
+    )
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.second'])")
+    assert page.evaluate("cardEntries()") == [
+        {"entity": "light.static"}, {"entity": "light.second"},
+    ]
 
 
 def test_template_result_updates_existing_entities_immediately(template_page):
@@ -176,6 +217,18 @@ def test_fresh_mount_renders_first_template_result_immediately(template_page):
     assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
     page.evaluate("testCard.remove()")
     page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.second'])")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+
+
+def test_reconnected_card_renders_first_result_immediately(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.first'])")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
+    page.evaluate("testCard.remove(); document.body.append(testCard)")
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.second'])")
     assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]

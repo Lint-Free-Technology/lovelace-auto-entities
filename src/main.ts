@@ -4,6 +4,7 @@ import {
   hasTemplate,
   bind_template,
   unbind_template,
+  TemplateSubscription,
 } from "./helpers/templates";
 import { get_filter, RULES } from "./filter";
 import { get_sorter } from "./sort";
@@ -41,6 +42,8 @@ class AutoEntities extends LitElement {
 
   _entities: EntityList;
   _cardConfig;
+  _templateGeneration?: number;
+  _templatePlaceholderPending = false;
   _templateResolved = false;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
@@ -95,7 +98,6 @@ class AutoEntities extends LitElement {
 
     if (config.filter?.template !== this._config?.filter?.template) {
       this._template = undefined;
-      this._templateResolved = false;
     }
 
     config = JSON.parse(JSON.stringify(config));
@@ -105,7 +107,12 @@ class AutoEntities extends LitElement {
       this._config.filter?.template &&
       hasTemplate(this._config.filter.template)
     ) {
-      bind_template(this._renderer, this._config.filter.template, { config });
+      bind_template(
+        this._renderer,
+        this._config.filter.template,
+        { config },
+        this._templateSubscription
+      );
     }
 
     this._cardBuilt = new Promise(
@@ -125,14 +132,23 @@ class AutoEntities extends LitElement {
     queueMicrotask(() => this.update_all());
   }
 
+  _templateSubscription = ({ generation, isPlaceholder }: TemplateSubscription) => {
+    if (this._templateGeneration !== generation) {
+      this._templateGeneration = generation;
+      this._templateResolved = false;
+    }
+    this._templatePlaceholderPending = isPlaceholder;
+  };
+
   _renderer = (tpl) => {
+    const isPlaceholder = this._templatePlaceholderPending;
+    this._templatePlaceholderPending = false;
     if (typeof tpl === "string") {
       this._template = tpl.split(/[\s,]+/);
     } else {
       this._template = tpl;
     }
-    // bind_template emits an empty placeholder before the first result arrives.
-    if (!this._templateResolved && tpl !== "") {
+    if (!isPlaceholder && !this._templateResolved) {
       this._templateResolved = true;
       window.clearTimeout(this._updateCooldown.timer);
       this._updateCooldown.timer = undefined;
@@ -146,9 +162,12 @@ class AutoEntities extends LitElement {
       this._config?.filter?.template &&
       hasTemplate(this._config.filter.template)
     ) {
-      bind_template(this._renderer, this._config.filter.template, {
-        config: this._config,
-      });
+      bind_template(
+        this._renderer,
+        this._config.filter.template,
+        { config: this._config },
+        this._templateSubscription
+      );
     }
     document.addEventListener("auto-entities-update", this.update_all.bind(this));
     this._cardController?.connected();
