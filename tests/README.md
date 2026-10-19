@@ -41,6 +41,9 @@ These tests load the built card in Chromium with synthetic Home Assistant states
 and inspect the entities passed to its inner card. They do not start Home Assistant
 or compare screenshots.
 
+Template smoke tests also simulate Home Assistant's template subscriptions and
+control the browser clock to check first-render timing and the update cooldown.
+
 ## Setup and run tests (VS Code tasks or CLI)
 
 Home Assistant test version is read from `tests/HA_VERSION`.

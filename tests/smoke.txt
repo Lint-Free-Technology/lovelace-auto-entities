@@ -1,1 +1,2 @@
 tests/test_matcher_smoke.py
+tests/test_template_smoke.py

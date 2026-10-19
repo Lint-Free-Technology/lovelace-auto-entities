@@ -5,7 +5,9 @@ interface CachedTemplate {
   template: string;
   variables: object;
   value: string;
-  callbacks: Set<(string) => void>;
+  generation: number;
+  hasResult: boolean;
+  callbacks: Set<TemplateCallback>;
   unsubscribe: Promise<() => Promise<void>>;
 }
 
@@ -14,11 +16,21 @@ interface RenderTemplateResult {
   listeners: any;
 }
 
+export interface TemplateSubscription {
+  generation: number;
+  isPlaceholder: boolean;
+  isInitial: boolean;
+}
+
+type TemplateCallback = (value: string, subscription?: TemplateSubscription) => void;
+
 (window as any).cardMod_template_cache =
   (window as any).cardMod_template_cache || {};
 
 const cachedTemplates: Record<string, CachedTemplate> = (window as any)
   .cardMod_template_cache;
+
+let templateGeneration = 0;
 
 function template_updated(
   key: string,
@@ -29,7 +41,14 @@ function template_updated(
     return;
   }
   cache.value = result.result;
-  cache.callbacks.forEach((f) => f(result.result));
+  cache.hasResult = true;
+  cache.callbacks.forEach((f) =>
+    f(result.result, {
+      generation: cache.generation,
+      isPlaceholder: false,
+      isInitial: false,
+    })
+  );
 }
 
 export function hasTemplate(str) {
@@ -38,7 +57,7 @@ export function hasTemplate(str) {
 }
 
 export async function bind_template(
-  callback: (string) => void,
+  callback: TemplateCallback,
   template: string,
   variables: object
 ): Promise<void> {
@@ -49,7 +68,6 @@ export async function bind_template(
   let cache = cachedTemplates[cacheKey];
   if (!cache) {
     unbind_template(callback);
-    callback("");
 
     variables = {
       user: hs.user.name,
@@ -62,6 +80,8 @@ export async function bind_template(
       template,
       variables,
       value: "",
+      generation: ++templateGeneration,
+      hasResult: false,
       callbacks: new Set([callback]),
       unsubscribe: connection.subscribeMessage(
         (result: RenderTemplateResult) => template_updated(cacheKey, result),
@@ -72,15 +92,30 @@ export async function bind_template(
         }
       ),
     };
+    callback("", {
+      generation: cache.generation,
+      isPlaceholder: true,
+      isInitial: true,
+    });
   } else {
-    if (!cache.callbacks.has(callback)) unbind_template(callback);
-    callback(cache.value);
-    cache.callbacks.add(callback);
+    // Caches created before this version do not have timing metadata.
+    cache.generation ??= ++templateGeneration;
+    cache.hasResult ??= cache.value !== "";
+    const isNewCallback = !cache.callbacks.has(callback);
+    if (isNewCallback) {
+      unbind_template(callback);
+      callback(cache.value, {
+        generation: cache.generation,
+        isPlaceholder: !cache.hasResult,
+        isInitial: true,
+      });
+      cache.callbacks.add(callback);
+    }
   }
 }
 
 export async function unbind_template(
-  callback: (string) => void
+  callback: TemplateCallback
 ): Promise<void> {
   let unsubscriber: Promise<() => Promise<void>>;
   for (const [key, cache] of Object.entries(cachedTemplates)) {
