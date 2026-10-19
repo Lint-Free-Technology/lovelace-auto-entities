@@ -7,7 +7,7 @@ interface CachedTemplate {
   value: string;
   generation: number;
   hasResult: boolean;
-  callbacks: Set<(string) => void>;
+  callbacks: Set<TemplateCallback>;
   unsubscribe: Promise<() => Promise<void>>;
 }
 
@@ -19,7 +19,10 @@ interface RenderTemplateResult {
 export interface TemplateSubscription {
   generation: number;
   isPlaceholder: boolean;
+  isInitial: boolean;
 }
+
+type TemplateCallback = (value: string, subscription?: TemplateSubscription) => void;
 
 (window as any).cardMod_template_cache =
   (window as any).cardMod_template_cache || {};
@@ -39,7 +42,13 @@ function template_updated(
   }
   cache.value = result.result;
   cache.hasResult = true;
-  cache.callbacks.forEach((f) => f(result.result));
+  cache.callbacks.forEach((f) =>
+    f(result.result, {
+      generation: cache.generation,
+      isPlaceholder: false,
+      isInitial: false,
+    })
+  );
 }
 
 export function hasTemplate(str) {
@@ -48,10 +57,9 @@ export function hasTemplate(str) {
 }
 
 export async function bind_template(
-  callback: (string) => void,
+  callback: TemplateCallback,
   template: string,
-  variables: object,
-  onSubscription?: (subscription: TemplateSubscription) => void
+  variables: object
 ): Promise<void> {
   const hs = await hass();
   const connection = hs.connection;
@@ -84,8 +92,11 @@ export async function bind_template(
         }
       ),
     };
-    onSubscription?.({ generation: cache.generation, isPlaceholder: true });
-    callback("");
+    callback("", {
+      generation: cache.generation,
+      isPlaceholder: true,
+      isInitial: true,
+    });
   } else {
     // Caches created before this version do not have timing metadata.
     cache.generation ??= ++templateGeneration;
@@ -93,18 +104,18 @@ export async function bind_template(
     const isNewCallback = !cache.callbacks.has(callback);
     if (isNewCallback) {
       unbind_template(callback);
-      onSubscription?.({
+      callback(cache.value, {
         generation: cache.generation,
         isPlaceholder: !cache.hasResult,
+        isInitial: true,
       });
-      callback(cache.value);
       cache.callbacks.add(callback);
     }
   }
 }
 
 export async function unbind_template(
-  callback: (string) => void
+  callback: TemplateCallback
 ): Promise<void> {
   let unsubscriber: Promise<() => Promise<void>>;
   for (const [key, cache] of Object.entries(cachedTemplates)) {

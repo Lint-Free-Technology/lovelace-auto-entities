@@ -43,7 +43,6 @@ class AutoEntities extends LitElement {
   _entities: EntityList;
   _cardConfig;
   _templateGeneration?: number;
-  _templatePlaceholderPending = false;
   _templateResolved = false;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
@@ -110,8 +109,7 @@ class AutoEntities extends LitElement {
       bind_template(
         this._renderer,
         this._config.filter.template,
-        { config },
-        this._templateSubscription
+        { config }
       );
     }
 
@@ -132,23 +130,24 @@ class AutoEntities extends LitElement {
     queueMicrotask(() => this.update_all());
   }
 
-  _templateSubscription = ({ generation, isPlaceholder }: TemplateSubscription) => {
-    if (this._templateGeneration !== generation) {
-      this._templateGeneration = generation;
+  _renderer = (tpl, subscription?: TemplateSubscription) => {
+    if (
+      subscription &&
+      !subscription.isInitial &&
+      subscription.generation !== this._templateGeneration
+    ) {
+      return;
+    }
+    if (subscription?.isInitial) {
+      this._templateGeneration = subscription.generation;
       this._templateResolved = false;
     }
-    this._templatePlaceholderPending = isPlaceholder;
-  };
-
-  _renderer = (tpl) => {
-    const isPlaceholder = this._templatePlaceholderPending;
-    this._templatePlaceholderPending = false;
     if (typeof tpl === "string") {
       this._template = tpl.split(/[\s,]+/);
     } else {
       this._template = tpl;
     }
-    if (!isPlaceholder && !this._templateResolved) {
+    if (!subscription?.isPlaceholder && !this._templateResolved) {
       this._templateResolved = true;
       window.clearTimeout(this._updateCooldown.timer);
       this._updateCooldown.timer = undefined;
@@ -165,8 +164,7 @@ class AutoEntities extends LitElement {
       bind_template(
         this._renderer,
         this._config.filter.template,
-        { config: this._config },
-        this._templateSubscription
+        { config: this._config }
       );
     }
     document.addEventListener("auto-entities-update", this.update_all.bind(this));

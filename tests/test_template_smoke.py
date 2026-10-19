@@ -71,8 +71,8 @@ def template_page(page: Page) -> Iterator[Page]:
                 if (!callback) throw new Error(`Missing subscription: ${template}`);
                 callback({ result });
             };
-            window.cardEntries = () => {
-                const config = testCard.querySelector('hui-card')?.config;
+            window.cardEntries = (card = testCard) => {
+                const config = card.querySelector('hui-card')?.config;
                 return config?.entities ?? config?.cards ?? null;
             };
         }"""
@@ -232,3 +232,27 @@ def test_reconnected_card_renders_first_result_immediately(template_page):
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.second'])")
     assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+
+
+def test_reattached_card_renders_latest_shared_template_result(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.first'])")
+    page.evaluate(
+        """() => {
+            window.secondCard = document.createElement('auto-entities');
+            secondCard.setConfig({
+                card: { type: 'entities' },
+                card_param: 'entities',
+                entities: [],
+                filter: { template: '{{ first }}' },
+            });
+            secondCard.hass = fixtureHass;
+            document.body.append(secondCard);
+        }"""
+    )
+    assert page.evaluate("cardEntries(secondCard)") == [{"entity": "light.first"}]
+    page.evaluate("secondCard.remove(); emitTemplate(['light.second'])")
+    page.evaluate("document.body.append(secondCard)")
+    assert page.evaluate("cardEntries(secondCard)") == [{"entity": "light.second"}]
