@@ -1,3 +1,11 @@
+### [2.8.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.2...v2.8.3) (2026-10-20)
+
+
+### 🐞 Bug Fixes
+
+* Don't throttle first template or hass state update. ([#190](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/190)) ([eef7cb3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/eef7cb3d5a5b76943bdef2718e118080df01640e)), closes [#189](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/189)
+* notify linked issues for prereleases ([#191](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/191)) ([e669937](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/e66993724058b44f993d8d40489f81d0743b4ae8))
+
 ### [2.8.3-beta.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.2...v2.8.3-beta.0) (2026-10-19)
 
 
