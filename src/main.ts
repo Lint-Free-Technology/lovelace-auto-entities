@@ -4,6 +4,7 @@ import {
   hasTemplate,
   bind_template,
   unbind_template,
+  TemplateSubscription,
 } from "./helpers/templates";
 import { get_filter, RULES } from "./filter";
 import { get_sorter } from "./sort";
@@ -41,6 +42,8 @@ class AutoEntities extends LitElement {
 
   _entities: EntityList;
   _cardConfig;
+  _templateGeneration?: number;
+  _templateResolved = false;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
   _cardBuiltResolve?;
@@ -92,6 +95,10 @@ class AutoEntities extends LitElement {
       }
     }
 
+    if (config.filter?.template !== this._config?.filter?.template) {
+      this._template = undefined;
+    }
+
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
@@ -99,7 +106,11 @@ class AutoEntities extends LitElement {
       this._config.filter?.template &&
       hasTemplate(this._config.filter.template)
     ) {
-      bind_template(this._renderer, this._config.filter.template, { config });
+      bind_template(
+        this._renderer,
+        this._config.filter.template,
+        { config }
+      );
     }
 
     this._cardBuilt = new Promise(
@@ -119,11 +130,27 @@ class AutoEntities extends LitElement {
     queueMicrotask(() => this.update_all());
   }
 
-  _renderer = (tpl) => {
+  _renderer = (tpl, subscription?: TemplateSubscription) => {
+    if (
+      subscription &&
+      !subscription.isInitial &&
+      subscription.generation !== this._templateGeneration
+    ) {
+      return;
+    }
+    if (subscription?.isInitial) {
+      this._templateGeneration = subscription.generation;
+      this._templateResolved = false;
+    }
     if (typeof tpl === "string") {
       this._template = tpl.split(/[\s,]+/);
     } else {
       this._template = tpl;
+    }
+    if (!subscription?.isPlaceholder && !this._templateResolved) {
+      this._templateResolved = true;
+      window.clearTimeout(this._updateCooldown.timer);
+      this._updateCooldown.timer = undefined;
     }
     queueMicrotask(() => this.update_all());
   };
@@ -134,9 +161,11 @@ class AutoEntities extends LitElement {
       this._config?.filter?.template &&
       hasTemplate(this._config.filter.template)
     ) {
-      bind_template(this._renderer, this._config.filter.template, {
-        config: this._config,
-      });
+      bind_template(
+        this._renderer,
+        this._config.filter.template,
+        { config: this._config }
+      );
     }
     document.addEventListener("auto-entities-update", this.update_all.bind(this));
     this._cardController?.connected();
@@ -158,6 +187,8 @@ class AutoEntities extends LitElement {
       this.else.preview = this.preview;
     }
 
+    if (!this.hass) return;
+
     if (this._updateCooldown.timer) {
       this._updateCooldown.rerun = true;
       return;
@@ -168,8 +199,6 @@ class AutoEntities extends LitElement {
         if (this._updateCooldown.rerun) this.update_all();
       }, 500);
     }
-
-    if (!this.hass) return;
 
     const useUixEntityIconStyling =
       this._config.uix_entity_icon_styling === true ||
