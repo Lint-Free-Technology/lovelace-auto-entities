@@ -5,7 +5,7 @@ Forked from [thomasloven/lovelace-auto-entities](https://github.com/thomasloven/
 Automatically populate lovelace cards with entities matching certain criteria.
 
 <!-- ha-marketplace:exclude-start -->
-[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Lint-Free-Technology&repository=lovelace-auto-entities&category=dashboard)
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Lint-Free-Technology&repository=lovelace-auto-entities&category=plugin)
 
 Use [Home Assistant Marketplace](https://www.home-assistant.io/integrations/marketplace/) to add this fork as a [custom repository](https://www.home-assistant.io/integrations/marketplace/#custom-repositories) and install. This can be done in one step using the button above. You can also use the `Add from link` option in Marketplace - use [https://github.com/Lint-Free-Technology/lovelace-auto-entities](https://github.com/Lint-Free-Technology/lovelace-auto-entities).
 
