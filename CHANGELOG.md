@@ -1,3 +1,10 @@
+### [2.8.4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.3...v2.8.4) (2026-11-05)
+
+
+### ⚙️ Miscellaneous
+
+* Dependency updates and HA Test version updated to 2026.11.0 ([c61134f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/c61134f98f41fc7f478b28fda324c590b899975c))
+
 ### [2.8.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.2...v2.8.3) (2026-10-20)
 
 
