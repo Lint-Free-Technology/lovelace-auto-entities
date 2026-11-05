@@ -11,7 +11,7 @@ Use [Home Assistant Marketplace](https://www.home-assistant.io/integrations/mark
 
 > [!IMPORTANT]
 > If you have the default auto-entities installed, [https://github.com/thomasloven/lovelace-auto-entities](https://github.com/thomasloven/lovelace-auto-entities), you will need to uninstall from Marketplace to be able to install this fork as a custom repository. This will be enforced by Home Assistant Marketplace.
-<!-- ha-marketplace:exclude-start -->
+<!-- ha-marketplace:exclude-end -->
 
 ## Usage
 
