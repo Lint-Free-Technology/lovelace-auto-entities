@@ -69,7 +69,12 @@ function compare(_a: any, _b: any, method: SortConfig) {
 
 const COMPARISONS: Record<
   string,
-  (x: HAState, method: SortConfig, hass: HassObject, entity?: LovelaceRowConfig) => any | Promise<any>
+  (
+    x: HAState | undefined,
+    method: SortConfig,
+    hass: HassObject,
+    entity?: LovelaceRowConfig
+  ) => any | Promise<any>
 > = {
   none: (x) => 0,
   domain: (x) => x?.entity_id?.split(".")[0],
@@ -85,7 +90,8 @@ const COMPARISONS: Record<
       getEntities(hass),
       getDevices(hass),
     ]);
-    const ent = entities[x.entity_id];
+    // Special entity-card rows such as dividers do not have an entity state.
+    const ent = entities[x?.entity_id];
     if (!ent) return undefined;
     const dev = devices[ent.device_id];
     if (!dev) return undefined;
@@ -97,7 +103,8 @@ const COMPARISONS: Record<
       getDevices(hass),
       getAreas(hass),
     ]);
-    const ent = entities[x.entity_id];
+    // Special entity-card rows such as dividers do not have an entity state.
+    const ent = entities[x?.entity_id];
     if (!ent) return undefined;
     let area = areas[ent.area_id];
     if (area) return area.name;
