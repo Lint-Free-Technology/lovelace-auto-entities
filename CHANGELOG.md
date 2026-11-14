@@ -1,3 +1,11 @@
+### [2.8.5-beta.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.4...v2.8.5-beta.0) (2026-11-14)
+
+
+### 🐞 Bug Fixes
+
+* Sorting at global level with special rows breaks with console error ([ec3f197](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/ec3f1972bd410c993db3eecfaf90432be301870c))
+* Sorting at global level with special rows breaks with console error ([#215](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/215)) ([121126c](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/121126ca1a31790513b3bfed7e589ae74fa57a37))
+
 ### [2.8.4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.3...v2.8.4) (2026-11-05)
 
 
