@@ -1,0 +1,37 @@
+id: sorting_group_dividers
+description: 'sorting: Dividers between sort groups'
+view_path: sorting-group-dividers
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Global sort divider
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.a[1-4]$/
+    sort:
+      - method: attribute
+        attribute: custom_date_time
+        divider: true
+      - method: entity_id
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Per-filter sort divider
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.a[1-4]$/
+          sort:
+            - method: attribute
+              attribute: custom_date_time
+              divider: true
+            - method: entity_id
+
+assertions:
+  - type: snapshot
+    name: 64_sorting_group_dividers
+    threshold: 0.02

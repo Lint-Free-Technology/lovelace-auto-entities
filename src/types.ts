@@ -16,6 +16,9 @@ export interface SortConfig {
   count?: number;
   numeric?: NumericSortConfig;
   ip?: boolean;
+  /** Insert a `{type: divider}` row between consecutive entities whenever the
+   * sort value of this level changes. Works per filter and for global sorts. */
+  divider?: boolean;
 }
 
 /**

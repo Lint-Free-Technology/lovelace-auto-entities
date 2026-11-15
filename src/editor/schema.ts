@@ -373,6 +373,11 @@ export const sortSchema = (method) => {
           ],
         },
         { name: "ip", type: "boolean", label: "IP address sort" },
+        {
+          name: "divider",
+          type: "boolean",
+          label: "Divider between sort groups",
+        },
       ],
     },
   ];
