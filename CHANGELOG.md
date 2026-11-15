@@ -1,3 +1,10 @@
+## [2.9.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.0...v2.9.0-beta.1) (2026-11-15)
+
+
+### ⭐ New Features
+
+* section headings per sort group ([#218](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/218)) ([35db86e](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/35db86eb8a58ddbc8ce1ab8d52a55f1fab283481))
+
 ## [2.9.0-beta.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.5-beta.0...v2.9.0-beta.0) (2026-11-15)
 
 
