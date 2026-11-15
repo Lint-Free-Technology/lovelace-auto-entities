@@ -16,10 +16,10 @@ export interface SortConfig {
   count?: number;
   numeric?: NumericSortConfig;
   ip?: boolean;
-  /** Insert a `{type: divider}` row between consecutive entities whenever the
+  /** Insert a divider row between consecutive entities whenever the
    * sort value of this level changes. Works per filter and for global sorts. */
   divider?: boolean;
-  /** Insert a `{type: section}` row whenever the sort value of this level
+  /** Insert a section heading row whenever the sort value of this level
    * changes, labeled with that value. Wins over `divider: true` on the same
    * boundary. */
   section?: boolean;

@@ -612,8 +612,8 @@ sort:
   - `nan_last` — sort numerically, with missing/`unknown` values after all numbers regardless of `reverse`
   - `nan_first` — sort numerically, with missing/`unknown` values before all numbers regardless of `reverse`
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
-- `divider:` Set to `true` to automatically insert a `{type: divider}` row between consecutive sorted entities whenever the sort value of this level changes. This gives a visual separator between sort groups without listing them out statically. Default: `false`.
-- `section:` Set to `true` to automatically insert a `{type: section}` row whenever the sort value of this level changes — a heading per sort group, including one above the first group. For the same group change, `section: true` takes precedence over `divider: true`. Default: `false`.
+- `divider:` Set to `true` to automatically insert a divider row between consecutive sorted entities whenever the sort value of this level changes. This gives a visual separator between sort groups without listing them out statically. Default: `false`.
+- `section:` Set to `true` to automatically insert a section heading above each sort group — including one above the first group — whenever the sort value of this level changes. For the same group change, `section: true` takes precedence over `divider: true`. Default: `false`.
 - `label:` Heading label for the section inserted by `section: true`, composed from rename-style name parts — `entity`, `device`, `area`, `floor`, `{type: text, text: ...}`, or a mix — exactly like the [`type:` option of `rename`](#renaming-entities), taken from the group's first entity. `separator` configures the separator between parts. By default the section is labeled with the plain group value.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
@@ -632,7 +632,7 @@ sort:
     ignore_case: true
 ```
 
-`divider: true` may be combined with multiple sort levels — mark the level that defines the groups. A `{type: divider}` row is then inserted whenever that level's sort value changes, e.g. per device while the entities are ordered by name within each device:
+`divider: true` may be combined with multiple sort levels — mark the level that defines the groups. A divider row is then inserted whenever that level's sort value changes, e.g. per device while the entities are ordered by name within each device:
 
 ```yaml
 sort:
@@ -654,7 +654,7 @@ sort:
   - method: friendly_name
 ```
 
-Note the difference in placement when choosing between the two: a `{type: divider}` row is inserted *between* two groups, so the card starts and ends without a line — while a `{type: section}` heading is inserted *above every group, including the first*, so the card opens with a heading. Prefer the card to start directly with entities? Use `divider: true` instead.
+Note the difference in placement when choosing between the two: a divider row is inserted *between* two groups, so the card starts and ends without a line — while a section heading is inserted *above every group, including the first*, so the card opens with a heading. Prefer the card to start directly with entities? Use `divider: true` instead.
 
 Non-numeric values such as `unknown` can be pinned first or last while numbers still sort among themselves. A following sort level then orders the non-numeric group:
 
