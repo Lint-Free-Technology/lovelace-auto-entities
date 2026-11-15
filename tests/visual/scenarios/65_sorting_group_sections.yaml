@@ -15,7 +15,10 @@ cards:
       - method: attribute
         attribute: custom_date_time
         section: true
-        label: 'Group: {{ entity_id }}'
+        label:
+          - type: text
+            text: 'Group: '
+          - type: entity
       - method: entity_id
 
   - type: custom:auto-entities
@@ -30,7 +33,10 @@ cards:
             - method: attribute
               attribute: custom_date_time
               section: true
-              label: 'Group: {{ entity_id }}'
+              label:
+                - type: text
+                  text: 'Group: '
+                - type: entity
             - method: entity_id
 
 assertions:

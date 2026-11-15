@@ -598,6 +598,7 @@ sort:
   divider: <divider>
   section: <section>
   label: <label>
+  separator: <separator>
 ```
 
 - `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
@@ -613,7 +614,7 @@ sort:
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
 - `divider:` Set to `true` to automatically insert a `{type: divider}` row between consecutive sorted entities whenever the sort value of this level changes. This gives a visual separator between sort groups without listing them out statically. Default: `false`.
 - `section:` Set to `true` to automatically insert a `{type: section}` row whenever the sort value of this level changes — a heading per sort group, including one above the first group. For the same group change, `section: true` takes precedence over `divider: true`. Default: `false`.
-- `label:` Label for the section inserted by `section: true`. Any sort method name is a valid placeholder — e.g. `{{ device }}`, `{{ area }}`, `{{ state }}`, `{{ friendly_name }}` — taken from the group's first entity, so the label documents its own source. The generic shorthand `{{ method }}` resolves to the sort value of the level marked `section: true`. By default the section is labeled with the plain group value.
+- `label:` Heading label for the section inserted by `section: true`, composed from rename-style name parts — `entity`, `device`, `area`, `floor`, `{type: text, text: ...}`, or a mix — exactly like the [`type:` option of `rename`](#renaming-entities), taken from the group's first entity. `separator` configures the separator between parts. By default the section is labeled with the plain group value.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
@@ -646,7 +647,10 @@ sort:
 sort:
   - method: device
     section: true
-    label: "Region: {{ method }}"
+    label:
+      - type: text
+        text: "Region: "
+      - type: device
   - method: friendly_name
 ```
 

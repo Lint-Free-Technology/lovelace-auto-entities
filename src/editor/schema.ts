@@ -385,8 +385,8 @@ export const sortSchema = (method) => {
         },
         {
           name: "label",
-          type: "string",
-          label: "Section label ({{ device }} / {{ area }} / {{ method }}…)",
+          selector: { object: {} },
+          label: "Section label (rename-style name parts list)",
         },
       ],
     },

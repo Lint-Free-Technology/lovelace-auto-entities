@@ -1,4 +1,5 @@
 import { getAreas, getDevices, getEntities } from "./helpers";
+import { to_ha_items } from "./rename";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function isNumericSort(numeric: SortConfig["numeric"]): boolean {
@@ -199,32 +200,26 @@ export async function get_sorter(
     const sectionLabel = async (level: number, i: number): Promise<string> => {
       const raw = valueMaps[level][i];
       const groupValue = raw === undefined || raw === null ? "" : String(raw);
-      const template = validMethods[level].label ?? "{{ method }}";
-      let text = template;
-      const tokenRegex = /{{\s*([a-z_]+)\s*}}/g;
-      const tokens = new Set<string>();
-      let tokenMatch: RegExpExecArray | null;
-      while ((tokenMatch = tokenRegex.exec(text)) !== null) {
-        tokens.add(tokenMatch[1]);
+      const label_config = validMethods[level].label;
+      if (label_config === undefined) return groupValue;
+      if (typeof hass.formatEntityName !== "function") {
+        // hass.formatEntityName is unavailable in older Home Assistant
+        // versions; keep the plain group value as the heading instead.
+        return groupValue;
       }
-      for (const token of Array.from(tokens)) {
-        let value: any;
-        if (token === "method") {
-          value = groupValue;
-        } else if (COMPARISONS[token]) {
-          const row = values[i];
-          value = await COMPARISONS[token](
-            hass.states[row?.entity],
-            { ...validMethods[level], method: token },
-            hass,
-            row
-          );
-        }
-        const resolved = value === undefined || value === null ? "" : String(value);
-        text = text.split(`{{ ${token} }}`).join(resolved);
-        text = text.split(`{{${token}}}`).join(resolved);
-      }
-      return text;
+      // Composed-style naming, exactly like rename: the group's first entity
+      // provides the state from which the HA-native name parts are built.
+      const row = values[i];
+      const state = hass.states[row?.entity];
+      const options = validMethods[level].separator !== undefined
+        ? { separator: validMethods[level].separator }
+        : undefined;
+      const composed = hass.formatEntityName(
+        state,
+        to_ha_items(label_config),
+        options
+      );
+      return composed || groupValue;
     };
     const sorted: LovelaceRowConfig[] = [];
     let lastEntityIndex: number | undefined = undefined;

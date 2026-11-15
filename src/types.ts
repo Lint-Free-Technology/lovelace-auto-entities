@@ -23,11 +23,14 @@ export interface SortConfig {
    * changes, labeled with that value. Wins over `divider: true` on the same
    * boundary. */
   section?: boolean;
-  /** Label for the injected section when `section: true` is set. Placeholders
-   * use the sort method name (e.g. `{{ device }}`) or the generic shorthand
-   * `{{ method }}` for the group's own sort value.
-   * Default: the plain group value. */
-  label?: string;
+  /** Heading label for the section from `section: true`, composed from
+   * rename-style name parts (`entity`, `device`, `area`, `floor`,
+   * `{type: text, text: ...}`) — exactly like `rename: name: type:`, taken
+   * from the group's first entity. Default: the plain group sort value. */
+  label?: string | EntityNameItem | EntityNameItem[];
+  /** Separator between composed `label:` name parts. Defaults to a space,
+   * like `rename`'s separator. */
+  separator?: string;
 }
 
 /**
