@@ -164,7 +164,7 @@ Choose selector (visual editor) form:
         active_choice: custom
 ```
 
-> **Note:** Special type entries (`divider`, `section`) are inserted as-is into the card entity list. They are **not** subject to `filter.exclude` rules and do not count towards entity matching.
+> **Note:** Special type entries (`divider`, `section`) are inserted as-is into the card entity list. They are **not** subject to `filter.exclude` rules and do not count towards entity matching. As a final step before the card is generated, auto-entities unconditionally removes leading and trailing divider rows and collapses consecutive divider rows into one, so an include entry that matches nothing never leaves a stray divider behind.
 
 NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
 
@@ -227,6 +227,8 @@ Use `unique` to remove duplicates after include/exclude/sort/rename processing:
 - `unique: true` — remove exact duplicate entity rows
 - `unique: entity` — keep only one row per `entity_id`
 - `unique: <attribute>` — keep only the first row for each unique attribute value (for example `unique: event_url`)
+
+Only entity rows take part in deduplication. Rows without an entity (e.g. static `type: divider`/`type: section` include entries) are always kept.
 
 Attribute paths can be nested with `:` separators (for example `unique: parent:child:id`).
 
@@ -624,6 +626,17 @@ sort:
   - method: friendly_name
     ignore_case: true
 ```
+
+`divider: true` may be combined with multiple sort levels — mark the level that defines the groups. A `{type: divider}` row is then inserted whenever that level's sort value changes, e.g. per device while the entities are ordered by name within each device:
+
+```yaml
+sort:
+  - method: device
+    divider: true
+  - method: friendly_name
+```
+
+`divider: true` works both on filter-by-filter sorts and on the global `sort:` option. Rows without an entity (static `type: divider` or `type: section` include entries) never get dividers inserted around them.
 
 Non-numeric values such as `unknown` can be pinned first or last while numbers still sort among themselves. A following sort level then orders the non-numeric group:
 
