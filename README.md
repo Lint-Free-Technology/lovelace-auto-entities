@@ -654,6 +654,8 @@ sort:
   - method: friendly_name
 ```
 
+The entries under `label:` compose the heading text only. The `- method: friendly_name` line above is a second sort level — a tiebreaker that orders the entities *within* each group, not a label part.
+
 Note the difference in placement when choosing between the two: a divider row is inserted *between* two groups, so the card starts and ends without a line — while a section heading is inserted *above every group, including the first*, so the card opens with a heading. Prefer the card to start directly with entities? Use `divider: true` instead.
 
 Non-numeric values such as `unknown` can be pinned first or last while numbers still sort among themselves. A following sort level then orders the non-numeric group:
