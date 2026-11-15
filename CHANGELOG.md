@@ -1,3 +1,10 @@
+## [2.9.0-beta.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.5-beta.0...v2.9.0-beta.0) (2026-11-15)
+
+
+### ⭐ New Features
+
+* dividers between sort groups (sort: divider: true) ([adfce32](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/adfce3206c7f45f71bc97250442dd70956c3c627)), closes [#216](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/216)
+
 ### [2.8.5-beta.0](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.8.4...v2.8.5-beta.0) (2026-11-14)
 
 
