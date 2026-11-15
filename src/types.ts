@@ -19,6 +19,15 @@ export interface SortConfig {
   /** Insert a `{type: divider}` row between consecutive entities whenever the
    * sort value of this level changes. Works per filter and for global sorts. */
   divider?: boolean;
+  /** Insert a `{type: section}` row whenever the sort value of this level
+   * changes, labeled with that value. Wins over `divider: true` on the same
+   * boundary. */
+  section?: boolean;
+  /** Label for the injected section when `section: true` is set. Placeholders
+   * use the sort method name (e.g. `{{ device }}`) or the generic shorthand
+   * `{{ method }}` for the group's own sort value.
+   * Default: the plain group value. */
+  label?: string;
 }
 
 /**
@@ -136,6 +145,7 @@ export interface LovelaceRowConfig {
   name?: string;
   icon?: string;
   color?: string;
+  label?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;

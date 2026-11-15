@@ -164,7 +164,7 @@ Choose selector (visual editor) form:
         active_choice: custom
 ```
 
-> **Note:** Special type entries (`divider`, `section`) are inserted as-is into the card entity list. They are **not** subject to `filter.exclude` rules and do not count towards entity matching. As a final step before the card is generated, auto-entities unconditionally removes leading and trailing divider rows and collapses consecutive divider rows into one, so an include entry that matches nothing never leaves a stray divider behind.
+> **Note:** Special type entries (`divider`, `section`) are inserted as-is into the card entity list. They are **not** subject to `filter.exclude` rules and do not count towards entity matching. As a final step before the card is generated, auto-entities unconditionally removes leading and trailing divider rows, collapses consecutive divider rows into one, drops divider rows directly adjacent to a section row, and drops a section that immediately follows an identical section — so an include entry that matches nothing never leaves a stray divider behind. Sections are deliberately never stripped at the start or the end of the card: a static heading there is a legitimate layout.
 
 NOTE: Filters marked :ab: use the choose selector in the visual editor to allow for direct object selection or custom string. When you use the visual editor on an older config, the yaml for filters using the choose selector will be upgraded accordingly. After upgrade you will see yaml for filters using choose selectors similar to that shown below. Both legacy and choose selector config are supported.
 
@@ -596,6 +596,8 @@ sort:
   numeric: <numeric>
   ip: <ip>
   divider: <divider>
+  section: <section>
+  label: <label>
 ```
 
 - `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
@@ -610,6 +612,8 @@ sort:
   - `nan_first` — sort numerically, with missing/`unknown` values before all numbers regardless of `reverse`
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
 - `divider:` Set to `true` to automatically insert a `{type: divider}` row between consecutive sorted entities whenever the sort value of this level changes. This gives a visual separator between sort groups without listing them out statically. Default: `false`.
+- `section:` Set to `true` to automatically insert a `{type: section}` row whenever the sort value of this level changes — a heading per sort group, including one above the first group. For the same group change, `section: true` takes precedence over `divider: true`. Default: `false`.
+- `label:` Label for the section inserted by `section: true`. Any sort method name is a valid placeholder — e.g. `{{ device }}`, `{{ area }}`, `{{ state }}`, `{{ friendly_name }}` — taken from the group's first entity, so the label documents its own source. The generic shorthand `{{ method }}` resolves to the sort value of the level marked `section: true`. By default the section is labeled with the plain group value.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 
@@ -636,7 +640,17 @@ sort:
   - method: friendly_name
 ```
 
-`divider: true` works both on filter-by-filter sorts and on the global `sort:` option. Rows without an entity (static `type: divider` or `type: section` include entries) never get dividers inserted around them.
+`divider: true` works both on filter-by-filter sorts and on the global `sort:` option. Rows without an entity (static `type: divider` or `type: section` include entries) never get dividers inserted around them. The `section: true` sibling takes the same spot with a heading instead of a line — by default labeled with the group's sort value, e.g. per device:
+
+```yaml
+sort:
+  - method: device
+    section: true
+    label: "Region: {{ method }}"
+  - method: friendly_name
+```
+
+Note the difference in placement when choosing between the two: a `{type: divider}` row is inserted *between* two groups, so the card starts and ends without a line — while a `{type: section}` heading is inserted *above every group, including the first*, so the card opens with a heading. Prefer the card to start directly with entities? Use `divider: true` instead.
 
 Non-numeric values such as `unknown` can be pinned first or last while numbers still sort among themselves. A following sort level then orders the non-numeric group:
 

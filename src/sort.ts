@@ -154,6 +154,14 @@ export async function get_sorter(
     .map((m, i) => (m.divider === true ? i : -1))
     .filter((i) => i >= 0);
 
+  // Sort levels marked with `section: true` insert a `{type: "section"}` row
+  // at the same group boundaries, labeled with the level's sort value and
+  // optionally formatted through the level's `label` template. A section
+  // boundary takes precedence over a divider for the same group change.
+  const sectionLevels = validMethods
+    .map((m, i) => (m.section === true ? i : -1))
+    .filter((i) => i >= 0);
+
   const sort = async (
     values: LovelaceRowConfig[]
   ): Promise<LovelaceRowConfig[]> => {
@@ -179,29 +187,71 @@ export async function get_sorter(
       return 0;
     });
 
-    if (dividerLevels.length === 0) {
+    if (dividerLevels.length === 0 && sectionLevels.length === 0) {
       return indices.map((i) => values[i]);
     }
 
-    // Walk the sorted list and insert dividers at group boundaries. Rows
-    // without an entity (e.g. `type: divider`/`section` entries) are passed
-    // through untouched and do not break the boundary detection: the next
-    // entity row is compared against the previous entity row.
+    // Walk the sorted list and insert dividers or sections at group
+    // boundaries. Rows without an entity (e.g. `type: divider`/`section`
+    // entries) are passed through untouched and do not break the boundary
+    // detection: the next entity row is compared against the previous entity
+    // row.
+    const sectionLabel = async (level: number, i: number): Promise<string> => {
+      const raw = valueMaps[level][i];
+      const groupValue = raw === undefined || raw === null ? "" : String(raw);
+      const template = validMethods[level].label ?? "{{ method }}";
+      let text = template;
+      const tokenRegex = /{{\s*([a-z_]+)\s*}}/g;
+      const tokens = new Set<string>();
+      let tokenMatch: RegExpExecArray | null;
+      while ((tokenMatch = tokenRegex.exec(text)) !== null) {
+        tokens.add(tokenMatch[1]);
+      }
+      for (const token of Array.from(tokens)) {
+        let value: any;
+        if (token === "method") {
+          value = groupValue;
+        } else if (COMPARISONS[token]) {
+          const row = values[i];
+          value = await COMPARISONS[token](
+            hass.states[row?.entity],
+            { ...validMethods[level], method: token },
+            hass,
+            row
+          );
+        }
+        const resolved = value === undefined || value === null ? "" : String(value);
+        text = text.split(`{{ ${token} }}`).join(resolved);
+        text = text.split(`{{${token}}}`).join(resolved);
+      }
+      return text;
+    };
     const sorted: LovelaceRowConfig[] = [];
     let lastEntityIndex: number | undefined = undefined;
     for (const i of indices) {
       const row = values[i];
       if (row?.entity) {
-        if (lastEntityIndex !== undefined) {
-          const changed = dividerLevels.some(
-            (level) =>
-              compare(
-                valueMaps[level][i],
-                valueMaps[level][lastEntityIndex as number],
-                validMethods[level]
-              ) !== 0
-          );
-          if (changed) sorted.push({ type: "divider" });
+        if (lastEntityIndex === undefined) {
+          // A heading belongs to each group, including the first one.
+          if (sectionLevels.length) {
+            sorted.push({
+              type: "section",
+              label: await sectionLabel(sectionLevels[0], i),
+            });
+          }
+        } else {
+          const groupChanged = (level: number) =>
+            compare(
+              valueMaps[level][i],
+              valueMaps[level][lastEntityIndex as number],
+              validMethods[level]
+            ) !== 0;
+          const sectionLevel = sectionLevels.find((level) => groupChanged(level));
+          if (sectionLevel !== undefined) {
+            sorted.push({ type: "section", label: await sectionLabel(sectionLevel, i) });
+          } else if (dividerLevels.some((level) => groupChanged(level))) {
+            sorted.push({ type: "divider" });
+          }
         }
         lastEntityIndex = i;
       }
