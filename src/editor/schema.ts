@@ -378,6 +378,16 @@ export const sortSchema = (method) => {
           type: "boolean",
           label: "Divider between sort groups",
         },
+        {
+          name: "section",
+          type: "boolean",
+          label: "Section heading before each sort group",
+        },
+        {
+          name: "label",
+          selector: { object: {} },
+          label: "Section label (rename-style name parts list)",
+        },
       ],
     },
   ];

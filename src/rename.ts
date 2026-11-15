@@ -16,7 +16,7 @@ function get_friendly(x: HAState): string {
  * to the HA-native object form ({ type: "entity" } etc.) that
  * hass.formatEntityName expects.  Object items pass through unchanged.
  */
-function to_ha_items(
+export function to_ha_items(
   type_config: string | EntityNameItem | EntityNameItem[]
 ): Array<{ type: string; text?: string }> {
   const arr: EntityNameItem[] = Array.isArray(type_config)

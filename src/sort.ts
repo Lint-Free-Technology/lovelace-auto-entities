@@ -1,4 +1,5 @@
 import { getAreas, getDevices, getEntities } from "./helpers";
+import { to_ha_items } from "./rename";
 import { HassObject, HAState, LovelaceRowConfig, SortConfig } from "./types";
 
 function isNumericSort(numeric: SortConfig["numeric"]): boolean {
@@ -154,6 +155,14 @@ export async function get_sorter(
     .map((m, i) => (m.divider === true ? i : -1))
     .filter((i) => i >= 0);
 
+  // Sort levels marked with `section: true` insert a `{type: "section"}` row
+  // at the same group boundaries, labeled with the level's sort value and
+  // optionally formatted through the level's `label` template. A section
+  // boundary takes precedence over a divider for the same group change.
+  const sectionLevels = validMethods
+    .map((m, i) => (m.section === true ? i : -1))
+    .filter((i) => i >= 0);
+
   const sort = async (
     values: LovelaceRowConfig[]
   ): Promise<LovelaceRowConfig[]> => {
@@ -179,29 +188,68 @@ export async function get_sorter(
       return 0;
     });
 
-    if (dividerLevels.length === 0) {
+    if (dividerLevels.length === 0 && sectionLevels.length === 0) {
       return indices.map((i) => values[i]);
     }
 
-    // Walk the sorted list and insert dividers at group boundaries. Rows
-    // without an entity (e.g. `type: divider`/`section` entries) are passed
-    // through untouched and do not break the boundary detection: the next
-    // entity row is compared against the previous entity row.
+    // Walk the sorted list and insert dividers or sections at group
+    // boundaries. Rows without an entity (e.g. `type: divider`/`section`
+    // entries) are passed through untouched and do not break the boundary
+    // detection: the next entity row is compared against the previous entity
+    // row.
+    const sectionLabel = async (level: number, i: number): Promise<string> => {
+      const raw = valueMaps[level][i];
+      const groupValue = raw === undefined || raw === null ? "" : String(raw);
+      const label_config = validMethods[level].label;
+      if (label_config === undefined) return groupValue;
+      if (typeof hass.formatEntityName !== "function") {
+        // hass.formatEntityName is unavailable in older Home Assistant
+        // versions; keep the plain group value as the heading instead.
+        return groupValue;
+      }
+      // Composed-style naming, exactly like rename: the group's first entity
+      // provides the state from which the HA-native name parts are built.
+      const row = values[i];
+      const state = hass.states[row?.entity];
+      // Rows may reference an entity without a state object; fall back to the
+      // plain group value, like the rename path does.
+      if (!state) return groupValue;
+      const options = validMethods[level].separator !== undefined
+        ? { separator: validMethods[level].separator }
+        : undefined;
+      const composed = hass.formatEntityName(
+        state,
+        to_ha_items(label_config),
+        options
+      );
+      return composed || groupValue;
+    };
     const sorted: LovelaceRowConfig[] = [];
     let lastEntityIndex: number | undefined = undefined;
     for (const i of indices) {
       const row = values[i];
       if (row?.entity) {
-        if (lastEntityIndex !== undefined) {
-          const changed = dividerLevels.some(
-            (level) =>
-              compare(
-                valueMaps[level][i],
-                valueMaps[level][lastEntityIndex as number],
-                validMethods[level]
-              ) !== 0
-          );
-          if (changed) sorted.push({ type: "divider" });
+        if (lastEntityIndex === undefined) {
+          // A heading belongs to each group, including the first one.
+          if (sectionLevels.length) {
+            sorted.push({
+              type: "section",
+              label: await sectionLabel(sectionLevels[0], i),
+            });
+          }
+        } else {
+          const groupChanged = (level: number) =>
+            compare(
+              valueMaps[level][i],
+              valueMaps[level][lastEntityIndex as number],
+              validMethods[level]
+            ) !== 0;
+          const sectionLevel = sectionLevels.find((level) => groupChanged(level));
+          if (sectionLevel !== undefined) {
+            sorted.push({ type: "section", label: await sectionLabel(sectionLevel, i) });
+          } else if (dividerLevels.some((level) => groupChanged(level))) {
+            sorted.push({ type: "divider" });
+          }
         }
         lastEntityIndex = i;
       }

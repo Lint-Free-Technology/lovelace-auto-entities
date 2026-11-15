@@ -58,19 +58,33 @@ function paginate_entity_rows(
 }
 
 /**
- * Unconditional cleanup of divider rows as the last step before the card is
- * generated: leading dividers are removed, trailing dividers are removed, and
- * consecutive divider rows are collapsed into one. This also covers dividers
- * from `type: divider` include entries landing next to dividers inserted by a
- * `divider: true` sort, and dividers adjacent to include entries that match
- * nothing.
+ * Unconditional cleanup of divider and section rows as the last step before
+ * the card is generated: leading dividers are removed, trailing dividers are
+ * removed, and consecutive divider rows are collapsed into one. Divider rows
+ * directly adjacent to a section row are removed (they add nothing on top of
+ * a heading), and a section whose label matches the previous section is
+ * dropped as a duplicate. This also covers dividers from `type: divider`
+ * include entries landing next to dividers inserted by a `divider: true`
+ * sort, and dividers adjacent to include entries that match nothing.
+ * Sections are never stripped at the start or the end of the card: a static
+ * `type: section` leading or trailing heading is a legitimate layout choice.
  */
-function cleanup_dividers(entities: EntityList): EntityList {
+function cleanup_special_rows(entities: EntityList): EntityList {
   const isDivider = (e: LovelaceRowConfig) => e?.type === "divider";
+  const isSection = (e: LovelaceRowConfig) => e?.type === "section";
   const cleaned: EntityList = [];
   for (const entity of entities) {
     if (isDivider(entity)) {
-      if (!cleaned.length || isDivider(cleaned[cleaned.length - 1])) continue;
+      const prev = cleaned[cleaned.length - 1];
+      if (!cleaned.length || isDivider(prev) || isSection(prev)) continue;
+      cleaned.push(entity);
+    } else if (isSection(entity)) {
+      const prev = cleaned[cleaned.length - 1];
+      // A divider directly above the section is redundant.
+      if (isDivider(prev)) cleaned.pop();
+      // A section with the same label as the previous section is redundant.
+      const previous = cleaned[cleaned.length - 1];
+      if (isSection(previous) && previous.label === entity.label) continue;
       cleaned.push(entity);
     } else {
       cleaned.push(entity);
@@ -546,7 +560,7 @@ class AutoEntities extends LitElement {
       );
     }
 
-    entities = cleanup_dividers(entities);
+    entities = cleanup_special_rows(entities);
 
     return entities;
   }

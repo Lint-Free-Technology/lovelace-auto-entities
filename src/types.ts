@@ -16,9 +16,21 @@ export interface SortConfig {
   count?: number;
   numeric?: NumericSortConfig;
   ip?: boolean;
-  /** Insert a `{type: divider}` row between consecutive entities whenever the
+  /** Insert a divider row between consecutive entities whenever the
    * sort value of this level changes. Works per filter and for global sorts. */
   divider?: boolean;
+  /** Insert a section heading row whenever the sort value of this level
+   * changes, labeled with that value. Wins over `divider: true` on the same
+   * boundary. */
+  section?: boolean;
+  /** Heading label for the section from `section: true`, composed from
+   * rename-style name parts (`entity`, `device`, `area`, `floor`,
+   * `{type: text, text: ...}`) — exactly like `rename: name: type:`, taken
+   * from the group's first entity. Default: the plain group sort value. */
+  label?: string | EntityNameItem | EntityNameItem[];
+  /** Separator between composed `label:` name parts. Defaults to a space,
+   * like `rename`'s separator. */
+  separator?: string;
 }
 
 /**
@@ -136,6 +148,7 @@ export interface LovelaceRowConfig {
   name?: string;
   icon?: string;
   color?: string;
+  label?: string;
 }
 export interface LovelaceCard extends HTMLElement {
   hass: any;
