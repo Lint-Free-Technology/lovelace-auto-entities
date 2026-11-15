@@ -211,6 +211,9 @@ export async function get_sorter(
       // provides the state from which the HA-native name parts are built.
       const row = values[i];
       const state = hass.states[row?.entity];
+      // Rows may reference an entity without a state object; fall back to the
+      // plain group value, like the rename path does.
+      if (!state) return groupValue;
       const options = validMethods[level].separator !== undefined
         ? { separator: validMethods[level].separator }
         : undefined;
