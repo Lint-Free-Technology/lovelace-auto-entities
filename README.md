@@ -654,7 +654,7 @@ sort:
   - method: friendly_name
 ```
 
-The entries under `label:` compose the heading text only. The `- method: friendly_name` line above is a second sort level — a tiebreaker that orders the entities *within* each group, not a label part.
+The example is a list of two sort levels. The first (`method: device`, `section: true`) groups the entities by device and gives each group a heading; the indented `type:` entries under `label:` describe only what that heading says — here the literal text "Region: " followed by the device name. The second (`method: friendly_name`) sorts the entities *within* each group by their display name, and is not a label part.
 
 Note the difference in placement when choosing between the two: a divider row is inserted *between* two groups, so the card starts and ends without a line — while a section heading is inserted *above every group, including the first*, so the card opens with a heading. Prefer the card to start directly with entities? Use `divider: true` instead.
 
