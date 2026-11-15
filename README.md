@@ -593,6 +593,7 @@ sort:
   count: <count>
   numeric: <numeric>
   ip: <ip>
+  divider: <divider>
 ```
 
 - `method:` **Required** One of `domain`, `entity_id`, `name`, `friendly_name`, `device`, `area`, `state`, `attribute`, `last_changed`, `last_updated` or `last_triggered`.
@@ -606,6 +607,7 @@ sort:
   - `nan_last` — sort numerically, with missing/`unknown` values after all numbers regardless of `reverse`
   - `nan_first` — sort numerically, with missing/`unknown` values before all numbers regardless of `reverse`
 - `ip:` Set to `true` to sort IP addresses group by group (e.g. 192.168.1.2 will be before 192.168.1.100).
+- `divider:` Set to `true` to automatically insert a `{type: divider}` row between consecutive sorted entities whenever the sort value of this level changes. This gives a visual separator between sort groups without listing them out statically. Default: `false`.
 - `attribute:` Attribute to sort by if `method: attribute`. Can be an _object attribute_ as above (e.g. `attribute: rgb_color:2`)
 - `first` and `count` can be used to only display `<count>` entities, starting with the `<first>` (starts with 0).
 

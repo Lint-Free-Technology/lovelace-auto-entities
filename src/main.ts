@@ -29,6 +29,31 @@ window.queueMicrotask =
 
 const CARDS_NO_ENTITY_WORKAROUND = [ "logbook", "map", "history-graph", "statistics-graph" ];
 
+/**
+ * Unconditional cleanup of divider rows as the last step before the card is
+ * generated: leading dividers are removed, trailing dividers are removed, and
+ * consecutive divider rows are collapsed into one. This also covers dividers
+ * from `type: divider` include entries landing next to dividers inserted by a
+ * `divider: true` sort, and dividers adjacent to include entries that match
+ * nothing.
+ */
+function cleanup_dividers(entities: EntityList): EntityList {
+  const isDivider = (e: LovelaceRowConfig) => e?.type === "divider";
+  const cleaned: EntityList = [];
+  for (const entity of entities) {
+    if (isDivider(entity)) {
+      if (!cleaned.length || isDivider(cleaned[cleaned.length - 1])) continue;
+      cleaned.push(entity);
+    } else {
+      cleaned.push(entity);
+    }
+  }
+  while (cleaned.length && isDivider(cleaned[cleaned.length - 1])) {
+    cleaned.pop();
+  }
+  return cleaned;
+}
+
 class AutoEntities extends LitElement {
   connectedWhileHidden = true;
   @property() _config: AutoEntitiesConfig;
@@ -470,6 +495,8 @@ class AutoEntities extends LitElement {
         apply_uix_entity_icon_styling(entity, styles)
       );
     }
+
+    entities = cleanup_dividers(entities);
 
     return entities;
   }

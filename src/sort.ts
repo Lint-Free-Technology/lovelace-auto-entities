@@ -147,6 +147,13 @@ export async function get_sorter(
     return (x) => x;
   }
 
+  // Sort levels marked with `divider: true` insert a `{type: "divider"}` row
+  // between consecutive sorted entities whenever that level's sort value
+  // changes. Works for both single-level and multi-level sorts.
+  const dividerLevels = validMethods
+    .map((m, i) => (m.divider === true ? i : -1))
+    .filter((i) => i >= 0);
+
   const sort = async (
     values: LovelaceRowConfig[]
   ): Promise<LovelaceRowConfig[]> => {
@@ -172,7 +179,35 @@ export async function get_sorter(
       return 0;
     });
 
-    return indices.map((i) => values[i]);
+    if (dividerLevels.length === 0) {
+      return indices.map((i) => values[i]);
+    }
+
+    // Walk the sorted list and insert dividers at group boundaries. Rows
+    // without an entity (e.g. `type: divider`/`section` entries) are passed
+    // through untouched and do not break the boundary detection: the next
+    // entity row is compared against the previous entity row.
+    const sorted: LovelaceRowConfig[] = [];
+    let lastEntityIndex: number | undefined = undefined;
+    for (const i of indices) {
+      const row = values[i];
+      if (row?.entity) {
+        if (lastEntityIndex !== undefined) {
+          const changed = dividerLevels.some(
+            (level) =>
+              compare(
+                valueMaps[level][i],
+                valueMaps[level][lastEntityIndex as number],
+                validMethods[level]
+              ) !== 0
+          );
+          if (changed) sorted.push({ type: "divider" });
+        }
+        lastEntityIndex = i;
+      }
+      sorted.push(row);
+    }
+    return sorted;
   };
   return sort;
 }
