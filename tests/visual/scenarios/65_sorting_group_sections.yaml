@@ -1,0 +1,39 @@
+id: sorting_group_sections
+description: 'sorting: Section headings per sort group'
+view_path: sorting-group-sections
+
+cards:
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Global sort section
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.a[1-4]$/
+    sort:
+      - method: attribute
+        attribute: custom_date_time
+        section: true
+        label: 'Group: {{ entity_id }}'
+      - method: entity_id
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Per-filter sort section
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: /sensor\.a[1-4]$/
+          sort:
+            - method: attribute
+              attribute: custom_date_time
+              section: true
+              label: 'Group: {{ entity_id }}'
+            - method: entity_id
+
+assertions:
+  - type: snapshot
+    name: 65_sorting_group_sections
+    threshold: 0.02
