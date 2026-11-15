@@ -30,6 +30,34 @@ window.queueMicrotask =
 const CARDS_NO_ENTITY_WORKAROUND = [ "logbook", "map", "history-graph", "statistics-graph" ];
 
 /**
+ * Pagination over entity rows only: `first` and `count` refer to entities,
+ * matching the `first`/`count` documentation ("<count> entities, starting
+ * with the <first>"). Rows without an entity (e.g. divider rows inserted
+ * by a `divider: true` sort) never count towards the page and are only
+ * kept while they sit inside the page; leading ones before the first
+ * included entity are dropped.
+ */
+function paginate_entity_rows(
+  rows: EntityList,
+  first: number,
+  count: number
+): EntityList {
+  const out: EntityList = [];
+  let entityIndex = -1;
+  let pageStarted = false;
+  for (const row of rows) {
+    if (row?.entity) {
+      entityIndex++;
+      if (entityIndex >= first + count) break;
+      if (entityIndex < first) continue;
+      pageStarted = true;
+    }
+    if (pageStarted) out.push(row);
+  }
+  return out;
+}
+
+/**
  * Unconditional cleanup of divider rows as the last step before the card is
  * generated: leading dividers are removed, trailing dividers are removed, and
  * consecutive divider rows are collapsed into one. This also covers dividers
@@ -385,14 +413,18 @@ class AutoEntities extends LitElement {
           add = await renamer(add);
           // Filter-local sort
           add = await sorter(add);
-          // Filter-local pagination
+          // Filter-local pagination. `first` and `count` count entity rows
+          // only: rows without an entity (e.g. divider rows inserted by a
+          // `divider: true` sort) never count towards the page.
           const filterSortPagination = Array.isArray(filter.sort)
             ? filter.sort[0]
             : filter.sort;
           if (filterSortPagination?.count || filterSortPagination?.first) {
-            const start = filterSortPagination?.first ?? 0;
-            const count = filterSortPagination?.count ?? Infinity;
-            add = add.slice(start, start + count);
+            add = paginate_entity_rows(
+              add,
+              filterSortPagination?.first ?? 0,
+              filterSortPagination?.count ?? Infinity
+            );
           }
           add = await Promise.all(add.map(post_process));
           return add;
@@ -477,7 +509,21 @@ class AutoEntities extends LitElement {
         isDeduplicatedByAttribute = true;
       }
 
-      if (!isDeduplicatedByAttribute) entities = entities.filter(sorter);
+      if (!isDeduplicatedByAttribute) {
+        // Only entity rows take part in deduplication. Rows without an
+        // entity (e.g. divider rows inserted by a `divider: true` sort, or
+        // static `type: divider`/`section` include entries) are kept as-is:
+        // with `unique: true` they would otherwise all deep-compare equal,
+        // and with `unique: "entity"` they would all collapse into the first
+        // row without an entity, losing group separators.
+        const seen: EntityList = [];
+        entities = entities.filter((entity) => {
+          if (!entity?.entity) return true;
+          const keep = sorter(entity, seen.length, [...seen, entity]);
+          seen.push(entity);
+          return keep;
+        });
+      }
     }
 
     // Pagination
@@ -485,9 +531,13 @@ class AutoEntities extends LitElement {
       ? this._config.sort[0]
       : this._config.sort;
     if (globalSortPagination?.count || globalSortPagination?.first) {
-      const start = globalSortPagination?.first ?? 0;
-      const count = globalSortPagination?.count ?? Infinity;
-      entities = entities.slice(start, start + count);
+      // Global pagination over entity rows only, consistent with
+      // filter-local pagination.
+      entities = paginate_entity_rows(
+        entities,
+        globalSortPagination?.first ?? 0,
+        globalSortPagination?.count ?? Infinity
+      );
     }
 
     if (this._config.uix_entity_icon_styling === true) {
