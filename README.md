@@ -678,6 +678,40 @@ sort:
     ignore_case: true
 ```
 
+### Styling section headings
+
+By default, the section label is shown with a divider line under it, per Home Assistant design — Home Assistant adds the divider to the first heading too when there is a title above it. In a listing this can feel counter-intuitive, or you may just want the label only. Two ways to change that, using UIX styling:
+
+#### Label, no line under the first heading (titled card)
+
+```yaml
+uix:
+  style: |
+    #states > div:first-child > hui-section-row::part(divider) {
+      display: none;
+    }
+    #states > div:first-child > hui-section-row::part(label) {
+      margin-top: 0;
+    }
+```
+
+`div:first-child` targets the card's first row, whatever it is. The section heading is that row as long as nothing static precedes it — if a leading `- type: divider` include entry is ever added, the rule hits that row instead, and a `:has(> hui-section-row)` guard does the picking.
+
+#### Label, no lines at all
+
+```yaml
+uix:
+  style: |
+    hui-section-row::part(divider) {
+      display: none !important;
+    }
+    #states > div:first-child > hui-section-row::part(label) {
+      margin-top: 0;
+    }
+```
+
+The second rule is optional — it pulls the first heading flush under the card title, as Home Assistant does for cards without a title.
+
 ## Entity options
 
 In the `options:` option of the filters, the string `this.entity_id` will be replaced with the matched entity_id. Useful for service calls - see below.
