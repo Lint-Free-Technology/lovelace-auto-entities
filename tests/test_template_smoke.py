@@ -308,6 +308,13 @@ def test_late_result_from_closed_subscription_is_ignored(template_page):
     assert page.evaluate("cardEntries()") == [{"entity": "light.fresh"}]
 
 
+def test_template_cache_is_not_shared_with_card_mod(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    assert page.evaluate("Object.keys(window.cardMod_template_cache ?? {})") == []
+    assert len(page.evaluate("Object.keys(window.autoEntities_template_cache)")) == 1
+
+
 def test_reattached_card_renders_latest_shared_template_result(template_page):
     page = template_page
     page.evaluate("mountCard()")

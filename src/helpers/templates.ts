@@ -29,11 +29,11 @@ export interface TemplateSubscription {
 
 type TemplateCallback = (value: string, subscription?: TemplateSubscription) => void;
 
-(window as any).cardMod_template_cache =
-  (window as any).cardMod_template_cache || {};
+(window as any).autoEntities_template_cache =
+  (window as any).autoEntities_template_cache || {};
 
 const cachedTemplates: Record<string, CachedTemplate> = (window as any)
-  .cardMod_template_cache;
+  .autoEntities_template_cache;
 
 let templateGeneration = 0;
 
@@ -108,9 +108,6 @@ export async function bind_template(
       isInitial: true,
     });
   } else {
-    // Caches created before this version do not have timing metadata.
-    cache.generation ??= ++templateGeneration;
-    cache.hasResult ??= cache.value !== "";
     const isNewCallback = !cache.callbacks.has(callback);
     if (isNewCallback) {
       unbind_template(callback);
