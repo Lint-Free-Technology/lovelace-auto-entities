@@ -288,6 +288,26 @@ def test_detached_template_unsubscribes_at_once_while_hidden(template_page):
     assert not page.evaluate("templateCallbacks.has('{{ first }}')")
 
 
+def test_late_result_from_closed_subscription_is_ignored(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.evaluate(
+        "() => { window.oldCallback = [...templateCallbacks.get('{{ first }}')].at(-1); }"
+    )
+    page.evaluate(
+        """Object.defineProperty(document, 'hidden', {
+            configurable: true, get: () => true,
+        })"""
+    )
+    page.evaluate("testCard.remove()")
+    page.evaluate("mountCard()")
+    # A result the old subscription sent before it closed arrives late.
+    page.evaluate("oldCallback({ result: ['light.stale'] })")
+    assert page.evaluate("cardEntries()") != [{"entity": "light.stale"}]
+    page.evaluate("emitTemplate(['light.fresh'])")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.fresh"}]
+
+
 def test_reattached_card_renders_latest_shared_template_result(template_page):
     page = template_page
     page.evaluate("mountCard()")

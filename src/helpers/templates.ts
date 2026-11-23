@@ -39,10 +39,13 @@ let templateGeneration = 0;
 
 function template_updated(
   key: string,
+  generation: number,
   result: RenderTemplateResult
 ): Promise<void> {
   const cache = cachedTemplates[key];
-  if (!cache) {
+  // A subscription still closing can deliver a late result after a new one
+  // took over the same key.
+  if (!cache || cache.generation !== generation) {
     return;
   }
   cache.value = result.result;
@@ -81,15 +84,17 @@ export async function bind_template(
       ...variables,
     };
 
+    const generation = ++templateGeneration;
     cachedTemplates[cacheKey] = cache = {
       template,
       variables,
       value: "",
-      generation: ++templateGeneration,
+      generation,
       hasResult: false,
       callbacks: new Set([callback]),
       unsubscribe: connection.subscribeMessage(
-        (result: RenderTemplateResult) => template_updated(cacheKey, result),
+        (result: RenderTemplateResult) =>
+          template_updated(cacheKey, generation, result),
         {
           type: "render_template",
           template,
