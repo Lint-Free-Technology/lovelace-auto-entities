@@ -10,6 +10,8 @@ import pytest
 from playwright.sync_api import Page
 
 BUNDLE = Path(__file__).resolve().parents[1] / "dist" / "auto-entities.js"
+# Matches UNSUBSCRIBE_COOLDOWN in src/helpers/templates.ts.
+UNSUBSCRIBE_COOLDOWN_MS = 20000
 
 
 @pytest.fixture
@@ -216,6 +218,7 @@ def test_fresh_mount_renders_first_template_result_immediately(template_page):
     page.evaluate("emitTemplate(['light.first'])")
     assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
     page.evaluate("testCard.remove()")
+    page.clock.run_for(UNSUBSCRIBE_COOLDOWN_MS)
     page.evaluate("mountCard()")
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.second'])")
@@ -228,10 +231,61 @@ def test_reconnected_card_renders_first_result_immediately(template_page):
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.first'])")
     assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
-    page.evaluate("testCard.remove(); document.body.append(testCard)")
+    page.evaluate("testCard.remove()")
+    page.clock.run_for(UNSUBSCRIBE_COOLDOWN_MS)
+    page.evaluate("document.body.append(testCard)")
     page.clock.run_for(25)
     page.evaluate("emitTemplate(['light.second'])")
     assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+
+
+def test_reattached_card_keeps_last_result_until_new_one(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.first'])")
+    page.evaluate("testCard.remove()")
+    page.clock.run_for(UNSUBSCRIBE_COOLDOWN_MS)
+    page.evaluate("document.body.append(testCard)")
+    page.clock.run_for(600)
+    assert page.evaluate("cardEntries()") == [{"entity": "light.first"}]
+    page.evaluate("emitTemplate(['light.second'])")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+
+
+def test_reattached_card_within_cooldown_shows_latest_result(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate("emitTemplate(['light.first'])")
+    page.evaluate("testCard.remove()")
+    page.clock.run_for(5000)
+    page.evaluate("emitTemplate(['light.second'])")
+    page.evaluate("document.body.append(testCard)")
+    assert page.evaluate("cardEntries()") == [{"entity": "light.second"}]
+    assert page.evaluate("templateCallbacks.get('{{ first }}').size") == 1
+
+
+def test_detached_template_unsubscribes_after_cooldown(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.evaluate("testCard.remove()")
+    page.clock.run_for(UNSUBSCRIBE_COOLDOWN_MS - 1)
+    assert page.evaluate("templateCallbacks.has('{{ first }}')")
+    page.clock.run_for(1)
+    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
+
+
+def test_detached_template_unsubscribes_at_once_while_hidden(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.evaluate(
+        """Object.defineProperty(document, 'hidden', {
+            configurable: true, get: () => true,
+        })"""
+    )
+    page.evaluate("testCard.remove()")
+    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
 
 
 def test_reattached_card_renders_latest_shared_template_result(template_page):
