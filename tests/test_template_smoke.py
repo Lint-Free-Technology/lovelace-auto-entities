@@ -359,6 +359,29 @@ def test_template_does_not_bind_until_card_is_connected(template_page):
     assert page.evaluate("templateCallbacks.has('{{ first }}')")
 
 
+def test_preview_does_not_resolve_template_filters(template_page):
+    page = template_page
+    page.evaluate(
+        """() => {
+            window.testCard = document.createElement('auto-entities');
+            testCard.preview = true;
+            testCard.setConfig({
+                card: { type: 'entities' },
+                filter: { template: '{{ first }}' },
+            });
+            testCard.hass = fixtureHass;
+            document.body.append(testCard);
+        }"""
+    )
+    page.clock.run_for(25)
+    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
+    assert page.evaluate("cardEntries()") == []
+
+    page.evaluate("testCard.preview = false")
+    page.clock.run_for(25)
+    assert page.evaluate("templateCallbacks.has('{{ first }}')")
+
+
 def test_late_bind_after_disconnect_has_no_card_callback(template_page):
     page = template_page
     page.evaluate(
