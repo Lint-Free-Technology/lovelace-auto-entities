@@ -1,3 +1,10 @@
+## [2.9.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.2...v2.9.0-beta.3) (2026-11-24)
+
+
+### 🐞 Bug Fixes
+
+* own template bindings by card lifecycle ([#229](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/229)) ([087a281](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/087a28182adfffb423acc37fd830dfe494482467))
+
 ## [2.9.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.1...v2.9.0-beta.2) (2026-11-24)
 
 
