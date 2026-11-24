@@ -53,6 +53,7 @@ def template_page(page: Page) -> Iterator[Page]:
             const base = document.createElement('hc-main');
             base.hass = fixtureHass;
             document.body.append(base);
+            window.fixtureBase = base;
             window.mountCard = ({
                 template = '{{ first }}', entities = [], withHass = true,
                 cardParam = 'entities',
@@ -337,3 +338,80 @@ def test_reattached_card_renders_latest_shared_template_result(template_page):
     page.evaluate("secondCard.remove(); emitTemplate(['light.second'])")
     page.evaluate("document.body.append(secondCard)")
     assert page.evaluate("cardEntries(secondCard)") == [{"entity": "light.second"}]
+
+
+def test_template_does_not_bind_until_card_is_connected(template_page):
+    page = template_page
+    page.evaluate(
+        """() => {
+            window.testCard = document.createElement('auto-entities');
+            testCard.setConfig({
+                card: { type: 'entities' },
+                filter: { template: '{{ first }}' },
+            });
+            testCard.hass = fixtureHass;
+        }"""
+    )
+    page.clock.run_for(25)
+    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
+    page.evaluate("document.body.append(testCard)")
+    page.clock.run_for(25)
+    assert page.evaluate("templateCallbacks.has('{{ first }}')")
+
+
+def test_preview_renders_cached_and_live_template_cards(template_page):
+    page = template_page
+    page.evaluate("mountCard({ cardParam: 'cards' })")
+    first = [{"type": "area", "area": "kitchen"}]
+    second = [{"type": "area", "area": "bedroom"}]
+    page.evaluate("cards => emitTemplate(cards)", first)
+    page.evaluate(
+        """() => {
+            testCard.remove();
+            mountCard({ cardParam: 'cards' });
+            testCard.preview = true;
+        }"""
+    )
+    assert page.evaluate("cardEntries()") == first
+    page.evaluate("cards => emitTemplate(cards)", second)
+    page.clock.run_for(500)
+    assert page.evaluate("cardEntries()") == second
+
+
+def test_late_bind_after_disconnect_has_no_card_callback(template_page):
+    page = template_page
+    page.evaluate(
+        """() => {
+            fixtureBase.hass = undefined;
+            window.testCard = document.createElement('auto-entities');
+            testCard.setConfig({
+                card: { type: 'entities' },
+                filter: { template: '{{ first }}' },
+            });
+            testCard.hass = fixtureHass;
+            document.body.append(testCard);
+            testCard.remove();
+            fixtureBase.hass = fixtureHass;
+        }"""
+    )
+    page.clock.run_for(100)
+    assert page.evaluate(
+        "Object.values(window.autoEntities_template_cache)[0]?.callbacks.size ?? 0"
+    ) == 0
+
+
+def test_detached_card_removes_document_update_listener(template_page):
+    page = template_page
+    page.evaluate(
+        """() => {
+            const prototype = customElements.get('auto-entities').prototype;
+            window.documentUpdateCalls = 0;
+            prototype.update_all = function () {
+                window.documentUpdateCalls += 1;
+            };
+            mountCard({ template: null });
+        }"""
+    )
+    page.evaluate("window.documentUpdateCalls = 0; testCard.remove()")
+    page.evaluate("document.dispatchEvent(new CustomEvent('auto-entities-update'))")
+    assert page.evaluate("window.documentUpdateCalls") == 0

@@ -111,12 +111,19 @@ class AutoEntities extends LitElement {
   _cardConfig;
   _templateGeneration?: number;
   _templateResolved = false;
+  _templateBindEpoch = 0;
+  _templateBindCallback?: (
+    value: string,
+    subscription?: TemplateSubscription
+  ) => void;
+  _templateBindKey?: string;
   _updateCooldown = { timer: undefined, rerun: false };
   _cardBuilt?: Promise<void>;
   _cardBuiltResolve?;
   _cardController?: CardController;
   _cardControllerType?: string;
   _llCustomEvents: { [key: string]: any } = {};
+  _updateAllListener = () => this.update_all();
 
   static getConfigElement() {
     return document.createElement("auto-entities-editor");
@@ -169,16 +176,7 @@ class AutoEntities extends LitElement {
     config = JSON.parse(JSON.stringify(config));
     this._config = config;
 
-    if (
-      this._config.filter?.template &&
-      hasTemplate(this._config.filter.template)
-    ) {
-      bind_template(
-        this._renderer,
-        this._config.filter.template,
-        { config }
-      );
-    }
+    this._syncTemplateBinding();
 
     this._cardBuilt = new Promise(
       (resolve) => (this._cardBuiltResolve = resolve)
@@ -229,25 +227,57 @@ class AutoEntities extends LitElement {
     queueMicrotask(() => this.update_all());
   };
 
+  _unbindTemplateBinding() {
+    this._templateBindEpoch += 1;
+    const callback = this._templateBindCallback;
+    this._templateBindCallback = undefined;
+    this._templateBindKey = undefined;
+    if (callback) void unbind_template(callback);
+  }
+
+  _syncTemplateBinding() {
+    const template = this._config?.filter?.template;
+    const bindKey = template && hasTemplate(template)
+      ? JSON.stringify([template, this._config])
+      : undefined;
+
+    if (!this.isConnected || !bindKey) {
+      this._unbindTemplateBinding();
+      return;
+    }
+    if (
+      this._templateBindCallback !== undefined &&
+      this._templateBindKey === bindKey
+    ) {
+      return;
+    }
+
+    this._unbindTemplateBinding();
+    const epoch = ++this._templateBindEpoch;
+    const callback = (value: string, subscription?: TemplateSubscription) => {
+      if (epoch !== this._templateBindEpoch || !this.isConnected) return;
+      this._renderer(value, subscription);
+    };
+    this._templateBindCallback = callback;
+    this._templateBindKey = bindKey;
+
+    void bind_template(callback, template, { config: this._config }).then(() => {
+      if (epoch !== this._templateBindEpoch || !this.isConnected) {
+        void unbind_template(callback);
+      }
+    });
+  }
+
   connectedCallback() {
     super.connectedCallback();
-    if (
-      this._config?.filter?.template &&
-      hasTemplate(this._config.filter.template)
-    ) {
-      bind_template(
-        this._renderer,
-        this._config.filter.template,
-        { config: this._config }
-      );
-    }
-    document.addEventListener("auto-entities-update", this.update_all.bind(this));
+    this._syncTemplateBinding();
+    document.addEventListener("auto-entities-update", this._updateAllListener);
     this._cardController?.connected();
   }
   disconnectedCallback() {
     super.disconnectedCallback();
-    unbind_template(this._renderer);
-    document.removeEventListener("auto-entities-update", this.update_all.bind(this));
+    this._unbindTemplateBinding();
+    document.removeEventListener("auto-entities-update", this._updateAllListener);
     this._cardController?.dispose();
   }
 
