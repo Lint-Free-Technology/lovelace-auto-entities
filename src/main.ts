@@ -241,7 +241,11 @@ class AutoEntities extends LitElement {
       ? JSON.stringify([template, this._config])
       : undefined;
 
-    if (!this.isConnected || !bindKey) {
+    // Home Assistant mounts the card preview beside the configuration editor.
+    // A cached template result can otherwise build a large generated card tree
+    // before that dialog gets its first paint. The preview deliberately shows
+    // only static entities; the live dashboard still subscribes as normal.
+    if (!this.isConnected || this.preview || !bindKey) {
       this._unbindTemplateBinding();
       return;
     }
@@ -413,7 +417,7 @@ class AutoEntities extends LitElement {
       return entities;
     }
 
-    if (this._template) {
+    if (this._template && !this.preview) {
       entities = entities.concat(this._template.map(format));
     }
     entities = entities.filter(Boolean);
@@ -612,6 +616,8 @@ class AutoEntities extends LitElement {
     if (changedProperties.has("preview")) {
       if (this.card) this.card.preview = this.preview;
       if (this.else) this.else.preview = this.preview;
+      this._syncTemplateBinding();
+      queueMicrotask(() => this.update_all());
     }
   }
 
