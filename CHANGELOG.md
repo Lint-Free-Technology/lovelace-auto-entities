@@ -1,3 +1,10 @@
+## [2.9.0-beta.4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.3...v2.9.0-beta.4) (2026-11-24)
+
+
+### 🐞 Bug Fixes
+
+* release a template subscription at once when the config replaces it ([#232](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/232)) ([702c9e8](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/702c9e8aaeb833a685a4a2806efb3c12d515ecb5)), closes [#224](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/224)
+
 ## [2.9.0-beta.3](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.2...v2.9.0-beta.3) (2026-11-24)
 
 
