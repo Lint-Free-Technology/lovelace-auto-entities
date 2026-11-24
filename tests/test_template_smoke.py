@@ -415,3 +415,57 @@ def test_detached_card_removes_document_update_listener(template_page):
     page.evaluate("window.documentUpdateCalls = 0; testCard.remove()")
     page.evaluate("document.dispatchEvent(new CustomEvent('auto-entities-update'))")
     assert page.evaluate("window.documentUpdateCalls") == 0
+
+
+SUBSCRIPTION_COUNT = "[...templateCallbacks.values()].reduce((n, s) => n + s.size, 0)"
+
+
+def test_changed_template_releases_previous_subscription_at_once(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    page.evaluate(
+        """testCard.setConfig({
+            card: { type: 'entities' },
+            filter: { template: '{{ second }}' },
+        })"""
+    )
+    page.clock.run_for(25)
+    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
+    assert page.evaluate(SUBSCRIPTION_COUNT) == 1
+
+
+def test_config_changes_in_one_tick_keep_one_subscription(template_page):
+    page = template_page
+    page.evaluate("mountCard()")
+    page.clock.run_for(25)
+    # The cache key includes the whole config, so each edit resubscribes.
+    page.evaluate(
+        """() => {
+            for (const title of ['a', 'ab', 'abc']) {
+                testCard.setConfig({
+                    card: { type: 'entities', title },
+                    filter: { template: '{{ first }}' },
+                });
+            }
+        }"""
+    )
+    page.clock.run_for(25)
+    assert page.evaluate(SUBSCRIPTION_COUNT) == 1
+
+
+def test_config_change_keeps_subscription_another_card_uses(template_page):
+    page = template_page
+    page.evaluate("mountCard(); window.firstCard = testCard; mountCard()")
+    page.clock.run_for(25)
+    page.evaluate(
+        """testCard.setConfig({
+            card: { type: 'entities' },
+            filter: { template: '{{ second }}' },
+        })"""
+    )
+    page.clock.run_for(25)
+    assert page.evaluate("templateCallbacks.has('{{ first }}')")
+    page.evaluate("emitTemplate(['light.kept'])")
+    assert page.evaluate("cardEntries(firstCard)") == [{"entity": "light.kept"}]
+    page.evaluate("firstCard.remove()")

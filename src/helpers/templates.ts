@@ -123,8 +123,10 @@ export async function bind_template(
   }
 }
 
+// `immediate` skips the cooldown, for a binding no card will come back to.
 export async function unbind_template(
-  callback: TemplateCallback
+  callback: TemplateCallback,
+  immediate = false
 ): Promise<void> {
   for (const [key, cache] of Object.entries(cachedTemplates)) {
     if (cache.callbacks.has(callback)) {
@@ -132,7 +134,7 @@ export async function unbind_template(
       if (cache.callbacks.size == 0) {
         // While hidden the connection may be suspended before a delayed
         // unsubscribe runs, which would leave a duplicate subscription.
-        if (document.hidden) {
+        if (immediate || document.hidden) {
           await unsubscribe_template(key);
         } else {
           window.clearTimeout(cache.cooldownTimeoutID);

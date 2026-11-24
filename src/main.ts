@@ -227,12 +227,12 @@ class AutoEntities extends LitElement {
     queueMicrotask(() => this.update_all());
   };
 
-  _unbindTemplateBinding() {
+  _unbindTemplateBinding(immediate = false) {
     this._templateBindEpoch += 1;
     const callback = this._templateBindCallback;
     this._templateBindCallback = undefined;
     this._templateBindKey = undefined;
-    if (callback) void unbind_template(callback);
+    if (callback) void unbind_template(callback, immediate);
   }
 
   _syncTemplateBinding() {
@@ -241,8 +241,10 @@ class AutoEntities extends LitElement {
       ? JSON.stringify([template, this._config])
       : undefined;
 
+    // Only a config change gets here with a binding, and the cooldown is for
+    // reattaching, so the old subscription can go now. Disconnect keeps it.
     if (!this.isConnected || !bindKey) {
-      this._unbindTemplateBinding();
+      this._unbindTemplateBinding(true);
       return;
     }
     if (
@@ -252,7 +254,7 @@ class AutoEntities extends LitElement {
       return;
     }
 
-    this._unbindTemplateBinding();
+    this._unbindTemplateBinding(true);
     const epoch = ++this._templateBindEpoch;
     const callback = (value: string, subscription?: TemplateSubscription) => {
       if (epoch !== this._templateBindEpoch || !this.isConnected) return;
@@ -263,7 +265,8 @@ class AutoEntities extends LitElement {
 
     void bind_template(callback, template, { config: this._config }).then(() => {
       if (epoch !== this._templateBindEpoch || !this.isConnected) {
-        void unbind_template(callback);
+        const replaced = this.isConnected && this._templateBindKey !== bindKey;
+        void unbind_template(callback, replaced);
       }
     });
   }
