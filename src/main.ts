@@ -207,7 +207,14 @@ class AutoEntities extends LitElement {
     }
     if (subscription?.isInitial) {
       this._templateGeneration = subscription.generation;
+      // Re-attached after the subscription was dropped: keep the last result
+      // on screen until the new one arrives, instead of emptying the card.
+      const keepLast =
+        subscription.isPlaceholder &&
+        this._templateResolved &&
+        this._template !== undefined;
       this._templateResolved = false;
+      if (keepLast) return;
     }
     if (typeof tpl === "string") {
       this._template = tpl.split(/[\s,]+/);

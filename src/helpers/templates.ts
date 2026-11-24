@@ -9,7 +9,12 @@ interface CachedTemplate {
   hasResult: boolean;
   callbacks: Set<TemplateCallback>;
   unsubscribe: Promise<() => Promise<void>>;
+  cooldownTimeoutID?: number;
 }
+
+// How long a template with no cards left stays subscribed, so a card shown
+// again soon (e.g. after switching views) gets the current result at once.
+const UNSUBSCRIBE_COOLDOWN = 20000;
 
 interface RenderTemplateResult {
   result: string;
@@ -24,20 +29,23 @@ export interface TemplateSubscription {
 
 type TemplateCallback = (value: string, subscription?: TemplateSubscription) => void;
 
-(window as any).cardMod_template_cache =
-  (window as any).cardMod_template_cache || {};
+(window as any).autoEntities_template_cache =
+  (window as any).autoEntities_template_cache || {};
 
 const cachedTemplates: Record<string, CachedTemplate> = (window as any)
-  .cardMod_template_cache;
+  .autoEntities_template_cache;
 
 let templateGeneration = 0;
 
 function template_updated(
   key: string,
+  generation: number,
   result: RenderTemplateResult
 ): Promise<void> {
   const cache = cachedTemplates[key];
-  if (!cache) {
+  // A subscription still closing can deliver a late result after a new one
+  // took over the same key.
+  if (!cache || cache.generation !== generation) {
     return;
   }
   cache.value = result.result;
@@ -76,15 +84,17 @@ export async function bind_template(
       ...variables,
     };
 
+    const generation = ++templateGeneration;
     cachedTemplates[cacheKey] = cache = {
       template,
       variables,
       value: "",
-      generation: ++templateGeneration,
+      generation,
       hasResult: false,
       callbacks: new Set([callback]),
       unsubscribe: connection.subscribeMessage(
-        (result: RenderTemplateResult) => template_updated(cacheKey, result),
+        (result: RenderTemplateResult) =>
+          template_updated(cacheKey, generation, result),
         {
           type: "render_template",
           template,
@@ -98,12 +108,11 @@ export async function bind_template(
       isInitial: true,
     });
   } else {
-    // Caches created before this version do not have timing metadata.
-    cache.generation ??= ++templateGeneration;
-    cache.hasResult ??= cache.value !== "";
     const isNewCallback = !cache.callbacks.has(callback);
     if (isNewCallback) {
       unbind_template(callback);
+      window.clearTimeout(cache.cooldownTimeoutID);
+      cache.cooldownTimeoutID = undefined;
       callback(cache.value, {
         generation: cache.generation,
         isPlaceholder: !cache.hasResult,
@@ -117,16 +126,32 @@ export async function bind_template(
 export async function unbind_template(
   callback: TemplateCallback
 ): Promise<void> {
-  let unsubscriber: Promise<() => Promise<void>>;
   for (const [key, cache] of Object.entries(cachedTemplates)) {
     if (cache.callbacks.has(callback)) {
       cache.callbacks.delete(callback);
       if (cache.callbacks.size == 0) {
-        unsubscriber = cache.unsubscribe;
-        delete cachedTemplates[key];
+        // While hidden the connection may be suspended before a delayed
+        // unsubscribe runs, which would leave a duplicate subscription.
+        if (document.hidden) {
+          await unsubscribe_template(key);
+        } else {
+          window.clearTimeout(cache.cooldownTimeoutID);
+          cache.cooldownTimeoutID = window.setTimeout(
+            unsubscribe_template,
+            UNSUBSCRIBE_COOLDOWN,
+            key
+          );
+        }
       }
       break;
     }
   }
-  if (unsubscriber) await (await unsubscriber)();
+}
+
+async function unsubscribe_template(key: string): Promise<void> {
+  const cache = cachedTemplates[key];
+  if (!cache || cache.callbacks.size) return;
+  window.clearTimeout(cache.cooldownTimeoutID);
+  delete cachedTemplates[key];
+  await (await cache.unsubscribe)();
 }
