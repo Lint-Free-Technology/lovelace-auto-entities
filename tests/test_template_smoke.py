@@ -359,27 +359,23 @@ def test_template_does_not_bind_until_card_is_connected(template_page):
     assert page.evaluate("templateCallbacks.has('{{ first }}')")
 
 
-def test_preview_does_not_resolve_template_filters(template_page):
+def test_preview_renders_cached_and_live_template_cards(template_page):
     page = template_page
+    page.evaluate("mountCard({ cardParam: 'cards' })")
+    first = [{"type": "area", "area": "kitchen"}]
+    second = [{"type": "area", "area": "bedroom"}]
+    page.evaluate("cards => emitTemplate(cards)", first)
     page.evaluate(
         """() => {
-            window.testCard = document.createElement('auto-entities');
+            testCard.remove();
+            mountCard({ cardParam: 'cards' });
             testCard.preview = true;
-            testCard.setConfig({
-                card: { type: 'entities' },
-                filter: { template: '{{ first }}' },
-            });
-            testCard.hass = fixtureHass;
-            document.body.append(testCard);
         }"""
     )
-    page.clock.run_for(25)
-    assert not page.evaluate("templateCallbacks.has('{{ first }}')")
-    assert page.evaluate("cardEntries()") == []
-
-    page.evaluate("testCard.preview = false")
-    page.clock.run_for(25)
-    assert page.evaluate("templateCallbacks.has('{{ first }}')")
+    assert page.evaluate("cardEntries()") == first
+    page.evaluate("cards => emitTemplate(cards)", second)
+    page.clock.run_for(500)
+    assert page.evaluate("cardEntries()") == second
 
 
 def test_late_bind_after_disconnect_has_no_card_callback(template_page):
