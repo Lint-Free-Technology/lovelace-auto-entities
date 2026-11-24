@@ -1,3 +1,10 @@
+## [2.9.0-beta.2](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.1...v2.9.0-beta.2) (2026-11-24)
+
+
+### 🐞 Bug Fixes
+
+* keep template results when a card is shown again ([#224](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/224)) ([23ce28f](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/23ce28f8dc696ad8d905dda7c24cfb763556484b))
+
 ## [2.9.0-beta.1](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.0...v2.9.0-beta.1) (2026-11-15)
 
 
