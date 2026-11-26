@@ -15,6 +15,7 @@ import {
   isRuleKeySelector,
   migrate_custom_rule_values,
 } from "./schema";
+import { localize, localizer } from "../localize";
 
 class AutoEntitiesFilterEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -27,7 +28,11 @@ class AutoEntitiesFilterEditor extends LitElement {
       return `${filter.type} ${filter.label ? `"${filter.label}"` : ""}`;
     }
     const rules = Object.keys(filter).filter((key) => isRuleKeySelector(key)).length;
-    return `${rules} ${rules === 1 ? "rule" : "rules"}`;
+    return localize(
+      rules === 1 ? "filter.rule_count_one" : "filter.rule_count_other",
+      this.hass,
+      { count: rules }
+    );
   }
 
   _getFilters(type) {
@@ -213,13 +218,14 @@ class AutoEntitiesFilterEditor extends LitElement {
                     appearance="filled"
                     @click=${(ev) => this._filterDelete(ev, idx, type)}
                   >
-                    Delete
+                    ${localize("filter.delete", this.hass)}
                   </ha-button>
                   ${filter.type === undefined
                     ? html`
                         <ha-form
                           .hass=${this.hass}
-                          .schema=${filterSchema(filter)}
+                          .schema=${filterSchema(this.hass, filter)}
+                          .localizeValue=${localizer(this.hass)}
                           .computeLabel=${(s) => s.label ?? s.name}
                           @value-changed=${(ev) =>
                             this._rulesChanged(ev, idx, type)}
@@ -228,19 +234,28 @@ class AutoEntitiesFilterEditor extends LitElement {
                         >
                         </ha-form>
                         <ha-expansion-panel outlined class="sort">
-                          <h4 slot="header">Sorting</h4>
+                          <h4 slot="header">
+                            ${localize("filter.sorting", this.hass)}
+                          </h4>
                           <div class="content">
                             ${Array.isArray(filter.sort)
                               ? html`
                                   <ha-alert alert-type="info">
-                                    Multiple sort levels are configured. Please
-                                    use the <b>CODE EDITOR</b> to edit them.
+                                    ${localize(
+                                      "sort.multiple_before",
+                                      this.hass
+                                    )}
+                                    <b>${localize("common.code_editor", this.hass)}</b>
+                                    ${localize(
+                                      "sort.multiple_after",
+                                      this.hass
+                                    )}
                                   </ha-alert>
                                 `
                               : html`
                                   <ha-form
                                     .hass=${this.hass}
-                                    .schema=${sortSchema(filter.sort?.method)}
+                                    .schema=${sortSchema(this.hass, filter.sort?.method)}
                                     .data=${sortDataForForm(filter.sort)}
                                     .computeLabel=${(s) => s.label ?? s.name}
                                     @value-changed=${(ev) =>
@@ -265,11 +280,13 @@ class AutoEntitiesFilterEditor extends LitElement {
                   ${type === "include"
                     ? html`
                         <ha-expansion-panel outlined class="styling">
-                          <h4 slot="header">Styling</h4>
+                          <h4 slot="header">
+                            ${localize("filter.styling", this.hass)}
+                          </h4>
                           <div class="content">
                             <ha-form
                               .hass=${this.hass}
-                              .schema=${stylingSchema}
+                              .schema=${stylingSchema(this.hass)}
                               .data=${{
                                 uix_entity_icon_styling:
                                   filter.uix_entity_icon_styling === true,
@@ -294,14 +311,14 @@ class AutoEntitiesFilterEditor extends LitElement {
         @click=${(ev) => this._filterAdd(ev, type)}
       >
         <ha-icon slot="start" .icon=${"mdi:plus"}></ha-icon>
-        Add filter
+        ${localize("filter.add", this.hass)}
       </ha-button>
       <ha-button
         appearance="plain" 
         @click=${(ev) => this._filterAdd(ev, type, true)}
       >
         <ha-icon slot="start" .icon=${"mdi:plus"}></ha-icon>
-      Add custom entry
+      ${localize("filter.add_custom", this.hass)}
     </ha-button>
   `;
 
@@ -309,20 +326,20 @@ class AutoEntitiesFilterEditor extends LitElement {
       <div>
         <ha-expansion-panel outlined>
           <ha-icon .icon=${"mdi:plus"} slot="leading-icon"></ha-icon>
-          <h3 slot="header">Include</h3>
+          <h3 slot="header">${localize("filter.include", this.hass)}</h3>
 
           <div class="content">${render_type("include")}</div>
         </ha-expansion-panel>
         <ha-expansion-panel outlined>
           <ha-icon .icon=${"mdi:minus"} slot="leading-icon"></ha-icon>
-          <h3 slot="header">Exclude</h3>
+          <h3 slot="header">${localize("filter.exclude", this.hass)}</h3>
           <div class="content">${render_type("exclude")}</div>
         </ha-expansion-panel>
         ${this._config.entities
           ? html`
               <ha-form
                 .hass=${this.hass}
-                .schema=${entitiesSchema}
+                .schema=${entitiesSchema(this.hass)}
                 .data=${this._config}
                 .computeLabel=${(s) => s.label ?? s.name}
                 @value-changed=${(ev) => this._entitiesChanged(ev)}
@@ -334,7 +351,7 @@ class AutoEntitiesFilterEditor extends LitElement {
           ? html`
               <ha-form
                 .hass=${this.hass}
-                .schema=${templateSchema}
+                .schema=${templateSchema(this.hass)}
                 .data=${this._config.filter}
                 .computeLabel=${(s) => s.label ?? s.name}
                 @value-changed=${(ev) => this._templateChanged(ev)}
