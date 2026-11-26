@@ -1,37 +1,46 @@
 import { getAreas, getConfigEntries, getDevices, getEntities, getFloors, getLabels } from "../helpers";
 import { SPECIAL_TYPES, SortConfig } from "../types";
+import { localize, TranslationKey } from "../localize";
 
-const ruleKeySelector = {
+const ruleKeys = [
+  "area",
+  "attributes",
+  "device",
+  "domain",
+  "entity_category",
+  "entity_id",
+  "floor",
+  "group",
+  "group_expanded",
+  "hidden_by",
+  "integration",
+  "label",
+  "last_changed",
+  "last_triggered",
+  "last_updated",
+  "level",
+  "device_manufacturer",
+  "device_model",
+  "name",
+  "state",
+  "state_translated",
+];
+
+const ruleKeySelector = (hass) => ({
   type: "select",
-  options: [
-    ["area", "Area"],
-    ["attributes", "Attribute"],
-    ["device", "Device"],
-    ["domain", "Domain"],
-    ["entity_category", "Entity Category"],
-    ["entity_id", "Entity ID"],
-    ["floor", "Floor"],
-    ["group", "Group"],
-    ["group_expanded", "Group expanded"],
-    ["hidden_by", "Hidden by"],
-    ["integration", "Integration"],
-    ["label", "Label"],
-    ["last_changed", "Last Changed"],
-    ["last_triggered", "Last Triggered"],
-    ["last_updated", "Last Updated"],
-    ["level", "Level"],
-    ["device_manufacturer", "Manufacturer"],
-    ["device_model", "Model"],
-    ["name", "Name"],
-    ["state", "State"],
-    ["state_translated", "State Translated"],
-  ],
-};
+  options: ruleKeys
+    .map((key): [string, string] => [
+      key,
+      localize(`rule.${key}` as TranslationKey, hass),
+    ])
+    .sort(([, a], [, b]) => a.localeCompare(b)),
+});
 
 const filterValueSelector = {
   attributes: { object: {} },
   area: { 
     choose: {
+      translation_key: "choose",
       choices: {
         area: { selector: { area: {} } },
         custom: { selector: { text: {} } }
@@ -41,6 +50,7 @@ const filterValueSelector = {
   domain: { text: {} },
   device: { 
     choose: {
+      translation_key: "choose",
       choices: {
         device: { selector: { device: {} } },
         custom: { selector: { text: {} } }
@@ -49,6 +59,7 @@ const filterValueSelector = {
   },
   entity_id: { 
     choose: {
+      translation_key: "choose",
       choices: {
         entity: { selector: { entity: {} } },
         custom: { selector: { text: {} } }
@@ -57,6 +68,7 @@ const filterValueSelector = {
   },
   floor: { 
     choose: {
+      translation_key: "choose",
       choices: {
         floor: { selector: { floor: {} } },
         custom: { selector: { text: {} } }
@@ -65,6 +77,7 @@ const filterValueSelector = {
   },
   group: { 
     choose: {
+      translation_key: "choose",
       choices: {
         group: { selector: { entity: {} } },
         custom: { selector: { text: {} } }
@@ -73,6 +86,7 @@ const filterValueSelector = {
   },
   group_expanded: { 
     choose: {
+      translation_key: "choose",
       choices: {
         group: { selector: { entity: {} } },
         custom: { selector: { text: {} } }
@@ -81,6 +95,7 @@ const filterValueSelector = {
   },
   integration: { 
     choose: {
+      translation_key: "choose",
       choices: {
         integration: { selector: { config_entry: {} } },
         custom: { selector: { text: {} } }
@@ -89,6 +104,7 @@ const filterValueSelector = {
   },
   label: { 
     choose: {
+      translation_key: "choose",
       choices: {
         label: { selector: { label: {} } },
         custom: { selector: { text: {} } }
@@ -141,23 +157,23 @@ const filterChooseValidators = {
 }
 
 export const isRuleKeySelector = (key) => {
-  return ruleKeySelector.options.some(([k, v]) => k === key);
+  return ruleKeys.includes(key);
 }
 
 export const hasSelector = (filter) => {
   return Object.keys(filter).some((k) => k in filterValueSelector);
 };
 
-const ruleSchema = ([key, value], idx) => {
+const ruleSchema = (hass, [key, value], idx) => {
   if (["sort", "options"].includes(key)) {
     return undefined;
   }
-  if (!ruleKeySelector.options.some(([k, v]) => k === key))
+  if (!ruleKeys.includes(key))
     return {
       type: "Constant",
       name: "Some rules are not shown",
-      value: `The rule "${key}" is not supported by the GUI editor.
-        Please switch to the CODE EDITOR to access all options.`,
+      label: localize("filter.unsupported_title", hass),
+      value: localize("filter.unsupported_rule", hass, { rule: key }),
     };
 
   return {
@@ -166,9 +182,9 @@ const ruleSchema = ([key, value], idx) => {
     column_min_width: filterValueSelector[key] !== undefined ? "100%" : undefined,
     schema: [
       {
-        ...ruleKeySelector,
+        ...ruleKeySelector(hass),
         name: `key_${idx}`,
-        label: "Rule",
+        label: localize("filter.rule", hass),
       },
       {
         name: `value_${idx}`,
@@ -179,30 +195,32 @@ const ruleSchema = ([key, value], idx) => {
   };
 };
 
-export const filterSchema = (group) => {
+export const filterSchema = (hass, group) => {
   const filters = { ...group };
   delete filters.options;
   delete filters.uix_entity_icon_styling;
   return [
-    ...Object.entries(filters).map(ruleSchema).filter(Boolean),
+    ...Object.entries(filters)
+      .map((rule, idx) => ruleSchema(hass, rule, idx))
+      .filter(Boolean),
     {
-      ...ruleKeySelector,
+      ...ruleKeySelector(hass),
       name: `key_new`,
-      label: "New Rule ...",
+      label: localize("filter.new_rule", hass),
     },
     {
       name: "options",
-      label: "Options:",
+      label: localize("filter.options", hass),
       selector: { object: {} },
     },
   ];
 };
 
-export const stylingSchema = [
+export const stylingSchema = (hass) => [
   {
     name: "uix_entity_icon_styling",
     type: "boolean",
-    label: "Use UIX entity icon styling",
+    label: localize("filter.uix_styling", hass),
   },
 ];
 
@@ -277,17 +295,17 @@ export const nonFilterSchema = [
   },
 ];
 
-export const entitiesSchema = [
+export const entitiesSchema = (hass) => [
   {
     name: "entities",
-    label: "Entities:",
+    label: localize("filter.entities", hass),
     selector: { object: {} },
   },
 ];
-export const templateSchema = [
+export const templateSchema = (hass) => [
   {
     name: "template",
-    label: "Template:",
+    label: localize("filter.template", hass),
     selector: { template: {} },
   },
 ];
@@ -329,64 +347,73 @@ export function sortDataFromForm(sort?: FormSortConfig): SortConfig {
   return sort as SortConfig;
 }
 
-export const sortSchema = (method) => {
+export const sortSchema = (hass, method) => {
   const schema: any[] = [
     {
       name: "method",
-      label: "Sort method",
+      label: localize("sort.method", hass),
       type: "select",
       options: [
-        ["domain", "Entity Domain"],
-        ["entity_id", "Entity ID"],
-        ["name", "Name (after rename)"],
-        ["friendly_name", "Friendly Name (original, before rename)"],
-        ["device", "Device"],
-        ["area", "Area"],
-        ["state", "Entity State"],
-        ["last_changed", "Last Change"],
-        ["last_updated", "Last Update"],
-        ["last_triggered", "Last Trigger"],
-        ["attribute", "Attribute"],
+        ["domain", localize("sort.domain", hass)],
+        ["entity_id", localize("sort.entity_id", hass)],
+        ["name", localize("sort.name", hass)],
+        ["friendly_name", localize("sort.friendly_name", hass)],
+        ["device", localize("sort.device", hass)],
+        ["area", localize("sort.area", hass)],
+        ["state", localize("sort.state", hass)],
+        ["last_changed", localize("sort.last_changed", hass)],
+        ["last_updated", localize("sort.last_updated", hass)],
+        ["last_triggered", localize("sort.last_triggered", hass)],
+        ["attribute", localize("sort.attribute", hass)],
       ],
     },
     {
       type: "constant",
       name: "Sorting options:",
+      label: localize("sort.options", hass),
       value: "",
     },
     {
       type: "grid",
       name: "",
       schema: [
-        { name: "reverse", type: "boolean", label: "Reverse" },
-        { name: "ignore_case", type: "boolean", label: "Ignore case" },
+        {
+          name: "reverse",
+          type: "boolean",
+          label: localize("sort.reverse", hass),
+        },
+        {
+          name: "ignore_case",
+          type: "boolean",
+          label: localize("sort.ignore_case", hass),
+        },
         {
           name: "numeric",
           type: "select",
-          label: "Numeric sort",
+          label: localize("sort.numeric", hass),
           options: [
-            ["default", "Default (off; on for timestamps)"],
-            [false, "Off"],
-            [true, "On, non-numeric follows sort direction"],
-            ["nan_last", "On, non-numeric last"],
-            ["nan_first", "On, non-numeric first"],
+            ["default", localize("sort.numeric_default", hass)],
+            [false, localize("sort.numeric_off", hass)],
+            [true, localize("sort.numeric_on", hass)],
+            ["nan_last", localize("sort.numeric_nan_last", hass)],
+            ["nan_first", localize("sort.numeric_nan_first", hass)],
           ],
         },
-        { name: "ip", type: "boolean", label: "IP address sort" },
+        { name: "ip", type: "boolean", label: localize("sort.ip", hass) },
         {
           name: "divider",
           type: "boolean",
-          label: "Divider between sort groups",
+          label: localize("sort.divider", hass),
         },
         {
           name: "section",
           type: "boolean",
-          label: "Section heading before each sort group",
+          label: localize("sort.section", hass),
         },
         {
           name: "label",
           selector: { object: {} },
-          label: "Section label (rename-style name parts list)",
+          label: localize("sort.section_label", hass),
         },
       ],
     },
@@ -397,22 +424,22 @@ export const sortSchema = (method) => {
       {
         type: "Constant",
         name: "GUI editor not available",
-        value: `Sorting by ${method} is not supported by the GUI editor.
-        Please switch to the CODE EDITOR to access all options.`,
+        label: localize("common.gui_unavailable", hass),
+        value: localize("sort.unsupported_method", hass, { method }),
       },
     ];
 
   if (method == "attribute") schema.push();
   schema.push({
     name: "attribute",
-    label: "Attribute:",
+    label: localize("sort.attribute_field", hass),
     selector: { object: {} },
   });
 
   return schema;
 };
 
-export const renameSchema = (method, type?, find?, replace?) => {
+export const renameSchema = (hass, method, type?, find?, replace?) => {
   const knownMethods = [
     "friendly_name", "entity_id", "domain", "state", "state_translated", "attribute",
     "device", "area", "remove_device", "remove_area",
@@ -423,7 +450,8 @@ export const renameSchema = (method, type?, find?, replace?) => {
       {
         type: "Constant",
         name: "GUI editor not available",
-        value: `Renaming by ${method} is not supported by the GUI editor. Please switch to the CODE EDITOR to access all options.`,
+        label: localize("common.gui_unavailable", hass),
+        value: localize("rename.unsupported_method", hass, { method }),
       },
     ];
 
@@ -432,6 +460,7 @@ export const renameSchema = (method, type?, find?, replace?) => {
     {
       type: "constant",
       name: "Home Assistant name parts:",
+      label: localize("rename.name_parts_title", hass),
       value: "",
     },
     {
@@ -440,56 +469,62 @@ export const renameSchema = (method, type?, find?, replace?) => {
       schema: [
         {
           name: "type",
-          label: "Name parts",
+          label: localize("rename.name_parts", hass),
           selector: {
             select: {
               multiple: true,
               custom_value: false,
               options: [
-                { value: "entity", label: "Entity" },
-                { value: "device", label: "Device" },
-                { value: "area", label: "Area" },
-                { value: "floor", label: "Floor" },
+                { value: "entity", label: localize("rename.part_entity", hass) },
+                { value: "device", label: localize("rename.part_device", hass) },
+                { value: "area", label: localize("rename.part_area", hass) },
+                { value: "floor", label: localize("rename.part_floor", hass) },
               ],
             },
           },
         },
-        { name: "separator", label: "Separator", selector: { text: {} } },
+        {
+          name: "separator",
+          label: localize("rename.separator", hass),
+          selector: { text: {} },
+        },
       ],
     },
     // ── Other (single-value extraction) ──────────────────────────────────
     {
       type: "constant",
       name: "Other (single-value extraction):",
+      label: localize("rename.other_title", hass),
       value: "",
     },
     {
       name: "method",
-      label: "Other rename method",
+      label: localize("rename.method", hass),
       type: "select",
       options: [
-        ["", "—  None  —"],
-        ["friendly_name", "Friendly Name"],
-        ["entity_id", "Entity ID"],
-        ["domain", "Entity Domain"],
-        ["state", "Entity State"],
-        ["state_translated", "Entity State Translated"],
-        ["attribute", "Attribute"],
-        ["device", "Device Name"],
-        ["area", "Area Name"],
-        ["remove_device", "Remove Device Name prefix"],
-        ["remove_area", "Remove Area Name prefix"],
+        ["", localize("rename.method_none", hass)],
+        ["friendly_name", localize("rename.method_friendly_name", hass)],
+        ["entity_id", localize("rename.method_entity_id", hass)],
+        ["domain", localize("rename.method_domain", hass)],
+        ["state", localize("rename.method_state", hass)],
+        ["state_translated", localize("rename.method_state_translated", hass)],
+        ["attribute", localize("rename.method_attribute", hass)],
+        ["device", localize("rename.method_device", hass)],
+        ["area", localize("rename.method_area", hass)],
+        ["remove_device", localize("rename.method_remove_device", hass)],
+        ["remove_area", localize("rename.method_remove_area", hass)],
       ],
     },
     {
       name: "attribute",
-      label: "Attribute (required when method is 'attribute'):",
+      label: localize("rename.attribute", hass),
       selector: { text: {} },
     },
     // ── String operations ─────────────────────────────────────────────────
     {
       type: "constant",
       name: "String operations (applied in order: find/replace → prepend → append → trim → capitalize). Find/replace can be a single value or a list of values in YAML.",
+      label: localize("rename.string_operations", hass),
       value: "",
     },
     ...(Array.isArray(find) || Array.isArray(replace)
@@ -497,8 +532,8 @@ export const renameSchema = (method, type?, find?, replace?) => {
           {
             type: "constant",
             name: "Find/Replace as list",
-            value:
-              "Find/Replace are configured as lists and cannot be edited in the GUI editor. Please switch to the CODE EDITOR to modify them.",
+            label: localize("rename.list_title", hass),
+            value: localize("rename.list_info", hass),
           },
         ]
       : [
@@ -506,37 +541,53 @@ export const renameSchema = (method, type?, find?, replace?) => {
             type: "grid",
             name: "",
             schema: [
-              { name: "find", label: "Find (regex)", selector: { text: {} } },
-              { name: "replace", label: "Replace with", selector: { text: {} } },
-              { name: "prepend", label: "Prepend", selector: { text: {} } },
-              { name: "append", label: "Append", selector: { text: {} } },
+              {
+                name: "find",
+                label: localize("rename.find", hass),
+                selector: { text: {} },
+              },
+              {
+                name: "replace",
+                label: localize("rename.replace", hass),
+                selector: { text: {} },
+              },
+              {
+                name: "prepend",
+                label: localize("rename.prepend", hass),
+                selector: { text: {} },
+              },
+              {
+                name: "append",
+                label: localize("rename.append", hass),
+                selector: { text: {} },
+              },
             ],
           },
         ]),
     {
       name: "trim",
       type: "boolean",
-      label: "Trim whitespace from result",
+      label: localize("rename.trim", hass),
     },
     {
       name: "capitalize",
       type: "boolean",
-      label: "Capitalize first letter of result",
+      label: localize("rename.capitalize", hass),
     },
     {
       name: "eval_js",
       type: "boolean",
-      label: "Evaluate Javascript on replace, append, prepend options",
+      label: localize("rename.eval_js", hass),
     },
     {
       name: "ignore_case",
       type: "boolean",
-      label: "Ignore case during find (regex)",
+      label: localize("rename.ignore_case", hass),
     },
   ];
 };
 
-export const cardOptionsSchema = [
+export const cardOptionsSchema = (hass) => [
   {
     type: "grid",
     name: "",
@@ -544,22 +595,22 @@ export const cardOptionsSchema = [
       {
         name: "show_empty",
         type: "boolean",
-        label: "Show if empty",
+        label: localize("card.show_empty", hass),
       },
       {
         name: "card_as_row",
         type: "boolean",
-        label: "Card as row",
+        label: localize("card.card_as_row", hass),
       },
       {
         name: "uix_entity_icon_styling",
         type: "boolean",
-        label: "Use UIX entity icon styling",
+        label: localize("filter.uix_styling", hass),
       },
       {
         name: "card_param",
         type: "string",
-        label: "Parameter to populate",
+        label: localize("card.card_param", hass),
       },
     ],
   },

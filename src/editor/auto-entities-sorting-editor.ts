@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { property, state } from "lit/decorators.js";
 import { AutoEntitiesConfig } from "../types";
 import { sortSchema, sortDataForForm, sortDataFromForm } from "./schema";
+import { localize } from "../localize";
 
 class AutoEntitiesSortingEditor extends LitElement {
   @state() _config: AutoEntitiesConfig;
@@ -21,8 +22,9 @@ class AutoEntitiesSortingEditor extends LitElement {
       return html`
         <div>
           <ha-alert alert-type="info">
-            Multiple sort levels are configured. Please use the
-            <b>CODE EDITOR</b> to edit them.
+            ${localize("sort.multiple_before", this.hass)}
+            <b>${localize("common.code_editor", this.hass)}</b>
+            ${localize("sort.multiple_after", this.hass)}
           </ha-alert>
         </div>
       `;
@@ -33,7 +35,7 @@ class AutoEntitiesSortingEditor extends LitElement {
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${sortSchema(data.method)}
+          .schema=${sortSchema(this.hass, data.method)}
           .computeLabel=${(s) => s.label ?? s.name}
           @value-changed=${this._changeSortOptions}
         ></ha-form>

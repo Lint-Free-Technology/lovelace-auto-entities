@@ -23,6 +23,7 @@ import { process_entity } from "./process_entity";
 import { getCardController, getCardControllerType } from "./card-controllers";
 import { CardController } from "./card-controllers/base";
 import { apply_uix_entity_icon_styling } from "./helpers/uix";
+import { localize } from "./localize";
 
 window.queueMicrotask =
   window.queueMicrotask || ((handler) => window.setTimeout(handler, 1));
@@ -142,11 +143,11 @@ class AutoEntities extends LitElement {
 
   setConfig(config: AutoEntitiesConfig) {
     if (!config) {
-      throw new Error("No configuration.");
+      throw new Error(localize("error.no_configuration", this.hass));
     }
 
     if (!config.filter && !config.entities) {
-      throw new Error("No filters specified.");
+      throw new Error(localize("error.no_filters", this.hass));
     }
 
     if (config.filter?.include) {
@@ -154,7 +155,12 @@ class AutoEntities extends LitElement {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
-            throw new Error(`Unknown rule "${k}" in include filter ${index}`);
+            throw new Error(
+              localize("error.unknown_include_rule", this.hass, {
+                rule: k,
+                index,
+              })
+            );
         }
       }
     }
@@ -164,7 +170,12 @@ class AutoEntities extends LitElement {
         if (Object.keys(filter).includes("type")) continue;
         for (const k in filter) {
           if (!(k.trim().split(" ")[0].trim() in RULES))
-            throw new Error(`Unknown rule "${k}" in exclude filter ${index}`);
+            throw new Error(
+              localize("error.unknown_exclude_rule", this.hass, {
+                rule: k,
+                index,
+              })
+            );
         }
       }
     }

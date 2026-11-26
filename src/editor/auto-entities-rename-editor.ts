@@ -23,7 +23,13 @@ class AutoEntitiesRenameEditor extends LitElement {
         <ha-form
           .hass=${this.hass}
           .data=${data}
-          .schema=${renameSchema(data.method, data.type, data.find, data.replace)}
+          .schema=${renameSchema(
+            this.hass,
+            data.method,
+            data.type,
+            data.find,
+            data.replace
+          )}
           .computeLabel=${(s) => s.label ?? s.name}
           @value-changed=${this._changeRenameOptions}
         ></ha-form>
