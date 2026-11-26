@@ -1,3 +1,14 @@
+## [2.9.0-beta.5](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.4...v2.9.0-beta.5) (2026-11-26)
+
+
+### ⭐ New Features
+
+* add translations for the editor, with pt-BR ([#233](https://github.com/Lint-Free-Technology/lovelace-auto-entities/issues/233)) ([4ec5623](https://github.com/Lint-Free-Technology/lovelace-auto-entities/commit/4ec5623b4c1578bc264f1ef39066d9de85e5f064))
+
+### ❤️ Contributors
+
+Thank you to [@lucararqbr](https://github.com/lucararqbr) for contributing to this release.
+
 ## [2.9.0-beta.4](https://github.com/Lint-Free-Technology/lovelace-auto-entities/compare/v2.9.0-beta.3...v2.9.0-beta.4) (2026-11-24)
 
 
