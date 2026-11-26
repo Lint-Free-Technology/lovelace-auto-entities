@@ -6,6 +6,7 @@
   "description": "",
   "scripts": {
     "build": "rollup -c",
+    "test:release-contributors": "node --test scripts/find-release-contributors.test.mjs",
     "watch": "rollup -c --watch"
   },
   "author": "Thomas Lovén",

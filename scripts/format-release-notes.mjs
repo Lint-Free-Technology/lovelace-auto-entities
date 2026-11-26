@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 
 const releaseNotes = process.env.RELEASE_NOTES?.trim();
 const releaseNoteBanner = process.env.RELEASE_NOTE_BANNER?.trim();
+const releaseContributors = process.env.RELEASE_CONTRIBUTORS?.trim();
 const sectionTitles = new Map([
   ["Features", "⭐ New Features"],
   ["Bug Fixes", "🐞 Bug Fixes"],
@@ -85,6 +86,14 @@ const formattedNotes = [
     section.body,
     "",
   ]),
+  ...(releaseContributors
+    ? [
+        "### ❤️ Contributors",
+        "",
+        `Thank you to ${releaseContributors} for contributing to this release.`,
+        "",
+      ]
+    : []),
 ]
   .join("\n")
   .trim();
