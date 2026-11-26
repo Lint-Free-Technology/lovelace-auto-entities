@@ -18,13 +18,15 @@ export function localize(
   values: Record<string, string | number> = {}
 ): string {
   const currentHass =
-    hass ?? (document.querySelector("home-assistant") as any)?.hass;
+    hass ??
+    (document.querySelector("home-assistant") as any)?.hass ??
+    (document.querySelector("hc-main") as any)?.hass;
   const language = currentHass?.locale?.language ?? currentHass?.language;
   const strings = translations[language] ?? en;
 
-  return Object.entries(values).reduce(
-    (text, [name, value]) => text.replace(`{${name}}`, () => String(value)),
-    strings[key]
+  // One pass over the translation, so inserted values are never re-read.
+  return strings[key].replace(/\{(\w+)\}/g, (match, name) =>
+    name in values ? String(values[name]) : match
   );
 }
 
